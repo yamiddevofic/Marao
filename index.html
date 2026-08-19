@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MARÃO - Tu mirada, tu estilo único</title>
+    
+
+    <!-- FUENTES GOOGLE -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FONT AWESOME PARA ÍCONOS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- HOJA DE ESTILOS OBLIGATORIA -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- GOOGLE SIGN-IN SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <!-- HEADER FIJO -->
+    <header class="main-header sticky-header">
+      <div class="header-top-bar">
+        <div class="header-icons-left">
+          <button
+            class="icon-btn"
+            onclick="mostrarSeccion('carrito')"
+            title="Ver Carrito"
+          >
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="cart-badge" class="badge">0</span>
+          </button>
+
+          <div id="user-profile-container" class="user-profile-container">
+            <button
+              class="icon-btn"
+              onclick="openLoginModal()"
+              title="Iniciar Sesión"
+            >
+              <i class="fa-solid fa-user"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="logo-container"
+          onclick="mostrarSeccion('tienda')"
+          style="cursor: pointer"
+        >
+          <img src="logo.png" alt="MARÃO Logo" class="brand-logo" />
+        </div>
+
+        <div class="header-right-space"></div>
+      </div>
+
+      <nav class="main-nav">
+        <ul>
+          <li><a href="#" onclick="mostrarSeccion('tienda')">INICIO</a></li>
+          <li>
+            <a href="#lentes" onclick="mostrarSeccion('tienda')"
+              >LENTES DE CONTACTO</a
+            >
+          </li>
+          <li>
+            <a href="#pestanas" onclick="mostrarSeccion('tienda')"
+              >PESTAÑAS PELO A PELO</a
+            >
+          </li>
+          <li>
+            <a href="#contacto" onclick="mostrarSeccion('tienda')">CONTACTO</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- VISTA TIENDA -->
+    <div id="view-store">
+      <section class="hero-section" id="hero">
+        <div class="hero-text">
+          <h1 class="font-bittler">MARAO: TU MIRADA,<br />TU ESTILO ÚNICO</h1>
+          <p class="hero-description">
+            Descubre nuestra exclusiva colección de lentes de contacto
+            cosméticos y pestañas pelo a pelo, diseñadas para resaltar tu
+            belleza natural.
+          </p>
+          <div class="hero-buttons">
+            <a href="#lentes" class="btn-primary">CATÁLOGO</a>
+            <a href="#pestanas" class="btn-secondary">VER PESTAÑAS</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img
+            src="hero-banner.jpg"
+            alt="Modelo Marao"
+            class="hero-img-element"
+          />
+        </div>
+      </section>
+      <section class="dual-catalog">
+     
+   <section class="dual-catalog">
+        <div class="catalog-col-lentes" id="lentes">
+          <h3>NUESTRA COLECCIÓN DE LENTES DE CONTACTO COSMÉTICOS</h3>
+          <div class="lentes-filter-wrapper">
+            <span class="filter-label">Tonos Café & Miel:</span>
+            <div class="pupil-filters">
+              <button
+                class="filter-btn active"
+                onclick="filtrarLentes('todos', event)"
+              >
+                TODOS
+              </button>
+              <button
+                class="filter-btn"
+                onclick="filtrarLentes('reducida', event)"
+              >
+                PUPILA REDUCIDA
+              </button>
+              <button
+                class="filter-btn"
+                onclick="filtrarLentes('estandar', event)"
+              >
+                PUPILA ESTÁNDAR
+              </button>
+            </div>
+          </div>
+          <div class="products-grid-lentes" id="grid-lentes-cafe"></div>
+        </div>
+
+        <<div class="catalog-col-pestanas" id="pestanas">
+  <h3>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h3>
+  <p class="slider-hint">Desliza para ver la pestaña y el pegante &rarr;</p>
+
+  <!-- CONTENEDOR EN GRID PARA MOSTRAR LAS 2 TARJETAS LADO A LADO -->
+  <div class="pestanas-grid">
+    
+    <!-- TARJETA 1: PESTAÑAS -->
+    <div class="pestana-card">
+      <div class="pestana-img-box">
+        <img src="pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto">
+      </div>
+      <div class="pestana-card-footer">
+        <h4>Tabla de Pestañas Punto a Punto</h4>
+        <p class="price">$30.000</p>
+        <button class="btn-add-figma" onclick="agregarAlCarritoPorId(99)">AÑADIR AL CARRITO</button>
+      </div>
+    </div>
+
+    <!-- TARJETA 2: PEGANTE -->
+    <div class="pestana-card">
+      <div class="pestana-img-box">
+        <img src="pegante-1.jpg" alt="Pegante Bond & Seal">
+      </div>
+      <div class="pestana-card-footer">
+        <h4>Pegante para Pestañas (Bond & Seal)</h4>
+        <p class="price">$7.000</p>
+        <button class="btn-add-figma" onclick="agregarAlCarritoPorId(100)">AÑADIR AL CARRITO</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+      </section>
+    </div>
+
+    <!-- VISTA CARRITO -->
+    <div id="view-cart" style="display: none; padding: 2rem 5%">
+      <p class="back-link" onclick="mostrarSeccion('tienda')">
+        &lt; Volver al inicio
+      </p>
+
+      <div class="cart-page-layout">
+        <div class="cart-items-column">
+          <h2 id="cart-title-count">TU CARRITO (0)</h2>
+          <hr class="dashed-divider" />
+          <div id="cart-products-container"></div>
+        </div>
+
+        <div class="cart-summary-card">
+          <h3>RESUMEN DE TU COMPRA</h3>
+          <hr class="dashed-divider" />
+
+          <div class="summary-line">
+            <span>Subtotal:</span>
+            <span id="summary-subtotal">$0</span>
+          </div>
+
+          <div class="shipping-selector-group">
+            <label for="shipping-city"
+              ><strong>Destino de Envío:</strong></label
+            >
+            <select id="shipping-city" onchange="calcularCostosEnvio()">
+              <option value="bogota_soacha">
+                Bogotá / Soacha (Contraentrega - $10.000)
+              </option>
+              <option value="nacional">Resto de Colombia ($22.000)</option>
+            </select>
+          </div>
+
+          <div class="summary-line">
+            <span>Envío:</span>
+            <span id="summary-shipping">$10.000</span>
+          </div>
+
+          <div class="summary-line total-line">
+            <span>Total a pagar:</span>
+            <span id="summary-total">$0</span>
+          </div>
+
+          <hr class="dashed-divider" />
+
+          <div class="payment-methods-section">
+            <p class="payment-title"><strong>Método de Pago:</strong></p>
+
+            <select
+              id="payment-type-select"
+              onchange="togglePaymentInputs()"
+              class="payment-select"
+            >
+              <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+              <option value="nequi">Nequi (Transferencia Directa)</option>
+              <option value="efectivo">
+                Pago Contraentrega (Solo Bogotá/Soacha)
+              </option>
+            </select>
+
+            <!-- INPUTS DE TARJETA CON FECHA Y CVV -->
+<div id="card-input-box" class="card-input-container" style="margin-top: 0.8rem;">
+  <label for="card-number-input"><strong>Número de Tarjeta / Cuenta:</strong></label>
+  <div class="input-with-card-icon">
+    <input type="text" id="card-number-input" placeholder="4000 1234 5678 9010" maxlength="19" oninput="detectarTipoTarjeta(this)">
+    <span id="card-brand-badge" class="card-badge-dynamic">DESCONOCIDO</span>
+  </div>
+  <span id="card-detected-label" class="detected-type-label">Escribe los dígitos para detectar el tipo</span>
+
+  <!-- CAMPOS ADICIONALES: FECHA Y CVV -->
+  <div id="extra-card-fields" class="card-extra-row">
+    <div class="field-col">
+      <label for="card-expiry-input"><strong>Vencimiento:</strong></label>
+      <input type="text" id="card-expiry-input" placeholder="MM/AA" maxlength="5" oninput="formatearFechaExp(this)">
+    </div>
+    <div class="field-col">
+      <label for="card-cvv-input"><strong>CVV / CVC:</strong></label>
+      <input type="password" id="card-cvv-input" placeholder="123" maxlength="4">
+    </div>
+  </div>
+</div>
+
+          <div class="address-input-container" style="margin-top: 1rem">
+            <label for="user-address-input"
+              ><strong>Dirección exacta de entrega:</strong></label
+            >
+            <input
+              type="text"
+              id="user-address-input"
+              placeholder="Ej: Calle 15 # 4-20 Apt 302, Bogotá"
+            />
+          </div>
+
+          <button class="btn-checkout-final" onclick="enviarPedidoWhatsApp()">
+            FINALIZAR PEDIDO
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL LOGIN -->
+    <div id="modal-login" class="modal-backdrop" style="display: none">
+      <div class="modal-detail-card login-card">
+        <span class="close-modal-x" onclick="cerrarModalLogin()">&times;</span>
+        <h3>INICIAR SESIÓN EN MARÃO</h3>
+        <p class="login-sub">
+          Accede con tu cuenta de Google para guardar tus datos de envío.
+        </p>
+
+        <div class="google-btn-wrapper">
+          <div
+            id="g_id_onload"
+            data-client_id="TU_CLIENT_ID_DE_GOOGLE.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false"
+          ></div>
+          <div
+            class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DETALLE PRODUCTO -->
+    <div id="modal-product-detail" class="modal-backdrop" style="display: none">
+      <div class="modal-detail-card">
+        <span class="close-modal-x" onclick="cerrarModalDetalle()"
+          >&times;</span
+        >
+        <h3 class="modal-header-title">INFORMACIÓN DEL LENTE</h3>
+
+        <div class="modal-detail-body">
+          <div class="modal-img-col">
+            <img id="modal-img" src="" alt="Lente de Contacto" />
+          </div>
+
+          <div class="modal-info-col">
+            <p><strong>Categoría:</strong> LENTES DE CONTACTO COSMÉTICOS</p>
+            <p><strong>Nombre:</strong> <span id="modal-title"></span></p>
+            <p>
+              <strong>Precio:</strong>
+              <span id="modal-price" class="modal-price-tag"></span>
+            </p>
+            <p><strong>Descripción:</strong> <span id="modal-desc"></span></p>
+
+            <div class="modal-action-bar">
+              <button class="btn-add-modal" id="btn-add-from-modal">
+                AÑADIR AL CARRITO
+              </button>
+              <div class="qty-controls">
+                <button onclick="modificarCantidadModal(-1)">-</button>
+                <span id="modal-qty">1</span>
+                <button onclick="modificarCantidadModal(1)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="main-footer" id="contacto">
+      <div class="footer-brand">
+        <img src="logoA.png" alt="MARÃO" class="footer-logo" />
+        <p>Tu mirada, tu estilo único</p>
+      </div>
+      <div class="footer-contact">
+        <p><strong>CONTACTO:</strong> 3243744983</p>
+        <p><strong>INSTA:</strong> @maraoficiall</p>
+      </div>
+    </footer>
+
+   <script src="script.js?v=3" charset="UTF-8"></script>
+  </body>
+</html>
