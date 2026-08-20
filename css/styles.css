@@ -652,7 +652,7 @@ h1,
 
   .hero-text {
     flex: 1;
-    padding: 5rem 7%;
+    padding: 5rem 8% 5rem 2%;
   }
 
   .hero-text h1 {
