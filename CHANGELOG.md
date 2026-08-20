@@ -7,71 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- `README.md` con descripción del proyecto, stack, instrucciones de ejecución,
-  configuración (login de Google y pedidos por WhatsApp), reglas de negocio y
-  deuda técnica conocida.
-- Documentación de la estructura modular del frontend bajo `js/`.
-
 ### Changed
 
-- CSS reescrito mobile-first con variables (`:root`) para colores, espaciados y
-  tipografía; media query con `min-width: 769px` para escritorio.
-- Vistas `#view-store` y `#view-cart` migradas de `<div>` a `<main>`; jerarquía
-  de encabezados corregida (h1 → h2 → h3, sin saltos).
-- Eliminados todos los estilos inline del HTML y los templates JS en favor de
-  clases CSS (`hidden`, `card-title`, `cart-view`, `cart-empty-message`, etc.).
-- Modales y vistas ahora se controlan con `classList` (`hidden` / `open`) en vez
-  de `style.display`.
-- `loading="lazy"` en imágenes de catálogo, pestañas, carrito y footer (el hero
-  se mantiene eager por estar arriba del pliegue).
+- El sitio ahora se sirve con módulos JS: requiere servidor HTTP local (abrir con doble clic ya no funciona).
+- El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
 ### Fixed
 
-- La media query móvil apuntaba a selectores inexistentes (`.section-dual-catalog`,
-  `.botones-filtro`) y abusaba de `!important`; el layout móvil no aplicaba nada.
-  Reescrita con los selectores reales y sin `!important`.
-
-- Se dividió el monolítico `script.js` (~470 líneas, todo en scope global) en
-  módulos ES por responsabilidad:
-  - `js/productos.js` — datos del catálogo.
-  - `js/catalog.js` — render de catálogo, filtros por pupila y modal de detalle.
-  - `js/cart.js` — estado y operaciones del carrito.
-  - `js/checkout.js` — costos de envío, detección de tipo de tarjeta y pedido
-    por WhatsApp.
-  - `js/auth.js` — login con Google.
-  - `js/ui.js` — navegación entre vistas (tienda / carrito).
-  - `js/main.js` — punto de entrada, inicialización y delegación de eventos.
-- Se reemplazaron los manejadores inline (`onclick`, `onchange`, `oninput`) por
-  delegación de eventos con atributos `data-action`.
-- El sitio ahora se carga con `<script type="module">`, por lo que debe servirse
-  por HTTP (p. ej. `python -m http.server`); abrir `index.html` con doble clic
-  deja de funcionar.
-
-### Fixed
-
-- HTML roto: sección `dual-catalog` anidada duplicada y `<<div` con carácter
-  inválido.
-- La tarjeta "Pegante para Pestañas (Bond & Seal)" no agregaba nada al carrito
-  (referenciaba el id 100, inexistente). Se agregaron los productos id 98 (tabla
-  de pestañas, $30.000) y id 100 (pegante, $7.000), alineados con los precios
-  mostrados en las tarjetas.
-- La tarjeta "Tabla de Pestañas Punto a Punto" agregaba el kit combo (id 99,
-  $35.000) en vez del producto de $30.000 mostrado.
-- Se renombró `ANGELES AMBER.jpg` a `ANGELES-AMBER.jpg` para coincidir con la
-  referencia del catálogo.
-- El botón "Añadir al carrito" del modal de detalle no tenía manejador (no hacía
-  nada). Ahora agrega el producto respetando la cantidad seleccionada.
-- `formatearFechaExp` (formato MM/AA del campo de vencimiento) se referenciaba
-  en el HTML pero nunca se implementó.
-
-### Notes
-
-- `main` permanece como rama estable; el desarrollo ocurre en `developer`.
-- Pendiente conocido: el checkout captura datos de tarjeta en el cliente y los
-  envía por WhatsApp (no cumple estándares PCI). Ver README → "Estado del
-  proyecto y deuda técnica conocida".
+- El botón "Añadir al carrito" del modal de detalle no hacía nada.
+- La tarjeta "Tabla de Pestañas Punto a Punto" agregaba el kit combo ($35.000) en vez de la tabla ($30.000).
+- La tarjeta "Pegante para Pestañas (Bond & Seal)" no agregaba nada al carrito.
+- La imagen del lente Ángeles Ámbar no cargaba (referencia con nombre incorrecto).
+- El campo de vencimiento de tarjeta (MM/AA) no formateaba la entrada.
 
 ## [0.1.0] - 2026-08-19
 
