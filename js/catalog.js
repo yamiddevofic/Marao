@@ -11,9 +11,9 @@ export function renderLentes(items) {
     .map(
       (prod) => `
     <div class="product-card-figma">
-      <img src="${prod.img}" alt="${prod.nombre}" data-action="open-detail" data-id="${prod.id}">
+      <img src="${prod.img}" alt="${prod.nombre}" loading="lazy" data-action="open-detail" data-id="${prod.id}">
       <div class="card-info">
-        <h4 data-action="open-detail" data-id="${prod.id}" style="cursor:pointer;">${prod.nombre}</h4>
+        <h3 data-action="open-detail" data-id="${prod.id}" class="card-title">${prod.nombre}</h3>
         <p class="price">$${prod.precio.toLocaleString()}</p>
       </div>
       <button class="btn-add-figma" data-action="add-to-cart" data-id="${prod.id}">AÑADIR AL CARRITO</button>
@@ -30,9 +30,9 @@ export function renderAccesorios(items) {
     .map(
       (acc) => `
     <div class="product-card-figma">
-      <img src="${acc.img}" alt="${acc.nombre}">
+      <img src="${acc.img}" alt="${acc.nombre}" loading="lazy">
       <div class="card-info">
-        <h4>${acc.nombre}</h4>
+        <h3>${acc.nombre}</h3>
         <p class="price">$${acc.precio.toLocaleString()}</p>
       </div>
       <button class="btn-add-figma" data-action="add-to-cart" data-id="${acc.id}">AÑADIR AL CARRITO</button>
@@ -66,11 +66,11 @@ export function abrirModalDetalle(id) {
     `$${prod.precio.toLocaleString()}`;
   document.getElementById("modal-desc").innerText = prod.desc;
 
-  document.getElementById("modal-product-detail").style.display = "flex";
+  document.getElementById("modal-product-detail").classList.add("open");
 }
 
 export function cerrarModalDetalle() {
-  document.getElementById("modal-product-detail").style.display = "none";
+  document.getElementById("modal-product-detail").classList.remove("open");
 }
 
 export function modificarCantidadModal(delta) {

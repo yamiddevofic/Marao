@@ -89,7 +89,7 @@ En desarrollo activo. Puntos pendientes identificados:
 - **Carrito**: vive solo en memoria; se pierde al recargar la página. Persistir en `localStorage`.
 - **Inventario/stock**: sin control de disponibilidad.
 - **Imágenes**: algunas referencias de producto aún no existen en el repo (lentes Citrina Brown, Choco Dark, accesorios).
-- **Responsive**: el diseño actual no es responsive; está pensado para escritorio. Requiere trabajo de media queries y ajuste de layouts antes de apuntar a móvil.
+- **Responsive**: ya hay layout mobile-first con `min-width` (media query a partir de 769px); falta verificar el pulido en dispositivos reales, especialmente catálogo y carrito.
 
 ## Contacto
 

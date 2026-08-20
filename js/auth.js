@@ -5,11 +5,11 @@ export function getUsuarioLogueado() {
 }
 
 export function openLoginModal() {
-  document.getElementById("modal-login").style.display = "flex";
+  document.getElementById("modal-login").classList.add("open");
 }
 
 export function cerrarModalLogin() {
-  document.getElementById("modal-login").style.display = "none";
+  document.getElementById("modal-login").classList.remove("open");
 }
 
 export function cerrarSesion() {

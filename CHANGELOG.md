@@ -16,6 +16,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- CSS reescrito mobile-first con variables (`:root`) para colores, espaciados y
+  tipografía; media query con `min-width: 769px` para escritorio.
+- Vistas `#view-store` y `#view-cart` migradas de `<div>` a `<main>`; jerarquía
+  de encabezados corregida (h1 → h2 → h3, sin saltos).
+- Eliminados todos los estilos inline del HTML y los templates JS en favor de
+  clases CSS (`hidden`, `card-title`, `cart-view`, `cart-empty-message`, etc.).
+- Modales y vistas ahora se controlan con `classList` (`hidden` / `open`) en vez
+  de `style.display`.
+- `loading="lazy"` en imágenes de catálogo, pestañas, carrito y footer (el hero
+  se mantiene eager por estar arriba del pliegue).
+
+### Fixed
+
+- La media query móvil apuntaba a selectores inexistentes (`.section-dual-catalog`,
+  `.botones-filtro`) y abusaba de `!important`; el layout móvil no aplicaba nada.
+  Reescrita con los selectores reales y sin `!important`.
+
 - Se dividió el monolítico `script.js` (~470 líneas, todo en scope global) en
   módulos ES por responsabilidad:
   - `js/productos.js` — datos del catálogo.

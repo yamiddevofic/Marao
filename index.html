@@ -56,7 +56,6 @@
           class="logo-container"
           data-action="mostrar-seccion"
           data-view="tienda"
-          style="cursor: pointer"
         >
           <img src="assets/img/logo.png" alt="MARÃO Logo" class="brand-logo" />
         </div>
@@ -103,7 +102,7 @@
     </header>
 
     <!-- VISTA TIENDA -->
-    <div id="view-store">
+    <main id="view-store">
       <section class="hero-section" id="hero">
         <div class="hero-text">
           <h1 class="font-bittler">MARAO: TU MIRADA,<br />TU ESTILO ÚNICO</h1>
@@ -127,7 +126,7 @@
       </section>
       <section class="dual-catalog">
         <div class="catalog-col-lentes" id="lentes">
-          <h3>NUESTRA COLECCIÓN DE LENTES DE CONTACTO COSMÉTICOS</h3>
+          <h2>NUESTRA COLECCIÓN DE LENTES DE CONTACTO COSMÉTICOS</h2>
           <div class="lentes-filter-wrapper">
             <span class="filter-label">Tonos Café & Miel:</span>
             <div class="pupil-filters">
@@ -158,7 +157,7 @@
         </div>
 
         <div class="catalog-col-pestanas" id="pestanas">
-  <h3>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h3>
+  <h2>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h2>
   <p class="slider-hint">Desliza para ver la pestaña y el pegante &rarr;</p>
 
   <!-- CONTENEDOR EN GRID PARA MOSTRAR LAS 2 TARJETAS LADO A LADO -->
@@ -167,10 +166,10 @@
     <!-- TARJETA 1: PESTAÑAS -->
     <div class="pestana-card">
       <div class="pestana-img-box">
-        <img src="assets/img/pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto">
+        <img src="assets/img/pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto" loading="lazy">
       </div>
       <div class="pestana-card-footer">
-        <h4>Tabla de Pestañas Punto a Punto</h4>
+        <h3>Tabla de Pestañas Punto a Punto</h3>
         <p class="price">$30.000</p>
         <button class="btn-add-figma" data-action="add-to-cart" data-id="98">AÑADIR AL CARRITO</button>
       </div>
@@ -179,10 +178,10 @@
     <!-- TARJETA 2: PEGANTE -->
     <div class="pestana-card">
       <div class="pestana-img-box">
-        <img src="assets/img/pegante-1.jpg" alt="Pegante Bond & Seal">
+        <img src="assets/img/pegante-1.jpg" alt="Pegante Bond & Seal" loading="lazy">
       </div>
       <div class="pestana-card-footer">
-        <h4>Pegante para Pestañas (Bond & Seal)</h4>
+        <h3>Pegante para Pestañas (Bond & Seal)</h3>
         <p class="price">$7.000</p>
         <button class="btn-add-figma" data-action="add-to-cart" data-id="100">AÑADIR AL CARRITO</button>
       </div>
@@ -191,10 +190,10 @@
   </div>
 </div>
       </section>
-    </div>
+    </main>
 
     <!-- VISTA CARRITO -->
-    <div id="view-cart" style="display: none; padding: 2rem 5%">
+    <main id="view-cart" class="cart-view hidden">
       <p class="back-link" data-action="mostrar-seccion" data-view="tienda">
         &lt; Volver al inicio
       </p>
@@ -254,7 +253,7 @@
             </select>
 
             <!-- INPUTS DE TARJETA CON FECHA Y CVV -->
-<div id="card-input-box" class="card-input-container" style="margin-top: 0.8rem;">
+<div id="card-input-box" class="card-input-container">
   <label for="card-number-input"><strong>Número de Tarjeta / Cuenta:</strong></label>
   <div class="input-with-card-icon">
     <input type="text" id="card-number-input" placeholder="4000 1234 5678 9010" maxlength="19">
@@ -275,7 +274,7 @@
   </div>
 </div>
 
-          <div class="address-input-container" style="margin-top: 1rem">
+          <div class="address-input-container">
             <label for="user-address-input"
               ><strong>Dirección exacta de entrega:</strong></label
             >
@@ -291,10 +290,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- MODAL LOGIN -->
-    <div id="modal-login" class="modal-backdrop" style="display: none">
+    <div id="modal-login" class="modal-backdrop">
       <div class="modal-detail-card login-card">
         <span class="close-modal-x" data-action="close-login">&times;</span>
         <h3>INICIAR SESIÓN EN MARÃO</h3>
@@ -323,7 +322,7 @@
     </div>
 
     <!-- MODAL DETALLE PRODUCTO -->
-    <div id="modal-product-detail" class="modal-backdrop" style="display: none">
+    <div id="modal-product-detail" class="modal-backdrop">
       <div class="modal-detail-card">
         <span class="close-modal-x" data-action="close-detail"
           >&times;</span
@@ -361,7 +360,7 @@
 
     <footer class="main-footer" id="contacto">
       <div class="footer-brand">
-        <img src="assets/img/logoA.png" alt="MARÃO" class="footer-logo" />
+        <img src="assets/img/logoA.png" alt="MARÃO" class="footer-logo" loading="lazy" />
         <p>Tu mirada, tu estilo único</p>
       </div>
       <div class="footer-contact">

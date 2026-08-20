@@ -6,8 +6,8 @@ export function mostrarSeccion(seccion) {
   if (!tienda || !carrito) return;
 
   const esCarrito = seccion === "carrito";
-  tienda.style.display = esCarrito ? "none" : "block";
-  carrito.style.display = esCarrito ? "block" : "none";
+  tienda.classList.toggle("hidden", esCarrito);
+  carrito.classList.toggle("hidden", !esCarrito);
 
   if (esCarrito) {
     renderCarritoPagina();

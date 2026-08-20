@@ -53,7 +53,7 @@ export function renderCarritoPagina() {
 
   if (carrito.length === 0) {
     container.innerHTML =
-      '<p style="padding: 1rem 0;">El carrito está vacío.</p>';
+      '<p class="cart-empty-message">El carrito está vacío.</p>';
     notificarActualizacion();
     return;
   }
@@ -62,7 +62,7 @@ export function renderCarritoPagina() {
     .map(
       (item) => `
     <div class="cart-item-row">
-      <img src="${item.img}" alt="${item.nombre}">
+      <img src="${item.img}" alt="${item.nombre}" loading="lazy">
       <div class="cart-item-details">
         <p><strong>Producto:</strong> ${item.nombre}</p>
         <p><strong>Detalle:</strong> Lente / Accesorio original MARÃO</p>
