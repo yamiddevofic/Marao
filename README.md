@@ -26,11 +26,17 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 
 ```
 Pag_Marao/
-├── index.html        # Página principal (tienda, carrito, modales)
-├── styles.css        # Estilos globales
-├── script.js         # Lógica: catálogo, carrito, checkout, login
-├── README.md
-└── *.jpg / *.png     # Imágenes de productos y marca
+├── index.html          # Página principal (tienda, carrito, modales)
+├── styles.css          # Estilos globales
+├── js/
+│   ├── main.js         # Punto de entrada: inicialización y delegación de eventos
+│   ├── productos.js    # Datos del catálogo (productosBase)
+│   ├── catalog.js      # Render de catálogo, filtros y modal de detalle
+│   ├── cart.js         # Estado y operaciones del carrito
+│   ├── checkout.js     # Costos de envío, validación de pago y pedido por WhatsApp
+│   ├── auth.js         # Login con Google
+│   └── ui.js           # Navegación entre vistas (tienda / carrito)
+└── *.jpg / *.png       # Imágenes de productos y marca
 ```
 
 ## Ejecución local
@@ -46,6 +52,8 @@ python -m http.server 8080
 # luego visita http://localhost:8080
 ```
 
+> **Nota**: el JS está organizado en módulos ES (`type="module"`), por lo que el sitio debe servirse por HTTP (opción 2). Abrir `index.html` directamente con doble clic no ejecutará los módulos.
+
 ## Configuración
 
 ### Login con Google
@@ -59,7 +67,7 @@ python -m http.server 8080
 
 ### Pedidos por WhatsApp
 
-El checkout construye un mensaje con el detalle del pedido (productos, cantidades, envío, dirección y total) y lo abre en `wa.me`. El número destino se define en `enviarPedidoWhatsApp()` dentro de `script.js`.
+El checkout construye un mensaje con el detalle del pedido (productos, cantidades, envío, dirección y total) y lo abre en `wa.me`. El número destino se define en `enviarPedidoWhatsApp()` dentro de `js/checkout.js`.
 
 ## Reglas de negocio actuales (definidas por el negocio)
 
@@ -76,11 +84,10 @@ El checkout construye un mensaje con el detalle del pedido (productos, cantidade
 En desarrollo activo. Puntos pendientes identificados:
 
 - **Pagos**: el número de tarjeta se captura en el cliente y viaja en el mensaje de WhatsApp. Esto no cumple estándares PCI. Migrar a checkout hospedado o widget oficial (Wompi, Epayco, PayU).
-- **Catálogo**: productos hardcodeados en `productosBase` (script.js). Migrar a un JSON externo o API cuando crezca.
+- **Catálogo**: productos hardcodeados en `productosBase` (`js/productos.js`). Migrar a un JSON externo o API cuando crezca.
 - **Carrito**: vive solo en memoria; se pierde al recargar la página. Persistir en `localStorage`.
 - **Inventario/stock**: sin control de disponibilidad.
 - **Imágenes**: algunas referencias de producto aún no existen en el repo (lentes Citrina Brown, Choco Dark, accesorios).
-- **Estructura JS**: todo vive en el scope global de un solo archivo; separar por módulos (catálogo, carrito, checkout, auth) antes de crecer.
 - **Responsive**: el diseño actual no es responsive; está pensado para escritorio. Requiere trabajo de media queries y ajuste de layouts antes de apuntar a móvil.
 
 ## Contacto
