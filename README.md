@@ -27,7 +27,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 ```
 Pag_Marao/
 ├── index.html          # Página principal (tienda, carrito, modales)
-├── styles.css          # Estilos globales
+├── css/styles.css      # Estilos globales
 ├── js/
 │   ├── main.js         # Punto de entrada: inicialización y delegación de eventos
 │   ├── productos.js    # Datos del catálogo (productosBase)

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- El hero de la portada se rediseñó: imagen vertical (proporción 500×834) sin distorsión, tipografía Bitter más grande, texto de presentación ampliado y botones redondeados alineados al párrafo.
 - El sitio ahora se sirve con módulos JS: requiere servidor HTTP local (abrir con doble clic ya no funciona).
 - El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
