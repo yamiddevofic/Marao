@@ -36,7 +36,8 @@ Pag_Marao/
 │   ├── checkout.js     # Costos de envío, validación de pago y pedido por WhatsApp
 │   ├── auth.js         # Login con Google
 │   └── ui.js           # Navegación entre vistas (tienda / carrito)
-└── *.jpg / *.png       # Imágenes de productos y marca
+├── assets/img/         # Imágenes (productos, marca, hero)
+└── CHANGELOG.md        # Historial de cambios
 ```
 
 ## Ejecución local

@@ -1,4 +1,5 @@
 export const PRECIO_LENTES = 45000;
+export const IMG_PATH = "assets/img/";
 
 export const productosBase = [
   {
@@ -7,7 +8,7 @@ export const productosBase = [
     desc: "Resalta tu mirada con un tono verde natural y un acabado espectacular.",
     precio: 45000,
     tipo: "reducida",
-    img: "ANGELES-AMBER.jpg",
+    img: IMG_PATH + "ANGELES-AMBER.jpg",
   },
   {
     id: 2,
@@ -15,7 +16,7 @@ export const productosBase = [
     desc: "Brillo avellana cálido e intenso con acabado hiperrealista.",
     precio: 45000,
     tipo: "estandar",
-    img: "lentes-citrina-brown.jpg",
+    img: IMG_PATH + "lentes-citrina-brown.jpg",
   },
   {
     id: 3,
@@ -23,7 +24,7 @@ export const productosBase = [
     desc: "Tono café profundo e impresionante.",
     precio: 45000,
     tipo: "reducida",
-    img: "lentes-choco-dark.jpg",
+    img: IMG_PATH + "lentes-choco-dark.jpg",
   },
   {
     id: 98,
@@ -31,7 +32,7 @@ export const productosBase = [
     desc: "Bandeja de pestañas pelo a pelo para un look natural.",
     precio: 30000,
     tipo: "pestana",
-    img: "pestanas-1.jpg",
+    img: IMG_PATH + "pestanas-1.jpg",
   },
   {
     id: 99,
@@ -39,7 +40,7 @@ export const productosBase = [
     desc: "Kit completo pelo a pelo con pegante adhesivo de alta fijación.",
     precio: 35000,
     tipo: "pestana",
-    img: "pestanas-1.jpg",
+    img: IMG_PATH + "pestanas-1.jpg",
   },
   {
     id: 100,
@@ -47,34 +48,34 @@ export const productosBase = [
     desc: "Pegante adhesivo de alta fijación para pestañas pelo a pelo.",
     precio: 7000,
     tipo: "pestana",
-    img: "pegante-1.jpg",
+    img: IMG_PATH + "pegante-1.jpg",
   },
   {
     id: 101,
     nombre: "ESTUCHE KIT VIAJERO",
     desc: "Incluye porta lentes, espejo y aplicadores.",
     precio: 12000,
-    img: "estuche.jpg",
+    img: IMG_PATH + "estuche.jpg",
   },
   {
     id: 102,
     nombre: "SOLUCIÓN MULTIPROPÓSITO 120ML",
     desc: "Líquido especial para desinfectar y conservar tus lentes.",
     precio: 18000,
-    img: "solucion.jpg",
+    img: IMG_PATH + "solucion.jpg",
   },
   {
     id: 103,
     nombre: "KIT APLICADOR + PINZAS",
     desc: "Herramientas con punta de silicona para colocación higiénica.",
     precio: 8000,
-    img: "pinzas.jpg",
+    img: IMG_PATH + "pinzas.jpg",
   },
   {
     id: 104,
     nombre: "LAVADORA MANUAL PARA LENTES",
     desc: "Elimina residuos de forma rápida girando la tapa.",
     precio: 16000,
-    img: "lavadora.jpg",
+    img: IMG_PATH + "lavadora.jpg",
   },
 ];
