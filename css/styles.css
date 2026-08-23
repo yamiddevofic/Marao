@@ -1,9 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Blinker:wght@300;400;600;700;800&family=Montserrat:wght@300;400;600;700;800&display=swap");
 
 :root {
   --color-bg: #f8f7f5;
   --color-surface: #e3e3e3;
-  --color-card: #c3b1a0;
+  --color-card: #7f6f6f;
+  /* Beige que usaban el badge del carrito y los filtros antes de que las
+     tarjetas pasaran a #7f6f6f; se mantiene por legibilidad del texto negro. */
+  --color-accent-soft: #c3b1a0;
   --color-modal: #d9c5b2;
   --color-dark: #3e3530;
   --color-black: #000;
@@ -23,8 +26,12 @@
 
   --font-body: "Montserrat", sans-serif;
   --font-display: "Bitter", serif;
+  /* Catálogos, carrusel y secciones de accesorios / "por qué comprar" */
+  --font-ui: "Blinker", sans-serif;
 
   --gutter: 5%;
+  /* Cuánto baja la imagen del hero sobre el bloque de pestañas (solo escritorio) */
+  --hero-overlap: 2.5rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
@@ -67,10 +74,8 @@ h1,
 }
 
 /* HEADER Y NAV */
-.sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+/* El header se queda en el tope de la página: no acompaña al scroll. */
+.main-header {
   background: var(--color-bg);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
@@ -101,7 +106,7 @@ h1,
   position: absolute;
   top: -6px;
   right: -8px;
-  background: var(--color-card);
+  background: var(--color-accent-soft);
   color: var(--color-black);
   font-size: 0.65rem;
   font-weight: bold;
@@ -201,22 +206,31 @@ h1,
 
 .hero-buttons {
   display: flex;
-  justify-content: space-around;
-  gap: 10%;
-  max-width: 48ch;
+  /* Nunca se apilan: si no caben, encogen. */
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: var(--spacing-md);
   margin: 3rem auto 0;
 }
 
 .btn-primary,
 .btn-secondary {
-  flex: 1;
+  /* Alto del diseño (50px); el ancho lo marca el texto más su padding, para
+     que el botón no quede holgado por los lados. */
+  /* Mismo ancho los dos (base 260px) y con permiso para encoger en pantallas
+     estrechas, para que nunca se pase uno debajo del otro. */
+  flex: 0 1 260px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0.75rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 0.9rem 1.5rem;
-  font-size: 0.85rem;
+  font-size: 14px;
   font-weight: bold;
   text-decoration: none;
-  display: inline-block;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 }
 
 .btn-primary {
@@ -242,6 +256,11 @@ h1,
 }
 
 /* CATALOGOS Y CARDS */
+.dual-catalog,
+.starry-section {
+  font-family: var(--font-ui);
+}
+
 .dual-catalog {
   display: flex;
   flex-direction: column;
@@ -250,8 +269,16 @@ h1,
 }
 
 .dual-catalog h2 {
-  font-size: 1.15rem;
-  line-height: 1.3;
+  font-size: 28px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+/* Aire debajo de todos los títulos de sección. */
+.dual-catalog h2,
+.starry-section h2 {
+  padding-bottom: var(--spacing-xl);
+  font-weight: 700;
 }
 
 .catalog-col-lentes,
@@ -275,13 +302,13 @@ h1,
 }
 
 .filter-btn {
-  background: var(--color-card);
+  background: var(--color-accent-soft);
   border: none;
   padding: 0.4rem 0.7rem;
   font-size: 0.7rem;
   font-weight: bold;
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
 }
 
 .filter-btn.active {
@@ -293,59 +320,117 @@ h1,
 .accessories-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-md);
-}
-
-.accessories-grid {
-  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
 }
 
 .product-card-figma {
   background: var(--color-card);
-  border-radius: var(--radius-md);
-  padding: 0.6rem;
+  border-radius: var(--radius-lg);
+  /* El botón llega hasta el borde inferior: el recorte redondea sus esquinas. */
+  overflow: hidden;
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .product-card-figma img {
-  width: 100%;
-  height: 110px;
+  /* Imagen cuadrada con un margen del color de la tarjeta alrededor. */
+  width: calc(100% - 2 * var(--spacing-sm));
+  margin: var(--spacing-sm) var(--spacing-sm) 0;
+  aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: var(--radius-md);
 }
 
-.card-title {
-  cursor: pointer;
+.card-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: var(--spacing-sm) 0.4rem;
 }
 
 .product-card-figma h3 {
-  font-size: 0.95rem;
-  margin: 0.4rem 0;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.product-card-figma .price {
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .btn-add-figma {
   background: var(--color-black);
   color: var(--color-white);
   border: none;
-  padding: 0.5rem 0;
-  font-size: 0.7rem;
+  width: 100%;
+  padding: 0.6rem 0.4rem;
+  font-size: 20px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 0.4rem;
-  font-family: var(--font-body);
-  border-radius: var(--radius-md);
+  margin-top: auto;
+  font-family: var(--font-ui);
+  border-radius: 0;
 }
 
 /* TARJETAS PESTAÑAS */
-.pestanas-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-md);
+.pestanas-carousel {
   margin-top: var(--spacing-md);
+}
+
+.pestanas-grid {
+  display: flex;
+  gap: var(--spacing-lg);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  /* La barra se oculta: el desplazamiento se hace con swipe o con las flechas. */
+  scrollbar-width: none;
+  padding-bottom: var(--spacing-sm);
+}
+
+.pestanas-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.pestanas-grid:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 4px;
+}
+
+/* Sin scroll-snap: como la última tarjeta asoma parcialmente, su punto de
+   anclaje cae fuera del scroll máximo y el navegador devolvía la vista al
+   inicio en cuanto se usaban las flechas. */
+.pestanas-grid > .pestana-card {
+  flex: 0 0 80%;
+}
+
+/* Flechas planas en los extremos del bloque, como en el diseño. */
+.carousel-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--spacing-sm);
+}
+
+.carousel-btn {
+  border: none;
+  background: transparent;
+  color: var(--color-white);
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+.carousel-btn:hover {
+  opacity: 0.7;
+}
+
+.carousel-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .pestana-card {
@@ -358,7 +443,9 @@ h1,
 
 .pestana-img-box {
   width: 100%;
-  height: 200px;
+  /* Slide vertical: la imagen crece con el ancho de la tarjeta en vez de
+     recortarse a una altura fija. */
+  aspect-ratio: 305 / 420;
 }
 
 .pestana-img-box img {
@@ -370,17 +457,29 @@ h1,
 .pestana-card-footer {
   background-color: var(--color-white);
   color: var(--color-black);
-  padding: 0.8rem 0.5rem;
+  /* Sin padding lateral: el botón llega hasta los bordes de la tarjeta. */
+  padding: 0.8rem 0 0;
   text-align: center;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.pestana-card-footer h3,
+.pestana-card-footer .price {
+  padding: 0 0.5rem;
 }
 
 .pestana-card-footer h3 {
-  font-size: 0.9rem;
+  font-size: 16px;
   line-height: 1.3;
+}
+
+.pestana-card-footer .price {
+  font-size: 20px;
+  font-weight: 700;
 }
 
 /* CARRITO */
@@ -612,11 +711,131 @@ h1,
   cursor: pointer;
 }
 
-/* FOOTER */
-.accessories-section {
-  padding: 3rem var(--gutter);
+/* SECCIONES CON FONDO DE ESTRELLAS */
+.starry-section {
+  background-color: var(--color-white);
+  /* Estrellas sueltas, no un mosaico repetido: con `repeat`, cualquier
+     estrella que cayera en el borde del contenedor quedaba cortada a la
+     mitad. La posición en % nunca recorta la imagen (0%/100% alinean su
+     borde exactamente con el del contenedor), así que todas quedan enteras
+     sin importar el ancho de la sección. */
+  background-image: url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-clara.svg"),
+    url("../assets/img/estrella-clara.svg"),
+    url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-clara.svg");
+  background-position:
+    0% 3%,
+    100% 2%,
+    2% 40%,
+    98% 38%,
+    6% 97%,
+    94% 96%;
+  background-size:
+    52px 52px,
+    48px 48px,
+    44px 44px,
+    46px 46px,
+    50px 50px,
+    46px 46px;
+  background-repeat: no-repeat;
+  padding: 3.5rem var(--gutter);
   text-align: center;
 }
+
+/* Reparto propio de estrellas: esta sección es mucho más baja que la de
+   accesorios, así que con los mismos porcentajes se apelotonaban. */
+.why-section {
+  background-image: url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-clara.svg"),
+    url("../assets/img/estrella-clara.svg"),
+    url("../assets/img/estrella-oscura.svg"),
+    url("../assets/img/estrella-clara.svg");
+  background-position:
+    0% 30%,
+    100% 28%,
+    3% 62%,
+    97% 60%,
+    8% 97%,
+    92% 95%;
+  background-size:
+    48px 48px,
+    44px 44px,
+    46px 46px,
+    44px 44px,
+    46px 46px,
+    48px 48px;
+}
+
+/* Franja marrón que separa el bloque de accesorios de los catálogos, con un
+   respiro en blanco entre los catálogos y la franja. */
+.accessories-section {
+  margin-top: 2.5rem;
+  /* La franja tiene el mismo grosor que la barra negra del navbar. */
+  border-top: 30px solid var(--color-dark);
+}
+
+.accessories-section h2 {
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+.why-section h2 {
+  font-size: 30px;
+  line-height: 1.3;
+}
+
+/* Las tarjetas van sobre las estrellas, no debajo. */
+.accessories-grid,
+.why-grid {
+  position: relative;
+}
+
+.card-desc {
+  font-size: 0.7rem;
+  line-height: 1.35;
+  margin-top: 0.2rem;
+}
+
+/* ¿POR QUÉ COMPRAR EN MARÃO? */
+.why-grid {
+  list-style: none;
+  display: grid;
+  gap: var(--spacing-lg);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.why-card {
+  background: #d0c9c9;
+  border: 2px solid var(--color-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  text-align: left;
+}
+
+.why-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.why-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.why-card p {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* FOOTER */
 
 .main-footer {
   background: var(--color-black);
@@ -625,7 +844,6 @@ h1,
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  margin-top: var(--spacing-xl);
 }
 
 .footer-logo {
@@ -657,7 +875,7 @@ h1,
   }
 
   .hero-text h1 {
-    font-size: 64px;
+    font-size: 70px;
     margin-bottom: 1.5rem;
   }
 
@@ -665,39 +883,149 @@ h1,
     font-size: 30px;
   }
 
+  .hero-buttons {
+    gap: 4rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    min-height: 62px;
+    padding: 0 2rem;
+    font-size: 16px;
+  }
+
   .hero-image {
     flex: 0 0 auto;
     width: min(40vw, 500px);
+    /* Queda por encima del bloque de pestañas, que sube para solaparse. */
+    position: relative;
+    z-index: 1;
   }
 
   .hero-img-element {
     height: 100%;
   }
 
+  /* La columna de pestañas continúa la imagen del hero: sin separación arriba
+     ni a la derecha, para que el bloque oscuro quede pegado a la imagen.
+     El padding pasa a cada columna para no perder el margen de los lentes. */
   .dual-catalog {
-    flex-direction: row;
-    padding: 3rem var(--gutter);
-    gap: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+    margin-top: calc(var(--hero-overlap) * -1);
   }
 
   .catalog-col-lentes {
-    flex: 1.2;
+    padding: calc(3rem + var(--hero-overlap)) var(--spacing-xl) 3rem
+      var(--gutter);
   }
 
   .catalog-col-pestanas {
-    flex: 0.8;
+    /* Media página: la imagen del hero la cubre parcialmente por arriba.
+       El extra de padding deja libre la franja que cubre la imagen. */
+    padding: calc(var(--spacing-xl) + var(--hero-overlap)) var(--spacing-lg)
+      var(--spacing-xl);
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  .pestana-img-box {
-    height: 280px;
+  /* Las tarjetas conservan su tamaño; la segunda queda parcialmente visible
+     para que se note que el carrusel se puede desplazar. */
+  .pestanas-grid > .pestana-card {
+    flex-basis: 62%;
   }
 
   .products-grid-lentes {
     grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
   }
 
   .accessories-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+  }
+
+  .starry-section {
+    padding: 4.5rem var(--gutter);
+  }
+
+  .accessories-section {
+    margin-top: 4rem;
+    border-top-width: 38px;
+  }
+
+  /* Reparto de estrellas del diseño: en escritorio hay sitio de sobra
+     alrededor del título, así que van más grandes y repartidas. */
+  .accessories-section {
+    background-image: url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-clara.svg");
+    background-position:
+      4% 7%,
+      97% 5%,
+      1% 46%,
+      79% 44%,
+      11% 95%,
+      38% 99%,
+      64% 94%,
+      92% 97%;
+    background-size:
+      86px 86px,
+      80px 80px,
+      64px 64px,
+      70px 70px,
+      72px 72px,
+      66px 66px,
+      62px 62px,
+      68px 68px;
+  }
+
+  .why-section {
+    background-image: url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-oscura.svg"),
+      url("../assets/img/estrella-clara.svg"),
+      url("../assets/img/estrella-oscura.svg");
+    background-position:
+      27% 10%,
+      71% 10%,
+      3% 44%,
+      97% 42%,
+      7% 94%,
+      43% 98%,
+      95% 92%;
+    background-size:
+      70px 70px,
+      66px 66px,
+      76px 76px,
+      72px 72px,
+      68px 68px,
+      60px 60px,
+      74px 74px;
+  }
+
+  .why-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+    justify-content: center;
+  }
+
+  /* Tamaño exacto del diseño: 271×127px. */
+  .why-card {
+    width: 271px;
+    height: 127px;
+    justify-self: center;
   }
 
   .cart-page-layout {

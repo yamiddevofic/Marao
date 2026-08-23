@@ -1,4 +1,5 @@
 import { productosBase } from "./productos.js";
+import { formatearPrecio } from "./formato.js";
 
 let carrito = [];
 
@@ -54,7 +55,6 @@ export function renderCarritoPagina() {
   if (carrito.length === 0) {
     container.innerHTML =
       '<p class="cart-empty-message">El carrito está vacío.</p>';
-    notificarActualizacion();
     return;
   }
 
@@ -76,13 +76,11 @@ export function renderCarritoPagina() {
         <button class="btn-remove-item" data-action="remove-item" data-id="${item.id}" title="Quitar del carrito">
           <i class="fa-solid fa-trash-can"></i>
         </button>
-        <span class="cart-item-price">$${(item.precio * item.cantidad).toLocaleString()}</span>
+        <span class="cart-item-price">${formatearPrecio(item.precio * item.cantidad)}</span>
       </div>
     </div>
     <hr class="dashed-divider">
   `,
     )
     .join("");
-
-  notificarActualizacion();
 }

@@ -1,5 +1,6 @@
 import { getCarrito } from "./cart.js";
 import { getUsuarioLogueado } from "./auth.js";
+import { formatearPrecio } from "./formato.js";
 
 const ENVIO_LOCAL = 10000;
 const ENVIO_NACIONAL = 22000;
@@ -15,14 +16,17 @@ export function calcularCostosEnvio() {
   const totalFinal = subtotal + costoEnvio;
 
   document.getElementById("summary-subtotal").innerText =
-    `$${subtotal.toLocaleString()}`;
+    formatearPrecio(subtotal);
   document.getElementById("summary-shipping").innerText =
-    `$${costoEnvio.toLocaleString()}`;
+    formatearPrecio(costoEnvio);
   document.getElementById("summary-total").innerText =
-    `$${totalFinal.toLocaleString()}`;
+    formatearPrecio(totalFinal);
 }
 
 export function detectarTipoTarjeta(input) {
+  // Nequi se elige en el selector de método de pago: detectarlo por el prefijo
+  // hacía que un celular 34x/37x se marcara como American Express.
+  const metodoPago = document.getElementById("payment-type-select")?.value;
   let valor = input.value.replace(/\D/g, "");
   let valorFormateado = valor.match(/.{1,4}/g)?.join(" ") || "";
   input.value = valorFormateado;
@@ -39,7 +43,14 @@ export function detectarTipoTarjeta(input) {
     return;
   }
 
-  if (/^4/.test(valor)) {
+  if (metodoPago === "nequi") {
+    badge.innerText = "NEQUI";
+    badge.classList.add("nequi");
+    label.innerText =
+      valor.length === 10
+        ? "Número de Nequi Registrado ✔️"
+        : "El número de Nequi debe tener 10 dígitos";
+  } else if (/^4/.test(valor)) {
     badge.innerText = "VISA";
     badge.classList.add("visa");
     label.innerText = "Tarjeta Visa (Débito/Crédito) Detectada ✔️";
@@ -51,10 +62,6 @@ export function detectarTipoTarjeta(input) {
     badge.innerText = "AMEX";
     badge.classList.add("amex");
     label.innerText = "American Express Detectada ✔️";
-  } else if (/^3\d{9}$/.test(valor)) {
-    badge.innerText = "NEQUI";
-    badge.classList.add("nequi");
-    label.innerText = "Número de Nequi Registrado ✔️";
   } else {
     badge.innerText = "OTRA";
     label.innerText = "Tarjeta de Crédito / Débito Genérica";
@@ -82,6 +89,7 @@ export function togglePaymentInputs() {
     cardInput.placeholder =
       method === "nequi" ? "300 123 4567" : "4000 1234 5678 9010";
   }
+  detectarTipoTarjeta(cardInput);
 }
 
 export function enviarPedidoWhatsApp() {
@@ -98,7 +106,7 @@ export function enviarPedidoWhatsApp() {
 
   if (!direccion) {
     alert("Por favor ingresa tu dirección exacta de entrega.");
-    direccionInput.focus();
+    if (direccionInput) direccionInput.focus();
     return;
   }
 
@@ -166,7 +174,7 @@ export function enviarPedidoWhatsApp() {
     const totalProd = item.precio * item.cantidad;
     subtotal += totalProd;
     lineas.push(
-      `${index + 1}. *${item.nombre}* x${item.cantidad} - $${totalProd.toLocaleString()}`,
+      `${index + 1}. *${item.nombre}* x${item.cantidad} - ${formatearPrecio(totalProd)}`,
     );
   });
 
@@ -183,9 +191,9 @@ export function enviarPedidoWhatsApp() {
   }
   lineas.push(detallePago);
 
-  lineas.push(`• *Total a pagar:* $${totalFinal.toLocaleString()}`);
+  lineas.push(`• *Total a pagar:* ${formatearPrecio(totalFinal)}`);
   lineas.push("");
-  lineas.push("¡Quedo atento(a) para confirmar la entrega de mi pedido");
+  lineas.push("¡Quedo atento(a) para confirmar la entrega de mi pedido!");
 
   const mensajeTexto = lineas.join("\n");
   const urlWA = `https://wa.me/573243744983?text=${encodeURIComponent(mensajeTexto)}`;

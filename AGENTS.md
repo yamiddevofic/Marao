@@ -15,19 +15,42 @@ Marao es una tienda virtual (e-commerce) de lentes de contacto y accesorios, inc
 
 - Una carpeta por responsabilidad (p. ej. `/css`, `/js`, `/assets/img`).
 - Cada módulo funcional vive en su propio archivo JS, no en un solo `script.js` gigante.
-- Esta sección es orientación general, no un mapa exhaustivo — actualízala solo si cambia la organización real del repo.
+- `index.html` es la única página: la tienda (`#view-store`) y el carrito (`#view-cart`) son vistas que se alternan con la clase `hidden`, no páginas distintas.
+- El mapa detallado de archivos está en el [README](README.md#estructura-de-archivos) — mantén ambos documentos en sincronía si cambia la organización real del repo.
 
 ## Módulos funcionales del sitio
 
-- Inicio
-- Catálogo: lentes de contacto
-- Catálogo: pestañas pelo a pelo
+Implementados:
+
+- Inicio (hero de portada)
+- Catálogo: lentes de contacto (`js/catalog.js`, con filtros por pupila)
+- Catálogo: pestañas pelo a pelo (carrusel de tarjetas estáticas en `index.html` + `js/carrusel.js`)
+- Modal de detalle de producto
+- Carrito de compras (`js/cart.js`)
+- Checkout con pedido por WhatsApp (`js/checkout.js`)
+- Login con Google (`js/auth.js`)
+- Accesorios y "¿Por qué comprar en MARÃO?" (secciones con fondo de estrellas, clase `.starry-section`)
+- Contacto (footer)
+
+Previstos, todavía no implementados:
+
 - Buscador de productos
-- Carrito de compras
-- Pasarela de pagos
-- Contacto
+- Pasarela de pagos real (hoy los datos de tarjeta se capturan en el cliente — ver la sección de seguridad)
 
 Antes de tocar cualquiera de estos módulos, revisa cómo están implementados los otros para mantener consistencia (nombres de funciones, estructura del DOM, clases CSS).
+
+## Patrones ya establecidos (respétalos)
+
+- **Delegación de eventos**: `js/main.js` escucha `click`, `change` e `input` en `document` y despacha por el atributo `data-action`. Para agregar una interacción, añade un `data-action` en el HTML y su `case` en el switch — nunca un `addEventListener` suelto por tarjeta ni un `onclick` en el markup.
+- **Evento `cart:updated`**: cualquier cambio del carrito se notifica con este `CustomEvent` en `window`. Quien necesite reaccionar (badge, resumen de envío) se suscribe; no se llama al render desde `cart.js`.
+- **Design tokens**: usa las variables CSS de `:root` (`--color-*`, `--font-body`, `--font-display`, `--spacing-*`, `--radius-*`, `--gutter`) en vez de valores literales.
+- **Idioma del código**: nombres de variables y funciones en español (`agregarAlCarrito`, `calcularCostosEnvio`); nombres de archivos y mensajes de commit en inglés.
+- **Breakpoint único**: `@media (min-width: 769px)` en `css/styles.css`. No introduzcas breakpoints nuevos sin motivo.
+- **Categorías de producto**: usa `getLentes()` / `getAccesorios()` de `js/productos.js`, nunca filtres el catálogo por precio ni por rango de `id`.
+- **Tipografías**: `--font-display` (Bitter) para el hero, `--font-ui` (Blinker) para catálogos, carrusel y secciones con estrellas, `--font-body` (Montserrat) para el resto. Los controles de formulario no heredan la fuente: hay que declararla.
+- **Precios**: siempre con `formatearPrecio()` de `js/formato.js` (formato `es-CO`), nunca `toLocaleString()` sin locale.
+- **Google Identity Services**: la inicialización se hace desde `js/auth.js` (hook `window.onGoogleLibraryLoad`), no con los atributos `data-callback` / `g_id_onload` de GSI: la librería resuelve esa configuración antes de que corran los módulos ES.
+- **Datos externos en el DOM**: lo que venga de Google (nombre, email, foto) se asigna con `textContent` o como atributo, nunca interpolado en `innerHTML`.
 
 ## Convenciones de código
 
@@ -72,6 +95,8 @@ No hay framework de testing automatizado todavía. Antes de dar una tarea por te
 - Usar siempre el checkout hospedado o widget oficial del proveedor de pagos.
 - Ninguna llave secreta en el código fuente ni en el repo — solo claves públicas si el proveedor lo requiere en cliente.
 - Tratar los datos personales de clientes (nombre, dirección, contacto) con el mismo cuidado que los datos de pago.
+
+> **Estado actual (deuda técnica)**: el checkout pide número de tarjeta, vencimiento y CVV pero no hay pasarela: el pedido sale por WhatsApp con solo los últimos 4 dígitos y el CVV nunca se usa. Se están pidiendo datos sensibles sin procesarlos. No amplíes esa lógica: cualquier trabajo sobre pagos debe ir hacia quitar esos campos o integrar un checkout hospedado.
 
 ## Commits
 

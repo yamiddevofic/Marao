@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Blinker:wght@300;400;600;700;800&family=Montserrat:wght@300;400;600;700;800&display=swap"
       rel="stylesheet"
     />
 
@@ -28,7 +28,7 @@
   </head>
   <body>
     <!-- HEADER FIJO -->
-    <header class="main-header sticky-header">
+    <header class="main-header">
       <div class="header-top-bar">
         <div class="header-icons-left">
           <button
@@ -115,7 +115,7 @@
             ocasión.
           </p>
           <div class="hero-buttons">
-            <a href="#lentes" class="btn-primary">CATÁLOGO</a>
+            <a href="#lentes" class="btn-primary">CATÁLOGO LENTES</a>
             <a href="#pestanas" class="btn-secondary">VER PESTAÑAS</a>
           </div>
         </div>
@@ -161,10 +161,16 @@
 
         <div class="catalog-col-pestanas" id="pestanas">
   <h2>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h2>
-  <p class="slider-hint">Desliza para ver la pestaña y el pegante &rarr;</p>
 
-  <!-- CONTENEDOR EN GRID PARA MOSTRAR LAS 2 TARJETAS LADO A LADO -->
-  <div class="pestanas-grid">
+  <!-- CARRUSEL: las tarjetas se desplazan en horizontal (swipe o flechas) -->
+  <div class="pestanas-carousel">
+    <div
+      class="pestanas-grid"
+      id="pestanas-carrusel"
+      tabindex="0"
+      role="region"
+      aria-label="Carrusel de productos de pestañas"
+    >
     
     <!-- TARJETA 1: PESTAÑAS -->
     <div class="pestana-card">
@@ -174,7 +180,7 @@
       <div class="pestana-card-footer">
         <h3>Tabla de Pestañas Punto a Punto</h3>
         <p class="price">$30.000</p>
-        <button class="btn-add-figma" data-action="add-to-cart" data-id="98">AÑADIR AL CARRITO</button>
+        <button class="btn-add-figma" data-action="add-to-cart" data-id="98">AÑADIR</button>
       </div>
     </div>
 
@@ -186,12 +192,75 @@
       <div class="pestana-card-footer">
         <h3>Pegante para Pestañas (Bond & Seal)</h3>
         <p class="price">$7.000</p>
-        <button class="btn-add-figma" data-action="add-to-cart" data-id="100">AÑADIR AL CARRITO</button>
+        <button class="btn-add-figma" data-action="add-to-cart" data-id="100">AÑADIR</button>
       </div>
     </div>
 
+    </div>
+
+    <div class="carousel-controls">
+      <button
+        class="carousel-btn"
+        data-action="carrusel-pestanas"
+        data-delta="-1"
+        aria-controls="pestanas-carrusel"
+        aria-label="Ver producto anterior"
+      >
+        <i class="fa-solid fa-caret-left" aria-hidden="true"></i>
+      </button>
+      <button
+        class="carousel-btn"
+        data-action="carrusel-pestanas"
+        data-delta="1"
+        aria-controls="pestanas-carrusel"
+        aria-label="Ver producto siguiente"
+      >
+        <i class="fa-solid fa-caret-right" aria-hidden="true"></i>
+      </button>
+    </div>
   </div>
 </div>
+      </section>
+
+      <section class="starry-section accessories-section" id="accesorios">
+        <h2>ACCESORIOS Y CUIDADO PARA TUS LENTES</h2>
+        <div class="accessories-grid" id="grid-accesorios"></div>
+      </section>
+
+      <section class="starry-section why-section" id="por-que-marao">
+        <h2>¿POR QUÉ COMPRAR EN MARÃO?</h2>
+        <ul class="why-grid">
+          <li class="why-card">
+            <h3>
+              <span class="why-icon" aria-hidden="true">📦</span>
+              Envíos Nacionales
+            </h3>
+            <p>
+              Llegamos a cada rincón de Colombia. Tu pedido viaja seguro y
+              asegurado hasta la puerta de tu casa.
+            </p>
+          </li>
+          <li class="why-card">
+            <h3>
+              <span class="why-icon" aria-hidden="true">💖</span>
+              Calidad Premium
+            </h3>
+            <p>
+              Productos 100% originales, hipoalergénicos y testeados para cuidar
+              la salud de tus ojos y tu mirada.
+            </p>
+          </li>
+          <li class="why-card">
+            <h3>
+              <span class="why-icon" aria-hidden="true">💬</span>
+              Pedidos por WhatsApp
+            </h3>
+            <p>
+              ¿No sabes qué color o medida elegir? Escríbenos y te ayudamos a
+              armar tu kit ideal en un minuto.
+            </p>
+          </li>
+        </ul>
       </section>
     </main>
 
@@ -304,22 +373,15 @@
           Accede con tu cuenta de Google para guardar tus datos de envío.
         </p>
 
+        <!-- La inicialización de Google la hace js/auth.js: el atributo
+             data-callback de GSI se resuelve contra window al cargar la
+             librería, cuando los módulos todavía no se han ejecutado. -->
         <div class="google-btn-wrapper">
           <div
-            id="g_id_onload"
-            data-client_id="TU_CLIENT_ID_DE_GOOGLE.apps.googleusercontent.com"
-            data-callback="handleCredentialResponse"
-            data-auto_prompt="false"
+            id="google-login-config"
+            data-client-id="TU_CLIENT_ID_DE_GOOGLE.apps.googleusercontent.com"
           ></div>
-          <div
-            class="g_id_signin"
-            data-type="standard"
-            data-size="large"
-            data-theme="outline"
-            data-text="sign_in_with"
-            data-shape="rectangular"
-            data-logo_alignment="left"
-          ></div>
+          <div id="google-signin-button"></div>
         </div>
       </div>
     </div>
@@ -334,7 +396,7 @@
 
         <div class="modal-detail-body">
           <div class="modal-img-col">
-            <img id="modal-img" src="" alt="Lente de Contacto" />
+            <img id="modal-img" alt="" />
           </div>
 
           <div class="modal-info-col">

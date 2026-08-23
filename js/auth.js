@@ -42,9 +42,9 @@ export function handleCredentialResponse(response) {
     return;
   }
   usuarioLogueado = {
-    nombre: data.name,
-    email: data.email,
-    foto: data.picture,
+    nombre: data.name || data.email || "Cliente",
+    email: data.email || "",
+    foto: data.picture || "",
   };
   actualizarInterfazUsuario();
   cerrarModalLogin();
@@ -54,15 +54,72 @@ function actualizarInterfazUsuario() {
   const container = document.getElementById("user-profile-container");
   if (!container) return;
 
-  if (usuarioLogueado) {
-    container.innerHTML = `
-      <img src="${usuarioLogueado.foto}" alt="${usuarioLogueado.nombre}" class="user-avatar" title="${usuarioLogueado.email}">
-      <span class="user-name">${usuarioLogueado.nombre.split(" ")[0]}</span>
-      <button class="btn-logout" data-action="logout" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
-    `;
-  } else {
-    container.innerHTML = `<button class="icon-btn" data-action="open-login"><i class="fa-solid fa-user"></i></button>`;
+  container.replaceChildren();
+
+  if (!usuarioLogueado) {
+    const btnLogin = document.createElement("button");
+    btnLogin.className = "icon-btn";
+    btnLogin.dataset.action = "open-login";
+    btnLogin.innerHTML = '<i class="fa-solid fa-user"></i>';
+    container.append(btnLogin);
+    return;
+  }
+
+  // El nombre, el email y la foto vienen del JWT de Google: son datos externos,
+  // así que se asignan como texto/atributos y nunca interpolados en innerHTML.
+  const avatar = document.createElement("img");
+  avatar.className = "user-avatar";
+  avatar.src = usuarioLogueado.foto || "";
+  avatar.alt = usuarioLogueado.nombre;
+  avatar.title = usuarioLogueado.email;
+
+  const nombre = document.createElement("span");
+  nombre.className = "user-name";
+  nombre.textContent = usuarioLogueado.nombre.split(" ")[0];
+
+  const btnLogout = document.createElement("button");
+  btnLogout.className = "btn-logout";
+  btnLogout.dataset.action = "logout";
+  btnLogout.title = "Cerrar sesión";
+  btnLogout.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
+
+  container.append(avatar, nombre, btnLogout);
+}
+
+// GSI resuelve `data-callback` contra `window` en cuanto carga la librería, y
+// los módulos ES se ejecutan después: la configuración del div se ignoraba
+// ("callback is not a function") y el botón de Google nunca respondía. Por eso
+// la inicialización se hace aquí, cuando la propia librería avisa que ya cargó.
+export function inicializarGoogleLogin() {
+  const config = document.getElementById("google-login-config");
+  const contenedorBoton = document.getElementById("google-signin-button");
+  const clientId = config?.dataset.clientId;
+
+  if (!clientId || clientId.startsWith("TU_CLIENT_ID")) {
+    console.warn(
+      "[auth] Falta configurar data-client-id en #google-login-config; el login con Google está deshabilitado.",
+    );
+    return;
+  }
+  if (!window.google?.accounts?.id) return;
+
+  window.google.accounts.id.initialize({
+    client_id: clientId,
+    callback: handleCredentialResponse,
+    auto_select: false,
+  });
+
+  if (contenedorBoton) {
+    window.google.accounts.id.renderButton(contenedorBoton, {
+      type: "standard",
+      size: "large",
+      theme: "outline",
+      text: "sign_in_with",
+      shape: "rectangular",
+      logo_alignment: "left",
+    });
   }
 }
 
-window.handleCredentialResponse = handleCredentialResponse;
+// Hook oficial de GSI: se invoca cuando la librería termina de cargar.
+window.onGoogleLibraryLoad = inicializarGoogleLogin;

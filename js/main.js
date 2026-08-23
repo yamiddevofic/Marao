@@ -1,4 +1,4 @@
-import { productosBase, PRECIO_LENTES } from "./productos.js";
+import { getLentes, getAccesorios } from "./productos.js";
 import {
   renderLentes,
   renderAccesorios,
@@ -15,6 +15,7 @@ import {
   getCarrito,
 } from "./cart.js";
 import { mostrarSeccion } from "./ui.js";
+import { desplazarCarruselPestanas } from "./carrusel.js";
 import {
   enviarPedidoWhatsApp,
   calcularCostosEnvio,
@@ -33,6 +34,20 @@ function actualizarBadge() {
   const badge = document.getElementById("cart-badge");
   if (badge) badge.textContent = String(total);
 }
+
+const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
+
+document.addEventListener(
+  "error",
+  (event) => {
+    const img = event.target;
+    if (!(img instanceof HTMLImageElement)) return;
+    if (img.dataset.fallbackAplicado === "true") return;
+    img.dataset.fallbackAplicado = "true";
+    img.src = IMG_PLACEHOLDER;
+  },
+  true,
+);
 
 document.addEventListener("click", (event) => {
   const el = event.target.closest("[data-action]");
@@ -78,6 +93,9 @@ document.addEventListener("click", (event) => {
     case "change-qty":
       cambiarCantidadCart(id, Number(el.dataset.delta));
       break;
+    case "carrusel-pestanas":
+      desplazarCarruselPestanas(Number(el.dataset.delta));
+      break;
     case "checkout":
       enviarPedidoWhatsApp();
       break;
@@ -108,8 +126,8 @@ window.addEventListener("cart:updated", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderLentes(productosBase.filter((p) => p.precio === PRECIO_LENTES));
-  renderAccesorios(productosBase.filter((p) => p.id >= 101));
+  renderLentes(getLentes());
+  renderAccesorios(getAccesorios());
   actualizarBadge();
   calcularCostosEnvio();
 });

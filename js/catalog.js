@@ -1,5 +1,6 @@
-import { productosBase, PRECIO_LENTES } from "./productos.js";
+import { productosBase, getLentes } from "./productos.js";
 import { agregarAlCarrito } from "./cart.js";
+import { formatearPrecio } from "./formato.js";
 
 let productoSeleccionadoModal = null;
 let cantidadModal = 1;
@@ -11,12 +12,12 @@ export function renderLentes(items) {
     .map(
       (prod) => `
     <div class="product-card-figma">
-      <img src="${prod.img}" alt="${prod.nombre}" loading="lazy" data-action="open-detail" data-id="${prod.id}">
+      <img src="${prod.img}" alt="${prod.nombre}" loading="lazy">
       <div class="card-info">
-        <h3 data-action="open-detail" data-id="${prod.id}" class="card-title">${prod.nombre}</h3>
-        <p class="price">$${prod.precio.toLocaleString()}</p>
+        <h3>${prod.nombre}</h3>
+        <p class="price">${formatearPrecio(prod.precio)}</p>
       </div>
-      <button class="btn-add-figma" data-action="add-to-cart" data-id="${prod.id}">AÑADIR AL CARRITO</button>
+      <button class="btn-add-figma" data-action="add-to-cart" data-id="${prod.id}">AÑADIR</button>
     </div>
   `,
     )
@@ -33,9 +34,10 @@ export function renderAccesorios(items) {
       <img src="${acc.img}" alt="${acc.nombre}" loading="lazy">
       <div class="card-info">
         <h3>${acc.nombre}</h3>
-        <p class="price">$${acc.precio.toLocaleString()}</p>
+        <p class="price">${formatearPrecio(acc.precio)}</p>
+        <p class="card-desc">${acc.desc}</p>
       </div>
-      <button class="btn-add-figma" data-action="add-to-cart" data-id="${acc.id}">AÑADIR AL CARRITO</button>
+      <button class="btn-add-figma" data-action="add-to-cart" data-id="${acc.id}">AÑADIR</button>
     </div>
   `,
     )
@@ -49,7 +51,7 @@ export function filtrarLentes(tipo) {
   const btnActivo = document.querySelector(`.filter-btn[data-filter="${tipo}"]`);
   if (btnActivo) btnActivo.classList.add("active");
 
-  const lentes = productosBase.filter((p) => p.precio === PRECIO_LENTES);
+  const lentes = getLentes();
   renderLentes(tipo === "todos" ? lentes : lentes.filter((l) => l.tipo === tipo));
 }
 
@@ -60,10 +62,12 @@ export function abrirModalDetalle(id) {
   cantidadModal = 1;
   actualizarCantidadModal();
 
-  document.getElementById("modal-img").src = prod.img;
+  const modalImg = document.getElementById("modal-img");
+  modalImg.src = prod.img;
+  modalImg.alt = prod.nombre;
   document.getElementById("modal-title").innerText = prod.nombre;
   document.getElementById("modal-price").innerText =
-    `$${prod.precio.toLocaleString()}`;
+    formatearPrecio(prod.precio);
   document.getElementById("modal-desc").innerText = prod.desc;
 
   document.getElementById("modal-product-detail").classList.add("open");
@@ -86,4 +90,5 @@ function actualizarCantidadModal() {
 export function agregarDesdeModal() {
   if (!productoSeleccionadoModal) return;
   agregarAlCarrito(productoSeleccionadoModal.id, cantidadModal);
+  cerrarModalDetalle();
 }
