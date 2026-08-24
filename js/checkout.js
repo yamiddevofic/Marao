@@ -154,7 +154,7 @@ export function enviarPedidoWhatsApp() {
   const costoEnvio = selectorEnvio === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
   const textoEnvio =
     selectorEnvio === "nacional"
-      ? "Nacional ($22.000)"
+      ? "A toda Colombia ($22.000)"
       : "Bogotá / Soacha Contraentrega ($10.000)";
 
   let subtotal = 0;
