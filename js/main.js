@@ -1,8 +1,9 @@
-import { getLentes, getAccesorios } from "./productos.js";
+import { getAccesorios } from "./productos.js";
 import {
-  renderLentes,
   renderAccesorios,
   filtrarLentes,
+  actualizarCatalogoLentes,
+  irAPaginaLentes,
   abrirModalDetalle,
   cerrarModalDetalle,
   modificarCantidadModal,
@@ -44,6 +45,12 @@ document.addEventListener(
     if (!(img instanceof HTMLImageElement)) return;
     if (img.dataset.fallbackAplicado === "true") return;
     img.dataset.fallbackAplicado = "true";
+
+    // Dentro de un <picture>, los <source> mandan sobre el src del <img>: si no
+    // se quitan, el navegador vuelve a elegir el formato que acaba de fallar y
+    // el placeholder no llegaría a verse nunca.
+    img.closest("picture")?.querySelectorAll("source").forEach((s) => s.remove());
+
     img.src = IMG_PLACEHOLDER;
   },
   true,
@@ -69,7 +76,10 @@ document.addEventListener("click", (event) => {
       cerrarSesion();
       break;
     case "filtrar-lentes":
-      filtrarLentes(el.dataset.filter);
+      filtrarLentes(el.dataset.filter, el.dataset.group);
+      break;
+    case "pagina-lentes":
+      irAPaginaLentes(el.dataset.pagina);
       break;
     case "open-detail":
       abrirModalDetalle(id);
@@ -126,7 +136,7 @@ window.addEventListener("cart:updated", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderLentes(getLentes());
+  actualizarCatalogoLentes();
   renderAccesorios(getAccesorios());
   actualizarBadge();
   calcularCostosEnvio();

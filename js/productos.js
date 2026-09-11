@@ -1,55 +1,11 @@
-export const PRECIO_LENTES = 45000;
-export const IMG_PATH = "assets/img/";
+import { IMG_PATH, PRECIO_LENTES } from "./constantes.js";
+import { lentes } from "./lentes.js";
+import { lentesCosplay } from "./cosplay.js";
 
-export const productosBase = [
-  {
-    id: 1,
-    nombre: "ANGELES AMBER",
-    desc: "Resalta tu mirada con un tono verde natural y un acabado espectacular.",
-    precio: 45000,
-    tipo: "reducida",
-    img: IMG_PATH + "ANGELES-AMBER.jpg",
-  },
-  {
-    id: 2,
-    nombre: "CITRINA BROWN",
-    desc: "Brillo avellana cálido e intenso con acabado hiperrealista.",
-    precio: 45000,
-    tipo: "estandar",
-    img: IMG_PATH + "lentes-citrina-brown.jpg",
-  },
-  {
-    id: 3,
-    nombre: "CHOCO DARK",
-    desc: "Tono café profundo e impresionante.",
-    precio: 45000,
-    tipo: "reducida",
-    img: IMG_PATH + "lentes-choco-dark.jpg",
-  },
-  {
-    id: 4,
-    nombre: "PATAYA GREEN",
-    desc: "Verde vibrante con destellos claros para una mirada llamativa.",
-    precio: 45000,
-    tipo: "estandar",
-    img: IMG_PATH + "lentes-pataya-green.jpg",
-  },
-  {
-    id: 5,
-    nombre: "ESTONIA BLUE",
-    desc: "Azul cristalino con anillo definido y acabado natural.",
-    precio: 45000,
-    tipo: "reducida",
-    img: IMG_PATH + "lentes-estonia-blue.jpg",
-  },
-  {
-    id: 6,
-    nombre: "ESTONIA GREEN",
-    desc: "Verde suave con matices grises para un look sutil y elegante.",
-    precio: 45000,
-    tipo: "estandar",
-    img: IMG_PATH + "lentes-estonia-green.jpg",
-  },
+export { IMG_PATH, PRECIO_LENTES };
+
+/** Pestañas y accesorios. Los lentes viven en `lentes.js`. */
+const otrosProductos = [
   {
     id: 98,
     nombre: "TABLA DE PESTAÑAS PUNTO A PUNTO",
@@ -108,7 +64,11 @@ export const productosBase = [
   },
 ];
 
-export const TIPOS_LENTE = ["reducida", "estandar"];
+export const productosBase = [...lentes, ...lentesCosplay, ...otrosProductos];
+
+/* "cosplay" es un tipo de lente más, pero no se clasifica por pupila: entra en
+   `getLentes()` y queda fuera de los filtros de pupila reducida/estándar. */
+export const TIPOS_LENTE = ["reducida", "estandar", "cosplay"];
 
 export const esLente = (producto) => TIPOS_LENTE.includes(producto.tipo);
 

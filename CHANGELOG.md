@@ -9,12 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Se sumaron al catálogo los 19 lentes de cosplay (Sharingan, Nezuko, Tanjiro, blancos de terror, fantasía...) a $45.000, con su propio botón de filtro "COSPLAY" junto a los tonos.
+- El catálogo de lentes pasó a tener las 85 referencias reales del documento del catálogo, cada una con su foto, descripción y ficha técnica (tono, cobertura, borde, efecto, marcas y diámetros disponibles).
+- Se pueden filtrar los lentes por tono (café & miel, verde, gris y azul), y ese filtro se combina con el de pupila.
+- Las fotos del catálogo pesan ahora una cuarta parte: se ajustaron al tamaño en que realmente se ven y se sirven en un formato más liviano (WebP), con la versión anterior como respaldo para navegadores antiguos. La portada abre con unos 320 KB de imágenes en vez de 858 KB.
+- Con un modal abierto la página de atrás ya no se desplaza: queda congelada en el mismo punto y al cerrar vuelve exactamente a donde estaba.
+- El catálogo se muestra de a 6 lentes por página, con controles para pasar de página.
+- El detalle del lente se rediseñó según Figma: collage de fotos, categoría, nombre, precio, descripción, duración y tipo, con el botón de añadir y el selector de cantidad centrados abajo.
+- El detalle de cada lente muestra ahora su ficha técnica completa y los otros nombres comerciales con los que se conoce la referencia.
 - Tres lentes nuevos en el catálogo: Pataya Green, Estonia Blue y Estonia Green ($45.000 cada uno).
 - Nueva sección "¿Por qué comprar en MARÃO?" con los tres argumentos de venta: envíos nacionales, calidad premium y pedidos por WhatsApp.
 - Las tarjetas de pestañas ahora son un carrusel: se deslizan con el dedo, con el teclado o con las flechas del bloque.
 - Se publicó la sección "Accesorios y cuidado para tus lentes" (solución, kit aplicador + pinza, estuche porta-lentes y lavadora manual), que estaba definida pero no se mostraba en la página. Cada accesorio muestra ahora su descripción.
 
 ### Changed
+
+- Los iconos del encabezado (carrito y perfil) pasaron de morado a negro.
+- En celular el primer botón de la portada dice solo "CATÁLOGO"; en pantallas grandes sigue diciendo "CATÁLOGO LENTES".
+
+- Los seis lentes de ejemplo (Citrina Brown, Choco Dark, Estonia Blue y Estonia Green, entre otros) salieron del catálogo: cuatro de ellos no tenían foto y el catálogo real del negocio los reemplaza.
 
 - En escritorio, la portada y el catálogo se ven a dos mitades iguales: el bloque de pestañas ocupa media página, llega al borde derecho y la imagen del hero se monta sobre su parte superior.
 - Las tarjetas de producto se rediseñaron: imagen cuadrada con margen, nombre y precio centrados y botón negro a lo ancho del borde inferior.
@@ -28,6 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
 ### Fixed
+
+- Los accesorios que todavía no tienen foto (solución, kit aplicador, estuche y lavadora) mostraban un hueco roto; ahora se ve la imagen de reemplazo de la marca.
+
+- Los campos del checkout (ciudad, dirección, datos de pago) hacían que el iPhone ampliara la pantalla al tocarlos y la vista quedaba descuadrada: ahora usan un tamaño de letra que no dispara ese zoom.
+- Botones e enlaces demasiado pequeños para tocarlos con el dedo (iconos del encabezado, menú, flechas del carrusel, cerrar del detalle y paginación) ahora tienen un área de toque acorde a la guía de accesibilidad.
+
+- En celulares de pantalla baja, el detalle del lente se salía de la pantalla y el botón "Añadir al carrito" quedaba fuera de alcance, sin forma de desplazarse hasta él. Ahora el detalle nunca supera el alto de la pantalla: el título y el botón quedan fijos y solo se desplaza el contenido.
 
 - El botón de "Iniciar sesión con Google" no respondía: la librería de Google se cargaba antes que el código del sitio y descartaba la configuración. Ahora el login se inicializa cuando la librería avisa que está lista.
 - Los precios calculados en la página (catálogo, carrito y resumen) se mostraban con formato extranjero ("$45,000") si el navegador estaba en otro idioma; ahora siempre usan el formato colombiano ("$45.000").

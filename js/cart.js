@@ -17,6 +17,12 @@ export function agregarAlCarrito(id, cantidad = 1) {
     console.warn(`[cart] Producto con id ${id} no existe en el catálogo.`);
     return;
   }
+  // Última barrera: la UI ya deshabilita el botón, pero un producto sin precio
+  // confirmado no puede entrar al carrito ni acabar en el pedido de WhatsApp.
+  if (typeof prod.precio !== "number") {
+    console.warn(`[cart] "${prod.nombre}" todavía no tiene precio confirmado.`);
+    return;
+  }
   const existe = carrito.find((item) => item.id === id);
   if (existe) {
     existe.cantidad += cantidad;

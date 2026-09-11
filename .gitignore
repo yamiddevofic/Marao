@@ -1,3 +1,10 @@
 .opencode/
 
 .claude/
+
+# Material fuente del catálogo: el RAR de fotos y el paquete de cosplay ya
+# procesados. Sus imágenes viven optimizadas en assets/img/lentes/, así que
+# versionar también los originales duplicaría ~16 MB sin aportar nada.
+FOTOS PAGINA/
+lentes-cosplay/
+lentes-cosplay.zip

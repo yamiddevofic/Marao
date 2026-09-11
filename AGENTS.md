@@ -46,6 +46,7 @@ Antes de tocar cualquiera de estos módulos, revisa cómo están implementados l
 - **Design tokens**: usa las variables CSS de `:root` (`--color-*`, `--font-body`, `--font-display`, `--spacing-*`, `--radius-*`, `--gutter`) en vez de valores literales.
 - **Idioma del código**: nombres de variables y funciones en español (`agregarAlCarrito`, `calcularCostosEnvio`); nombres de archivos y mensajes de commit en inglés.
 - **Breakpoint único**: `@media (min-width: 769px)` en `css/styles.css`. No introduzcas breakpoints nuevos sin motivo.
+- **Convenciones de móvil**: están en la skill `mobile-web` (`.claude/skills/mobile-web/`) — áreas táctiles, alturas `dvh`, zoom de iOS en formularios, desbordes y modales. Aplícalas al tocar cualquier vista y verifica con `scripts/audit-mobile.js` antes de dar el trabajo por terminado.
 - **Categorías de producto**: usa `getLentes()` / `getAccesorios()` de `js/productos.js`, nunca filtres el catálogo por precio ni por rango de `id`.
 - **Tipografías**: `--font-display` (Bitter) para el hero, `--font-ui` (Blinker) para catálogos, carrusel y secciones con estrellas, `--font-body` (Montserrat) para el resto. Los controles de formulario no heredan la fuente: hay que declararla.
 - **Precios**: siempre con `formatearPrecio()` de `js/formato.js` (formato `es-CO`), nunca `toLocaleString()` sin locale.

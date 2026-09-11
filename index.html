@@ -115,33 +115,39 @@
             ocasión.
           </p>
           <div class="hero-buttons">
-            <a href="#lentes" class="btn-primary">CATÁLOGO LENTES</a>
+            <a href="#lentes" class="btn-primary"
+              ><span>CATÁLOGO<span class="solo-escritorio"> LENTES</span></span></a
+            >
             <a href="#pestanas" class="btn-secondary">VER PESTAÑAS</a>
           </div>
         </div>
         <div class="hero-image">
           <!-- Es la imagen más grande y la primera que se ve: se pide con
                prioridad alta y con sus medidas, para que no salte el layout. -->
-          <img
-            src="assets/img/hero-banner.jpg"
-            alt="Modelo Marao"
-            class="hero-img-element"
-            width="1421"
-            height="1107"
-            fetchpriority="high"
-            decoding="async"
-          />
+          <picture>
+            <source srcset="assets/img/hero-banner.webp" type="image/webp" />
+            <img
+              src="assets/img/hero-banner.jpg"
+              alt="Modelo Marao"
+              class="hero-img-element"
+              width="1200"
+              height="935"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
         </div>
       </section>
       <section class="dual-catalog">
         <div class="catalog-col-lentes" id="lentes">
           <h2>NUESTRA COLECCIÓN DE LENTES DE CONTACTO COSMÉTICOS</h2>
           <div class="lentes-filter-wrapper">
-            <span class="filter-label">Tonos Café & Miel:</span>
-            <div class="pupil-filters">
+            <span class="filter-label">Tono:</span>
+            <div class="pupil-filters" data-group="color">
               <button
                 class="filter-btn active"
                 data-action="filtrar-lentes"
+                data-group="color"
                 data-filter="todos"
               >
                 TODOS
@@ -149,20 +155,81 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
-                data-filter="reducida"
+                data-group="color"
+                data-filter="miel"
               >
-                PUPILA REDUCIDA
+                CAFÉ &amp; MIEL
               </button>
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                data-group="color"
+                data-filter="verde"
+              >
+                VERDE
+              </button>
+              <button
+                class="filter-btn"
+                data-action="filtrar-lentes"
+                data-group="color"
+                data-filter="gris"
+              >
+                GRIS
+              </button>
+              <button
+                class="filter-btn"
+                data-action="filtrar-lentes"
+                data-group="color"
+                data-filter="azul"
+              >
+                AZUL
+              </button>
+              <button
+                class="filter-btn"
+                data-action="filtrar-lentes"
+                data-group="color"
+                data-filter="cosplay"
+              >
+                COSPLAY
+              </button>
+            </div>
+          </div>
+          <div class="lentes-filter-wrapper">
+            <span class="filter-label">Pupila:</span>
+            <div class="pupil-filters" data-group="pupila">
+              <button
+                class="filter-btn active"
+                data-action="filtrar-lentes"
+                data-group="pupila"
+                data-filter="todos"
+              >
+                TODAS
+              </button>
+              <button
+                class="filter-btn"
+                data-action="filtrar-lentes"
+                data-group="pupila"
+                data-filter="reducida"
+              >
+                REDUCIDA
+              </button>
+              <button
+                class="filter-btn"
+                data-action="filtrar-lentes"
+                data-group="pupila"
                 data-filter="estandar"
               >
-                PUPILA ESTÁNDAR
+                ESTÁNDAR
               </button>
             </div>
           </div>
           <div class="products-grid-lentes" id="grid-lentes-cafe"></div>
+          <nav
+            class="paginacion"
+            id="paginacion-lentes"
+            aria-label="Paginación del catálogo de lentes"
+            hidden
+          ></nav>
         </div>
 
         <div class="catalog-col-pestanas" id="pestanas">
@@ -181,7 +248,7 @@
     <!-- TARJETA 1: PESTAÑAS -->
     <div class="pestana-card">
       <div class="pestana-img-box">
-        <img src="assets/img/pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto" loading="lazy">
+        <picture><source srcset="assets/img/pestanas-1.webp" type="image/webp"><img src="assets/img/pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto" loading="lazy"></picture>
       </div>
       <div class="pestana-card-footer">
         <h3>Tabla de Pestañas Punto a Punto</h3>
@@ -193,7 +260,7 @@
     <!-- TARJETA 2: PEGANTE -->
     <div class="pestana-card">
       <div class="pestana-img-box">
-        <img src="assets/img/pegante-1.jpg" alt="Pegante Bond & Seal" loading="lazy">
+        <picture><source srcset="assets/img/pegante-1.webp" type="image/webp"><img src="assets/img/pegante-1.jpg" alt="Pegante Bond & Seal" loading="lazy"></picture>
       </div>
       <div class="pestana-card-footer">
         <h3>Pegante para Pestañas (Bond & Seal)</h3>
@@ -395,35 +462,56 @@
     <!-- MODAL DETALLE PRODUCTO -->
     <div id="modal-product-detail" class="modal-backdrop">
       <div class="modal-detail-card">
-        <span class="close-modal-x" data-action="close-detail"
-          >&times;</span
+        <button
+          class="close-modal-x"
+          data-action="close-detail"
+          aria-label="Cerrar detalle del lente"
         >
+          &times;
+        </button>
         <h3 class="modal-header-title">INFORMACIÓN DEL LENTE</h3>
 
         <div class="modal-detail-body">
           <div class="modal-img-col">
-            <img id="modal-img" alt="" />
+            <div class="modal-galeria" id="modal-galeria"></div>
           </div>
 
           <div class="modal-info-col">
-            <p><strong>Categoría:</strong> LENTES DE CONTACTO COSMÉTICOS</p>
+            <p><strong>Categoría:</strong> <span id="modal-categoria"></span></p>
             <p><strong>Nombre:</strong> <span id="modal-title"></span></p>
             <p>
               <strong>Precio:</strong>
               <span id="modal-price" class="modal-price-tag"></span>
             </p>
-            <p><strong>Descripción:</strong> <span id="modal-desc"></span></p>
+            <p class="modal-desc-bloque">
+              <strong>Descripción:</strong><br />
+              <span id="modal-desc"></span>
+            </p>
+            <p><strong>Duración:</strong> <span id="modal-duracion"></span></p>
+            <p><strong>Tipo:</strong> <span id="modal-tipo"></span></p>
+          </div>
+        </div>
 
-            <div class="modal-action-bar">
-              <button class="btn-add-modal" data-action="add-modal">
-                AÑADIR AL CARRITO
-              </button>
-              <div class="qty-controls">
-                <button data-action="qty-modal" data-delta="-1">-</button>
-                <span id="modal-qty">1</span>
-                <button data-action="qty-modal" data-delta="1">+</button>
-              </div>
-            </div>
+        <div class="modal-action-bar">
+          <button class="btn-add-modal" data-action="add-modal">
+            AÑADIR AL CARRITO
+          </button>
+          <div class="qty-controls">
+            <button
+              data-action="qty-modal"
+              data-delta="1"
+              aria-label="Aumentar cantidad"
+            >
+              +
+            </button>
+            <span id="modal-qty">1</span>
+            <button
+              data-action="qty-modal"
+              data-delta="-1"
+              aria-label="Disminuir cantidad"
+            >
+              &minus;
+            </button>
           </div>
         </div>
       </div>

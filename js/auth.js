@@ -1,3 +1,5 @@
+import { bloquearScroll, desbloquearScroll } from "./scroll-lock.js";
+
 let usuarioLogueado = null;
 
 export function getUsuarioLogueado() {
@@ -6,10 +8,15 @@ export function getUsuarioLogueado() {
 
 export function openLoginModal() {
   document.getElementById("modal-login").classList.add("open");
+  bloquearScroll();
 }
 
 export function cerrarModalLogin() {
-  document.getElementById("modal-login").classList.remove("open");
+  const modal = document.getElementById("modal-login");
+  if (!modal.classList.contains("open")) return;
+
+  modal.classList.remove("open");
+  desbloquearScroll();
 }
 
 export function cerrarSesion() {

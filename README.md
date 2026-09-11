@@ -5,11 +5,11 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 ## Módulos
 
 - **Inicio / Tienda** (`#view-store`): hero de portada + catálogo dual (lentes de contacto y pestañas pelo a pelo).
-- **Catálogo de lentes** (`#lentes`): grid renderizado desde JS con filtros por tipo de pupila (reducida / estándar / todos).
+- **Catálogo de lentes** (`#lentes`): grid renderizado desde JS con filtros combinables por tono (café & miel / verde / gris / azul) y por pupila (reducida / estándar), paginado de 6 referencias.
 - **Catálogo de pestañas** (`#pestanas`): carrusel horizontal con tarjetas estáticas en el HTML (tabla punto a punto y pegante Bond & Seal) que agregan al carrito por `data-id`. En escritorio ocupa la mitad derecha de la página, llega al borde y la imagen del hero se monta sobre su parte superior.
 - **Accesorios** (`#accesorios`): grid renderizado desde JS con los productos de tipo `accesorio`, con nombre, precio y descripción.
 - **¿Por qué comprar en MARÃO?** (`#por-que-marao`): tres argumentos de venta estáticos (envíos, calidad, WhatsApp).
-- **Modal de detalle**: ficha del lente con imagen, precio, descripción y selector de cantidad.
+- **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
 - **Checkout**: selección de método de pago y envío del pedido por WhatsApp.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI) para prellenar los datos del cliente.
@@ -37,15 +37,20 @@ Pag_Marao/
 ├── css/styles.css      # Estilos globales + design tokens (variables CSS)
 ├── js/
 │   ├── main.js         # Punto de entrada: render inicial y delegación de eventos
-│   ├── productos.js    # Datos del catálogo (productosBase) y constantes de precio
+│   ├── constantes.js   # Constantes compartidas (IMG_PATH, PRECIO_LENTES)
+│   ├── lentes.js       # Catálogo cosmético: 85 referencias con ficha técnica
+│   ├── cosplay.js      # Línea cosplay: 19 referencias
+│   ├── productos.js    # Une lentes + pestañas + accesorios en productosBase
 │   ├── catalog.js      # Render de catálogo, filtros y modal de detalle
 │   ├── cart.js         # Estado y operaciones del carrito
 │   ├── checkout.js     # Costos de envío, medios de pago y pedido por WhatsApp
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
 │   ├── carrusel.js     # Desplazamiento del carrusel de pestañas
+│   ├── scroll-lock.js  # Congela el scroll de la página con un modal abierto
 │   ├── formato.js      # Formato de precios en pesos colombianos
 │   └── ui.js           # Navegación entre vistas (tienda / carrito)
 ├── assets/img/         # Imágenes (productos, marca, hero)
+│   └── lentes/         # Fotos por tono (miel, verde, gris, azul) + cosplay/
 ├── docs/               # Documentación adicional (vacío por ahora)
 ├── AGENTS.md           # Convenciones de código y guía para agentes/colaboradores
 └── CHANGELOG.md        # Historial de cambios (Keep a Changelog + SemVer)
@@ -57,7 +62,12 @@ Pag_Marao/
 - **Delegación de eventos**: `main.js` escucha `click`, `change` e `input` a nivel de `document` y despacha según el atributo `data-action` del elemento (`add-to-cart`, `open-detail`, `checkout`, `filtrar-lentes`, etc.). No hay `onclick` en el markup.
 - **Comunicación del carrito**: `cart.js` emite el evento `cart:updated` en `window`; `main.js` lo escucha para refrescar el badge del header y recalcular los costos de envío.
 - **Categorías de producto**: cada producto lleva un `tipo` (`reducida` / `estandar` para lentes, `pestana`, `accesorio`). Los helpers `getLentes()` y `getAccesorios()` de `productos.js` son la única fuente de esa partición — no filtres por precio ni por rango de `id`.
+- **Productos sin precio**: hoy no hay ninguno, pero la salvaguarda sigue activa — un producto con `precio: null` se publica mostrando "Precio por confirmar", con el botón deshabilitado, y `agregarAlCarrito()` lo rechaza. Dejar entrar algo sin precio mandaría un pedido a $0 por WhatsApp.
+- **Datos de lentes**: `js/lentes.js` es un archivo generado a partir del documento del catálogo y del set de fotos; cada referencia añade `color`, `cobertura`, `borde`, `efecto`, `promocion`, `alias` y `presentaciones` (marca + diámetro + pupila). `constantes.js` existe para que `lentes.js` y `productos.js` compartan `IMG_PATH` y `PRECIO_LENTES` sin ciclo de imports.
+- **Modales y scroll**: al abrir un modal se llama a `bloquearScroll()` (`js/scroll-lock.js`) y al cerrarlo a `desbloquearScroll()`. Usa `position: fixed` sobre el `body` porque `overflow: hidden` no frena el scroll en iOS, y lleva un contador interno para soportar un modal sobre otro. Si añades un modal nuevo, engánchalo a ese par de funciones.
+- **Render del catálogo**: `actualizarCatalogoLentes()` (`js/catalog.js`) es el único punto que pinta el grid; filtros, paginación y carga inicial pasan por ahí en vez de llamar a `renderLentes()` directamente.
 - **Precios**: siempre con `formatearPrecio()` (`js/formato.js`), que fuerza el formato `es-CO`. Nunca `toLocaleString()` sin locale.
+- **Formatos de imagen**: cada foto existe en `.webp` (lo que sirve el navegador) y `.jpeg` junto a ella como respaldo. El dataset guarda solo el `.jpeg` y `marcaFoto()` (`js/catalog.js`) arma el `<picture>` derivando el WebP; una regla global `picture { display: contents }` evita que ese envoltorio altere el layout. Las fotos se guardan a 600px de lado máximo, que es lo que se ve incluso en pantallas retina.
 - **Imágenes de producto**: un listener global de `error` en `main.js` (fase de captura, porque `error` no burbujea) reemplaza cualquier imagen rota por `assets/img/placeholder-producto.svg`.
 - **Design tokens**: los colores, tipografías y espaciados viven en variables CSS bajo `:root` (`--color-*`, `--font-body`, `--font-display`, `--font-ui`, `--spacing-*`, `--radius-*`, `--gutter`, `--hero-overlap`). Usarlas en vez de valores sueltos.
 - **Tipografías**: Bitter (`--font-display`) en el hero, Blinker (`--font-ui`) en catálogos, carrusel y secciones de accesorios / "por qué comprar", Montserrat (`--font-body`) en el resto.
@@ -94,11 +104,12 @@ El checkout construye un mensaje con el detalle del pedido (productos, cantidade
 
 ## Reglas de negocio actuales (definidas por el negocio)
 
-Catálogo (`js/productos.js`):
+Catálogo (`js/lentes.js` y `js/productos.js`):
 
 | Producto                              | Precio  | Estado                     |
 | ------------------------------------- | ------- | -------------------------- |
-| Lentes cosméticos (Ángeles Ámbar, Citrina Brown, Choco Dark, Pataya Green, Estonia Blue, Estonia Green) | $45.000 | Publicado (con filtros por pupila) |
+| Lentes cosméticos (85 referencias en `js/lentes.js`) | $45.000 | Publicado (filtros por tono y pupila, paginado de 6) |
+| Lentes cosplay (19 referencias en `js/cosplay.js`) | $45.000 | Publicado (filtro "Cosplay"; sin clasificación por pupila) |
 | Tabla de pestañas punto a punto       | $30.000 | Publicado                  |
 | Bandeja pestañas + Bond & Seal (kit)  | $35.000 | Publicado                  |
 | Pegante Bond & Seal                   | $7.000  | Publicado                  |
@@ -118,9 +129,25 @@ Envíos y pagos (`js/checkout.js`):
 En desarrollo activo. Puntos pendientes identificados:
 
 - **Pagos (crítico)**: el formulario pide número de tarjeta, vencimiento y CVV, pero **no hay pasarela**: el mensaje de WhatsApp solo lleva los últimos 4 dígitos y el CVV no se usa en ninguna parte. Es decir, se piden datos sensibles al cliente sin procesarlos, lo que da una falsa sensación de pago en línea y mete al sitio en alcance PCI sin necesidad. Decisión pendiente del negocio: quitar esos campos, o integrar un checkout hospedado / widget oficial (Wompi, Epayco, PayU).
-- **Imágenes faltantes**: `assets/img/` solo tiene `ANGELES-AMBER.jpg`, `pestanas-1.jpg` y `pegante-1.jpg` como imágenes de producto. Faltan `lentes-citrina-brown.jpg`, `lentes-choco-dark.jpg`, `lentes-pataya-green.jpg`, `lentes-estonia-blue.jpg`, `lentes-estonia-green.jpg`, `estuche.jpg`, `solucion.jpg`, `pinzas.jpg` y `lavadora.jpg`. Mientras tanto se muestra `placeholder-producto.svg` en su lugar.
+- **8 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
+
+  | Referencia | Tono | Ficha |
+  | ---------- | ---- | ----- |
+  | Siri Brown | Miel | Freshlady DM 14.2, pupila reducida, con borde |
+  | Brazil Girl Amber | Miel | Eyeshare DM 14.0, pupila estándar, sin borde |
+  | Brazil Girl Grafito | Gris | Eyeshare DM 14.0, pupila estándar, sin borde |
+  | Nigth Storn | Azul | Freshlady DM 14.5, pupila realista, con borde |
+  | Violet Mirage | Azul | Freshlady DM 14.2, efecto medialuna, con borde |
+  | Peacock Blue | Azul | Eyeshare DM 14.5, pupila realista, con borde |
+  | Vaadhoo | Azul | Freshlady DM 14.2, pupila realista, sin borde — **sin descripción** |
+  | Zafiro / Ocean Blue | Azul | Freshlady DM 14.2, media cobertura, con borde — **sin descripción** |
+
+  Se comprobó por similitud de nombre contra las 97 fotos del set, sin filtrar por tono: ninguna corresponde a estas ocho. Las coincidencias altas son falsas (`siri brown` ↔ `rusian-brown` solo comparten el sufijo; `zafiro/ocean blue` ↔ `ocean-brown` es de tono miel). Al recibirlas, basta con dejarlas en `assets/img/lentes/<tono>/` (600px de lado, `.jpeg` + `.webp`) y poner la ruta en `img`/`imagenes` de la referencia en `js/lentes.js`.
+
+- **18 fotos sin ficha — pendiente del proveedor** (`lentesSinFicha` en `js/lentes.js`): el caso inverso. Hay foto pero el documento no las describe, así que falta su tipo de pupila y su cobertura, que no se pueden deducir de la imagen. No se publican para no inventar datos de producto. Con esos dos campos, cada una pasa al array `lentes` y el catálogo sube de 104 a 122 referencias.
+- **Accesorios sin foto**: `estuche.jpg`, `solucion.jpg`, `pinzas.jpg` y `lavadora.jpg` no existen en el repo; se muestran con el placeholder.
 - **Carrito sin persistencia**: vive solo en memoria; se pierde al recargar. Persistir en `localStorage`.
-- **Catálogo hardcodeado**: `productosBase` en `js/productos.js`. Migrar a JSON externo o API cuando crezca.
+- **Catálogo hardcodeado**: `js/lentes.js` (85 referencias) y `js/productos.js` son archivos estáticos. Con este volumen ya conviene migrar a JSON externo o API, y cargarlo bajo demanda.
 - **Inventario/stock**: sin control de disponibilidad.
 - **Buscador de productos**: previsto en `AGENTS.md`, aún no implementado.
 - **Login con Google**: el JWT se decodifica en el cliente sin verificar la firma; sirve para prellenar datos, no como autenticación real. Requiere backend para validarlo.

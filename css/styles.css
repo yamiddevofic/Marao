@@ -95,9 +95,16 @@ h1,
   background: none;
   border: none;
   font-size: 1.3rem;
-  color: var(--color-accent);
+  color: var(--color-black);
   cursor: pointer;
   position: relative;
+  /* El icono mantiene su tamaño; lo que crece es la zona que responde al dedo
+     (WCAG 2.2 SC 2.5.8 pide 24x24 CSS px como mínimo; 44 es lo cómodo). */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .badge {
@@ -143,6 +150,9 @@ h1,
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 1.2px;
+  /* El texto mide 14px de alto: el padding lleva el objetivo táctil al mínimo */
+  display: inline-block;
+  padding: 0.4rem 0.2rem;
 }
 
 /* USER PROFILE */
@@ -291,6 +301,29 @@ h1,
   color: var(--color-white);
 }
 
+/* Los controles de formulario no heredan tipografía ni tamaño del documento, y
+   Safari en iOS amplía la página al enfocar cualquier campo con fuente menor a
+   16px. Se fija aquí para todos en vez de repetirlo en cada bloque. */
+input,
+select,
+textarea,
+button {
+  font-family: var(--font-body);
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* <picture> solo agrupa formatos, no debe añadir una caja al layout: con
+   `display: contents` la imagen sigue siendo hija directa a efectos de flex y
+   grid, y todas las reglas escritas para `img` siguen valiendo igual. */
+picture {
+  display: contents;
+}
+
 .lentes-filter-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -350,6 +383,9 @@ h1,
 }
 
 .product-card-figma h3 {
+  /* Abre el modal de detalle, así que cuenta como objetivo táctil */
+  padding: 0.25rem 0;
+  cursor: pointer;
   font-size: 16px;
   letter-spacing: 0.02em;
   margin: 0;
@@ -420,6 +456,12 @@ h1,
   line-height: 1;
   padding: 0.2rem;
   cursor: pointer;
+  /* La flecha es estrecha (18px): el objetivo táctil se agranda sin tocarla */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .carousel-btn:hover {
@@ -666,6 +708,20 @@ h1,
 }
 
 /* MODALES */
+/* Congela la página mientras hay un modal abierto. `position: fixed` es lo
+   único que frena el scroll también en iOS; `top` compensa el desplazamiento
+   actual para que no se vea ningún salto, y el padding rellena el hueco que
+   deja la barra de scroll al desaparecer. */
+body.scroll-bloqueado {
+  position: fixed;
+  top: var(--scroll-lock-top, 0px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  padding-right: var(--scroll-lock-gap, 0px);
+}
+
 .modal-backdrop {
   display: none;
   position: fixed;
@@ -703,10 +759,190 @@ h1,
 
 .close-modal-x {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: 1px solid var(--color-dark);
+  border-radius: 2px;
+  line-height: 1;
+  font-family: var(--font-ui);
   font-size: 1.5rem;
+  color: var(--color-dark);
   cursor: pointer;
+  /* Se mantiene el recuadro discreto del diseño, pero por encima del mínimo
+     táctil; en pantallas de dedo se agranda al tamaño cómodo. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+@media (any-pointer: coarse) {
+  .close-modal-x {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* MODAL DE DETALLE DEL LENTE */
+
+/* El modal nunca debe superar la altura de la pantalla: el título, la X y la
+   barra de "añadir al carrito" quedan fijos y solo scrollea el contenido. Sin
+   esto, en pantallas bajas el botón caía fuera del viewport y, al ser el fondo
+   `position: fixed`, no había forma de alcanzarlo.
+   Se aplica solo al modal de detalle para no alterar el de login, que comparte
+   la clase `.modal-detail-card`. */
+#modal-product-detail .modal-detail-card {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+}
+
+#modal-product-detail .modal-detail-body {
+  overflow-y: auto;
+  /* Un ítem flex no baja de su tamaño de contenido sin esto, así que sin
+     `min-height: 0` el bloque no se encogería y el scroll nunca aparecería. */
+  min-height: 0;
+}
+
+#modal-product-detail .modal-header-title,
+#modal-product-detail .modal-action-bar {
+  flex-shrink: 0;
+}
+
+.modal-header-title {
+  margin: 0 0 var(--spacing-md);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-align: center;
+  /* La X va posicionada sobre esta zona: la cabecera reserva su alto y deja
+     libres los costados para que no se monte sobre el título ni sobre la foto. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 44px;
+}
+
+.modal-detail-body {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+/* Recuadro blanco sobre el que va el collage de fotos */
+.modal-img-col {
+  background: var(--color-white);
+  padding: 0.4rem;
+  align-self: start;
+  /* En móvil se limita para que los datos y el botón sigan a la vista */
+  width: 100%;
+  max-width: 240px;
+  margin-inline: auto;
+}
+
+.modal-galeria {
+  display: grid;
+  gap: 0.25rem;
+  /* Con una sola foto ocupa todo el recuadro; con varias, cuadrícula 2x2. */
+  grid-template-columns: 1fr 1fr;
+}
+
+.modal-galeria[data-cantidad="1"] {
+  grid-template-columns: 1fr;
+}
+
+.modal-galeria img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-info-col {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.modal-info-col p {
+  margin: 0 0 0.45rem;
+}
+
+/* La descripción va bajo su etiqueta y conserva los saltos de línea del dato */
+.modal-desc-bloque #modal-desc {
+  white-space: pre-line;
+}
+
+.modal-price-tag {
+  font-weight: bold;
+}
+
+.modal-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.btn-add-modal {
+  background: transparent;
+  border: 1px solid var(--color-dark);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: var(--color-dark);
+  cursor: pointer;
+}
+
+/* Producto publicado pero todavía sin precio: se ve, no se compra. */
+.btn-add-figma:disabled,
+.btn-add-modal:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-add-modal:hover {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.qty-controls {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.qty-controls button {
+  background: transparent;
+  border: none;
+  padding: 0.45rem 0.7rem;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--color-dark);
+  cursor: pointer;
+}
+
+.qty-controls span {
+  display: flex;
+  align-items: center;
+  padding: 0 0.7rem;
+  border-left: 1px solid var(--color-dark);
+  border-right: 1px solid var(--color-dark);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
 }
 
 /* SECCIONES CON FONDO DE ESTRELLAS */
@@ -850,7 +1086,114 @@ h1,
 }
 
 /* ESCRITORIO: a partir de 769px se activa el layout de dos columnas */
+/* Texto que solo aparece en pantallas grandes. Se recorta la palabra en vez de
+   duplicar el botón para que el lector de pantalla no anuncie dos veces la
+   misma acción ni lea una etiqueta que no está visible. */
+.solo-escritorio {
+  display: none;
+}
+
+/* Filtros y ficha técnica del catálogo de lentes */
+.filter-label {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: bold;
+  min-width: 3.5rem;
+}
+
+/* Tono y cobertura bajo el nombre de cada lente */
+.card-meta {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  margin: 0;
+  opacity: 0.75;
+}
+
+.catalogo-vacio {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  grid-column: 1 / -1;
+  margin: var(--spacing-md) 0;
+}
+
+.modal-ficha {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem var(--spacing-sm);
+  margin: var(--spacing-sm) 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.modal-ficha dt {
+  font-weight: bold;
+  color: var(--color-dark);
+}
+
+.modal-ficha dd {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* Paginación del catálogo de lentes */
+.paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin: var(--spacing-md) 0;
+  font-family: var(--font-ui);
+}
+
+.pagina-btn {
+  background: var(--color-accent-soft);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.6rem;
+  min-width: 32px;
+  min-height: 32px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagina-btn.active {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.pagina-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pagina-flecha {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.paginacion-info {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
 @media (min-width: 769px) {
+  .solo-escritorio {
+    display: inline;
+  }
+
+  .modal-detail-body {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .modal-img-col {
+    max-width: none;
+  }
+
   .brand-logo {
     height: 55px;
   }
