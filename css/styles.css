@@ -78,13 +78,26 @@ h1,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem var(--gutter);
+  /* El gutter del 5% deja los iconos muy lejos del borde en pantallas anchas
+     (64px a 1280px). Se acota el margen lateral para que el grupo de acciones
+     quede anclado al canto sin pegarse a él. Sigue siendo simétrico, que es lo
+     que mantiene el logo centrado. */
+  padding: 0.8rem clamp(1rem, 2.5vw, 1.75rem);
 }
 
-.header-icons-left {
+/* Los dos lados reparten el sobrante por igual, así el logo queda centrado sin
+   depender de un ancho fijo acertado a mano: al iniciar sesión el contenido de
+   un lado crece y el centro no se mueve. */
+.header-side {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
-  gap: 1.2rem;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.header-side--fin {
+  justify-content: flex-end;
 }
 
 .icon-btn {
@@ -115,20 +128,114 @@ h1,
   padding: 2px 5px;
 }
 
+/* En móvil el logo cede alto para que la fila cuadre junto al carrito y el
+   botón de menú; en escritorio recupera su tamaño. */
 .brand-logo {
-  height: 45px;
+  height: 38px;
   object-fit: contain;
 }
 
-.header-right-space {
-  width: 60px;
+/* --- Entrada de perfil (barra en escritorio, menú en móvil) --- */
+
+.perfil-entrada {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: inherit;
+  min-height: 44px;
 }
 
+.perfil-entrada:hover,
+.perfil-entrada:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.perfil-entrada-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-dark);
+  font-size: 0.9rem;
+}
+
+.perfil-entrada-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.perfil-entrada-accion {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Dentro del menú, sobre fondo negro, el contraste se invierte. */
+#perfil-slot-menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0.3rem 0 0.7rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 0.3rem;
+}
+
+#perfil-slot-menu .perfil-entrada {
+  color: var(--color-white);
+}
+
+#perfil-slot-menu .perfil-entrada:hover,
+#perfil-slot-menu .perfil-entrada:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* `--color-accent` es un morado oscuro: sobre el negro del menú no se lee.
+   El tono suave de la marca sí contrasta. */
+#perfil-slot-menu .perfil-entrada-accion {
+  color: var(--color-accent-soft);
+}
+
+/* Mobile-first: la navegación está plegada y la abre el botón hamburguesa. Con
+   los cuatro enlaces visibles el menú se partía en dos filas y el encabezado se
+   comía el 20% de la pantalla. */
 .main-nav {
   background: var(--color-black);
   padding: 0.6rem 0;
-  display: flex;
+  display: none;
   justify-content: center;
+}
+
+.main-nav.abierto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-nav.abierto ul {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+/* En una lista vertical el objetivo cómodo no es el texto, es el renglón. */
+.main-nav.abierto a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  width: 100%;
 }
 
 .main-nav ul {
@@ -169,15 +276,6 @@ h1,
 .user-name {
   font-size: 0.75rem;
   font-weight: bold;
-}
-
-.btn-logout {
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 0.8rem;
-  cursor: pointer;
-  margin-left: 4px;
 }
 
 /* HERO */
@@ -708,11 +806,172 @@ body.scroll-bloqueado {
   margin: 1rem;
 }
 
-.login-card {
-  max-width: 400px;
+/* --- Modales de identidad (login y perfil) --- */
+
+/* Los dos son la misma pieza y comparten estilos, para que entrar a la cuenta y
+   consultarla no parezcan pantallas de sitios distintos.
+   Fondo claro en vez del beige de los modales de producto: sobre #d9c5b2 el
+   texto secundario quedaba en torno a 3:1, por debajo del mínimo legible. Con
+   #f8f7f5 el texto apagado sube a ~7:1 y el principal a ~16:1. */
+.login-card,
+.perfil-card {
+  background: var(--color-bg);
+  max-width: 360px;
+  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
   text-align: center;
-  background: var(--color-white);
-  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+}
+
+/* La X con recuadro pesaba demasiado para una tarjeta tan limpia: aquí es un
+   objetivo sin marco que solo se tiñe al enfocarlo o pasar por encima. */
+.login-card .close-modal-x,
+.perfil-card .close-modal-x {
+  border: none;
+  top: 10px;
+  right: 10px;
+  font-size: 1.6rem;
+  color: var(--color-text-muted);
+  border-radius: 50%;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.login-card .close-modal-x:hover,
+.login-card .close-modal-x:focus-visible,
+.perfil-card .close-modal-x:hover,
+.perfil-card .close-modal-x:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-text);
+}
+
+.login-card .modal-header-title,
+.perfil-card .modal-header-title {
+  min-height: 0;
+  margin-bottom: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--color-text-muted);
+}
+
+.identidad-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: var(--spacing-lg) 0;
+}
+
+.login-marca {
+  height: 46px;
+  object-fit: contain;
+  margin-bottom: var(--spacing-md);
+}
+
+.login-sub {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  max-width: 28ch;
+}
+
+.perfil-foto {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-surface);
+  margin-bottom: var(--spacing-sm);
+}
+
+.perfil-nombre {
+  font-family: var(--font-ui);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+
+.perfil-email {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+/* Filas etiqueta/valor, el mismo patrón del resumen del carrito. Hairlines en
+   vez de cajas: la separación se nota sin añadir peso visual. */
+.perfil-datos {
+  margin: 0 0 var(--spacing-lg);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.perfil-dato {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  padding: 0.75rem 0.1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.perfil-dato dt {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.perfil-dato dd {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.identidad-acciones {
+  display: flex;
+}
+
+/* Ancho completo, como el botón de finalizar pedido: en una tarjeta estrecha un
+   botón centrado y pequeño deja la base descompensada. Contorno en vez de
+   relleno porque cerrar sesión no es la acción que el sitio quiere empujar. */
+.btn-modal-secundario {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--color-text);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.5rem;
+  min-height: 48px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-modal-secundario:hover,
+.btn-modal-secundario:focus-visible {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.identidad-nota {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
 }
 
 .close-modal-x {
@@ -1154,6 +1413,29 @@ body.scroll-bloqueado {
 
   .brand-logo {
     height: 55px;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  .main-nav {
+    display: flex;
+  }
+
+  /* En escritorio el perfil vuelve a la barra y su hueco del menú sobra. */
+  #perfil-slot-menu {
+    display: none;
+  }
+
+  /* Junto al carrito el perfil va como icono, según el diseño: el nombre y el
+     "Ver perfil" son la forma del menú móvil, donde hay sitio para leerlos. */
+  .header-side--fin .perfil-entrada-texto {
+    display: none;
+  }
+
+  .header-side--fin .perfil-entrada {
+    padding: 6px;
   }
 
   .main-nav ul {

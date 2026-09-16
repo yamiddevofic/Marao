@@ -22,6 +22,8 @@ Marao es una tienda virtual (e-commerce) de lentes de contacto y accesorios, inc
 
 Implementados:
 
+- Encabezado: en móvil la navegación va en un menú hamburguesa (`#main-nav` + `.menu-toggle`); el carrito queda siempre en la barra y el perfil se muda al menú. En escritorio (`min-width: 769px`) el menú se muestra siempre y el perfil vuelve a la barra.
+- Modal de perfil (`#modal-perfil`): foto, nombre, correo y cerrar sesión
 - Inicio (hero de portada)
 - Catálogo: lentes de contacto (`js/catalog.js`, con filtros por pupila)
 - Catálogo: pestañas pelo a pelo (carrusel de tarjetas estáticas en `index.html` + `js/carrusel.js`)
@@ -45,6 +47,10 @@ Antes de tocar cualquiera de estos módulos, revisa cómo están implementados l
 - **Evento `cart:updated`**: cualquier cambio del carrito se notifica con este `CustomEvent` en `window`. Quien necesite reaccionar (badge, resumen de envío) se suscribe; no se llama al render desde `cart.js`.
 - **Evento `sesion:cambiada`**: entrar o salir de una cuenta se notifica con este `CustomEvent` en `window`, igual que `cart:updated`. Quien dependa de la sesión se suscribe; `auth.js` no llama a los módulos que dependen de ella.
 - **Persistencia**: todo lo que se guarda pasa por `js/almacenamiento.js`, nunca por `localStorage` directo — ese módulo envuelve cada acceso en `try/catch` porque en modo privado el solo hecho de tocarlo lanza. El carrito se guarda como `{id, cantidad}` y se revalida contra `productosBase` al restaurar; los datos de envío van por cuenta (`claveEnvio`). No se persiste nada del método de pago.
+- **El perfil no se duplica**: `#user-profile-container` existe una sola vez y `ubicarPerfil()` (`js/main.js`) lo muda entre `#perfil-slot-bar` y `#perfil-slot-menu` según el breakpoint. `auth.js` reescribe ese contenedor, así que un id repetido lo rompería. La reubicación escucha `matchMedia` **y** `resize`: el evento de `matchMedia` no llega en todos los entornos y sin esa red el perfil se queda en el lado equivocado tapando el logo.
+- **Centrado del encabezado**: los dos lados (`.header-side`) son `flex: 1 1 0`, así el logo queda centrado aunque el contenido de un lado crezca. No vuelvas a centrarlo con un ancho fijo: eso fue lo que se descuadró al aparecer el perfil con sesión iniciada.
+- **Modales de identidad**: login y perfil comparten estilos (`.login-card`, `.perfil-card`). Van sobre `--color-bg`, no sobre el beige `--color-modal` de los modales de producto: sobre el beige el texto secundario se quedaba en torno a 3:1 de contraste. Si añades otro modal de cuenta, engánchalo a ese par de clases.
+- **Etiqueta del perfil**: el texto ("Iniciar sesión" / nombre + "Ver perfil") se ve en el menú móvil y lo oculta el CSS en la barra de escritorio, donde queda solo el icono. Por eso el botón lleva siempre `aria-label`: sin él se quedaría sin nombre accesible justo en escritorio.
 - **Design tokens**: usa las variables CSS de `:root` (`--color-*`, `--font-body`, `--font-display`, `--spacing-*`, `--radius-*`, `--gutter`) en vez de valores literales.
 - **Idioma del código**: nombres de variables y funciones en español (`agregarAlCarrito`, `calcularCostosEnvio`); nombres de archivos y mensajes de commit en inglés.
 - **Breakpoint único**: `@media (min-width: 769px)` en `css/styles.css`. No introduzcas breakpoints nuevos sin motivo.

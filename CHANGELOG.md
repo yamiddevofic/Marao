@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- En celular la navegación se agrupa en un menú hamburguesa, con el carrito siempre a la vista junto al botón del menú. El encabezado pasó de ocupar el 20% de la pantalla a menos del 10%, y el menú dejó de partirse en dos filas.
+- El perfil es ahora una opción del menú con foto y nombre: al tocar "Ver perfil" se abre un modal con los datos de la cuenta y el botón de cerrar sesión.
+
 - El carrito ya no se pierde al recargar ni al volver de WhatsApp: se guarda en el navegador y se recupera al abrir la página. Si una referencia salió del catálogo mientras tanto, no reaparece.
 - La sesión de Google sobrevive a la recarga: ya no hay que volver a entrar cada vez.
 - Al iniciar sesión, el dispositivo recuerda la dirección y el destino de envío de esa cuenta y los repone en la próxima compra. En un celular compartido, cada cuenta ve solo lo suyo.
@@ -33,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Los modales de iniciar sesión y de perfil se rediseñaron: fondo claro en vez del beige, más aire entre bloques y una ficha de datos con líneas finas. El texto apagado pasó de leerse a duras penas sobre el beige a tener contraste holgado.
+- En computador el carrito y el perfil quedaron juntos en la esquina derecha (carrito a la izquierda, perfil a la derecha) siguiendo el diseño, y más cerca del borde.
+- El modal de perfil muestra ahora la dirección de envío guardada de esa cuenta.
+
 - El modal de login decía "guardar tus datos de envío" sin que se guardara nada. Ahora lo hace de verdad, y el texto aclara que es en ese dispositivo.
 
 - Los iconos del encabezado (carrito y perfil) pasaron de morado a negro.
@@ -52,6 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
 ### Fixed
+
+- Al iniciar sesión el logo del encabezado se corría del centro y quedaba pegado al borde derecho, en celular y en computador. El centrado dependía de un ancho fijo que no podía compensar un lado que crece al entrar a la cuenta.
+- El botón de cerrar sesión medía 13x15 px, por debajo del mínimo para tocarlo con el dedo. Ahora vive dentro del modal de perfil con un tamaño cómodo.
 
 - Los accesorios que todavía no tienen foto (solución, kit aplicador, estuche y lavadora) mostraban un hueco roto; ahora se ve la imagen de reemplazo de la marca.
 

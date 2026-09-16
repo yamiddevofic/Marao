@@ -30,27 +30,9 @@
     <!-- HEADER FIJO -->
     <header class="main-header">
       <div class="header-top-bar">
-        <div class="header-icons-left">
-          <button
-            class="icon-btn"
-            data-action="mostrar-seccion"
-            data-view="carrito"
-            title="Ver Carrito"
-          >
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="cart-badge" class="badge">0</span>
-          </button>
-
-          <div id="user-profile-container" class="user-profile-container">
-            <button
-              class="icon-btn"
-              data-action="open-login"
-              title="Iniciar Sesión"
-            >
-              <i class="fa-solid fa-user"></i>
-            </button>
-          </div>
-        </div>
+        <!-- Espaciador: su único trabajo es equilibrar el lado derecho para
+             que el logo quede centrado. -->
+        <div class="header-side" aria-hidden="true"></div>
 
         <div
           class="logo-container"
@@ -60,42 +42,54 @@
           <img src="assets/img/logo.png" alt="MARÃO Logo" class="brand-logo" />
         </div>
 
-        <div class="header-right-space"></div>
+        <div class="header-side header-side--fin">
+          <button
+            class="icon-btn"
+            data-action="mostrar-seccion"
+            data-view="carrito"
+            title="Ver Carrito"
+            aria-label="Ver carrito"
+          >
+            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+            <span id="cart-badge" class="badge">0</span>
+          </button>
+
+          <!-- Según el diseño, en escritorio el perfil va junto al carrito y a
+               su derecha. En móvil este hueco queda vacío: el perfil vive en el
+               menú y js/main.js lo muda según el breakpoint, para no duplicar el
+               markup (un #user-profile-container repetido rompería a auth.js). -->
+          <div id="perfil-slot-bar"></div>
+
+          <button
+            class="icon-btn menu-toggle"
+            data-action="toggle-menu"
+            aria-controls="main-nav"
+            aria-expanded="false"
+            aria-label="Abrir menú"
+          >
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
 
-      <nav class="main-nav">
+      <nav class="main-nav" id="main-nav">
+        <!-- Posición de partida del perfil: móvil primero. -->
+        <div class="perfil-slot" id="perfil-slot-menu">
+          <div id="user-profile-container" class="user-profile-container"></div>
+        </div>
+
         <ul>
           <li>
-            <a
-              href="#"
-              data-action="mostrar-seccion"
-              data-view="tienda"
-              >INICIO</a
-            >
+            <a href="#" data-action="mostrar-seccion" data-view="tienda">INICIO</a>
           </li>
           <li>
-            <a
-              href="#lentes"
-              data-action="mostrar-seccion"
-              data-view="tienda"
-              >LENTES DE CONTACTO</a
-            >
+            <a href="#lentes" data-action="mostrar-seccion" data-view="tienda">LENTES DE CONTACTO</a>
           </li>
           <li>
-            <a
-              href="#pestanas"
-              data-action="mostrar-seccion"
-              data-view="tienda"
-              >PESTAÑAS PELO A PELO</a
-            >
+            <a href="#pestanas" data-action="mostrar-seccion" data-view="tienda">PESTAÑAS PELO A PELO</a>
           </li>
           <li>
-            <a
-              href="#contacto"
-              data-action="mostrar-seccion"
-              data-view="tienda"
-              >CONTACTO</a
-            >
+            <a href="#contacto" data-action="mostrar-seccion" data-view="tienda">CONTACTO</a>
           </li>
         </ul>
       </nav>
@@ -426,12 +420,27 @@
     <!-- MODAL LOGIN -->
     <div id="modal-login" class="modal-backdrop">
       <div class="modal-detail-card login-card">
-        <span class="close-modal-x" data-action="close-login">&times;</span>
-        <h3>INICIAR SESIÓN EN MARÃO</h3>
-        <p class="login-sub">
-          Accede con tu cuenta de Google y este dispositivo recordará tus datos
-          de envío para tu próxima compra.
-        </p>
+        <button
+          class="close-modal-x"
+          data-action="close-login"
+          aria-label="Cerrar"
+        >
+          &times;
+        </button>
+        <h3 class="modal-header-title">INICIAR SESIÓN</h3>
+
+        <div class="identidad-cuerpo">
+          <img
+            src="assets/img/logo.png"
+            alt=""
+            class="login-marca"
+            aria-hidden="true"
+          />
+          <p class="login-sub">
+            Accede con tu cuenta de Google y este dispositivo recordará tus
+            datos de envío para tu próxima compra.
+          </p>
+        </div>
 
         <!-- La inicialización de Google la hace js/auth.js: el atributo
              data-callback de GSI se resuelve contra window al cargar la
@@ -454,6 +463,47 @@
             data-client-id="486710402515-7s294tbkr4t8e40dtt2gjqik55v5js59.apps.googleusercontent.com"
           ></div>
           <div id="google-signin-button"></div>
+        </div>
+
+        <p class="identidad-nota">
+          Tus datos se guardan únicamente en este dispositivo.
+        </p>
+      </div>
+    </div>
+
+    <!-- MODAL PERFIL -->
+    <div id="modal-perfil" class="modal-backdrop">
+      <div class="modal-detail-card perfil-card">
+        <button
+          class="close-modal-x"
+          data-action="close-perfil"
+          aria-label="Cerrar perfil"
+        >
+          &times;
+        </button>
+        <h3 class="modal-header-title">MI PERFIL</h3>
+
+        <div class="identidad-cuerpo">
+          <img id="perfil-foto" class="perfil-foto" alt="" />
+          <p id="perfil-nombre" class="perfil-nombre"></p>
+          <p id="perfil-email" class="perfil-email"></p>
+        </div>
+
+        <dl class="perfil-datos">
+          <div class="perfil-dato">
+            <dt>Sesión</dt>
+            <dd>Google</dd>
+          </div>
+          <div class="perfil-dato">
+            <dt>Envío guardado</dt>
+            <dd id="perfil-envio">—</dd>
+          </div>
+        </dl>
+
+        <div class="identidad-acciones">
+          <button class="btn-modal-secundario" data-action="logout">
+            CERRAR SESIÓN
+          </button>
         </div>
       </div>
     </div>

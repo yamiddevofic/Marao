@@ -12,6 +12,8 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
 - **Checkout**: destino de envío, intención de método de pago y envío del pedido por WhatsApp. No se piden datos de tarjeta: el cobro se coordina por ese mismo canal.
+- **Encabezado**: en móvil, menú hamburguesa con las secciones y el acceso al perfil; el carrito permanece visible en la barra. En escritorio el menú es una barra fija y el perfil vuelve al encabezado.
+- **Modal de perfil**: foto, nombre y correo de la cuenta, con el botón de cerrar sesión.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
 

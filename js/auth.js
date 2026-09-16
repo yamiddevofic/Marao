@@ -1,5 +1,11 @@
 import { bloquearScroll, desbloquearScroll } from "./scroll-lock.js";
-import { CLAVE_SESION, leer, guardar, borrar } from "./almacenamiento.js";
+import {
+  CLAVE_SESION,
+  claveEnvio,
+  leer,
+  guardar,
+  borrar,
+} from "./almacenamiento.js";
 
 /**
  * El perfil se restaura de `localStorage` para que recargar no cierre la
@@ -50,6 +56,7 @@ export function cerrarModalLogin() {
 }
 
 export function cerrarSesion() {
+  cerrarModalPerfil();
   usuarioLogueado = null;
   borrar(CLAVE_SESION);
   actualizarInterfazUsuario();
@@ -91,6 +98,13 @@ export function handleCredentialResponse(response) {
   cerrarModalLogin();
 }
 
+/**
+ * Pinta la entrada de perfil del encabezado.
+ *
+ * Sin sesión es el acceso al login; con sesión muestra foto y nombre y abre el
+ * modal de perfil. El botón de cerrar sesión vive dentro de ese modal y no en
+ * la barra: allí era un objetivo de 13x15 px, por debajo del mínimo de WCAG.
+ */
 function actualizarInterfazUsuario() {
   const container = document.getElementById("user-profile-container");
   if (!container) return;
@@ -98,33 +112,94 @@ function actualizarInterfazUsuario() {
   container.replaceChildren();
 
   if (!usuarioLogueado) {
+    // La etiqueta se ve en el menú móvil, donde hay sitio para leerla; en la
+    // barra de escritorio el CSS la oculta y queda solo el icono. El
+    // `aria-label` cubre ese caso para que el botón nunca quede sin nombre.
     const btnLogin = document.createElement("button");
-    btnLogin.className = "icon-btn";
+    btnLogin.className = "perfil-entrada perfil-entrada--invitado";
     btnLogin.dataset.action = "open-login";
-    btnLogin.innerHTML = '<i class="fa-solid fa-user"></i>';
+    btnLogin.setAttribute("aria-label", "Iniciar sesión");
+    btnLogin.title = "Iniciar sesión";
+    btnLogin.innerHTML =
+      '<span class="perfil-entrada-icono"><i class="fa-solid fa-user" aria-hidden="true"></i></span>';
+
+    const texto = document.createElement("span");
+    texto.className = "perfil-entrada-texto";
+    texto.textContent = "Iniciar sesión";
+    btnLogin.append(texto);
+
     container.append(btnLogin);
     return;
   }
 
   // El nombre, el email y la foto vienen del JWT de Google: son datos externos,
   // así que se asignan como texto/atributos y nunca interpolados en innerHTML.
+  const entrada = document.createElement("button");
+  entrada.className = "perfil-entrada";
+  entrada.dataset.action = "open-perfil";
+  // En escritorio el CSS oculta el texto y solo queda el avatar: sin esto el
+  // botón se quedaría sin nombre accesible.
+  entrada.setAttribute("aria-label", `Ver perfil de ${usuarioLogueado.nombre}`);
+  entrada.title = "Ver perfil";
+
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
   avatar.src = usuarioLogueado.foto || "";
-  avatar.alt = usuarioLogueado.nombre;
-  avatar.title = usuarioLogueado.email;
+  avatar.alt = "";
+
+  const bloque = document.createElement("span");
+  bloque.className = "perfil-entrada-texto";
 
   const nombre = document.createElement("span");
   nombre.className = "user-name";
   nombre.textContent = usuarioLogueado.nombre.split(" ")[0];
 
-  const btnLogout = document.createElement("button");
-  btnLogout.className = "btn-logout";
-  btnLogout.dataset.action = "logout";
-  btnLogout.title = "Cerrar sesión";
-  btnLogout.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
+  const ver = document.createElement("span");
+  ver.className = "perfil-entrada-accion";
+  ver.textContent = "Ver perfil";
 
-  container.append(avatar, nombre, btnLogout);
+  bloque.append(nombre, ver);
+  entrada.append(avatar, bloque);
+  container.append(entrada);
+}
+
+/** Vuelca los datos de la sesión en el modal de perfil. */
+function pintarModalPerfil() {
+  if (!usuarioLogueado) return;
+  const foto = document.getElementById("perfil-foto");
+  const nombre = document.getElementById("perfil-nombre");
+  const email = document.getElementById("perfil-email");
+
+  if (foto) {
+    foto.src = usuarioLogueado.foto || "";
+    foto.alt = `Foto de ${usuarioLogueado.nombre}`;
+  }
+  if (nombre) nombre.textContent = usuarioLogueado.nombre;
+  if (email) email.textContent = usuarioLogueado.email;
+
+  // Se lee del almacenamiento y no de checkout.js: ese módulo ya importa a
+  // este, y la dependencia inversa cerraría un ciclo.
+  const envio = document.getElementById("perfil-envio");
+  if (envio) {
+    const datos = leer(claveEnvio(usuarioLogueado.email), null);
+    const direccion = datos && typeof datos.direccion === "string" ? datos.direccion.trim() : "";
+    envio.textContent = direccion || "Sin dirección guardada";
+  }
+}
+
+export function abrirModalPerfil() {
+  if (!usuarioLogueado) return;
+  pintarModalPerfil();
+  document.getElementById("modal-perfil")?.classList.add("open");
+  bloquearScroll();
+}
+
+export function cerrarModalPerfil() {
+  const modal = document.getElementById("modal-perfil");
+  if (!modal || !modal.classList.contains("open")) return;
+
+  modal.classList.remove("open");
+  desbloquearScroll();
 }
 
 // GSI resuelve `data-callback` contra `window` en cuanto carga la librería, y

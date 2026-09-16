@@ -28,7 +28,65 @@ import {
   cerrarModalLogin,
   cerrarSesion,
   inicializarSesion,
+  abrirModalPerfil,
+  cerrarModalPerfil,
 } from "./auth.js";
+
+/**
+ * Menú de navegación en móvil.
+ *
+ * En escritorio el CSS lo muestra siempre y esconde el botón, así que esta
+ * función solo actúa donde el hamburguesa existe. El estado vive en la clase
+ * `.abierto` y se refleja en `aria-expanded` para quien use lector de pantalla.
+ */
+/* Único breakpoint del proyecto (AGENTS.md). El grupo de utilidades no se
+   duplica en el markup: se muda entre la barra superior y el menú según de qué
+   lado de este breakpoint estemos. */
+const ESCRITORIO = window.matchMedia("(min-width: 769px)");
+
+/**
+ * Reubica carrito y perfil: dentro del menú en móvil, en la barra superior en
+ * escritorio. Mover el nodo en vez de repetirlo mantiene una sola fuente de
+ * verdad — `auth.js` reescribe `#user-profile-container` y un id duplicado lo
+ * rompería.
+ */
+function ubicarPerfil() {
+  const grupo = document.getElementById("user-profile-container");
+  const destino = document.getElementById(
+    ESCRITORIO.matches ? "perfil-slot-bar" : "perfil-slot-menu",
+  );
+  if (!grupo || !destino || grupo.parentElement === destino) return;
+  destino.append(grupo);
+}
+
+function sincronizarConAnchura() {
+  ubicarPerfil();
+  // Al pasar a escritorio el menú deja de estar plegado: si quedó abierto, su
+  // estado y el `aria-expanded` del botón se quedarían desfasados.
+  if (ESCRITORIO.matches) alternarMenu(true);
+}
+
+/* Se escucha el cambio de breakpoint y además `resize` como red de seguridad:
+   el evento de matchMedia no llega en todos los entornos, y si se pierde el
+   perfil se queda en el lado equivocado tapando el logo. `sincronizarConAnchura`
+   es idempotente y sale sin tocar el DOM cuando ya está donde toca, así que
+   repetirla no cuesta. */
+ESCRITORIO.addEventListener("change", sincronizarConAnchura);
+window.addEventListener("resize", sincronizarConAnchura);
+
+function alternarMenu(forzarCerrado = false) {
+  const nav = document.getElementById("main-nav");
+  const boton = document.querySelector(".menu-toggle");
+  if (!nav || !boton) return;
+
+  const abierto = forzarCerrado ? false : !nav.classList.contains("abierto");
+  nav.classList.toggle("abierto", abierto);
+  boton.setAttribute("aria-expanded", String(abierto));
+  boton.setAttribute(
+    "aria-label",
+    abierto ? "Cerrar menú de navegación" : "Abrir menú de navegación",
+  );
+}
 
 function actualizarBadge() {
   const total = getCarrito().reduce((sum, i) => sum + i.cantidad, 0);
@@ -62,7 +120,20 @@ document.addEventListener("click", (event) => {
 
   const id = Number(el.dataset.id);
 
+  // Cualquier acción lanzada desde dentro del panel lo cierra: navegar, ir al
+  // carrito o abrir el login dejaban el desplegable encima de la vista.
+  if (el.closest("#main-nav")) alternarMenu(true);
+
   switch (el.dataset.action) {
+    case "toggle-menu":
+      alternarMenu();
+      break;
+    case "open-perfil":
+      abrirModalPerfil();
+      break;
+    case "close-perfil":
+      cerrarModalPerfil();
+      break;
     case "mostrar-seccion":
       mostrarSeccion(el.dataset.view);
       break;
@@ -151,6 +222,7 @@ window.addEventListener("sesion:cambiada", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  ubicarPerfil();
   actualizarCatalogoLentes();
   renderAccesorios(getAccesorios());
   actualizarBadge();
