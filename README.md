@@ -11,7 +11,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **¿Por qué comprar en MARÃO?** (`#por-que-marao`): tres argumentos de venta estáticos (envíos, calidad, WhatsApp).
 - **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
-- **Checkout**: selección de método de pago y envío del pedido por WhatsApp.
+- **Checkout**: destino de envío, intención de método de pago y envío del pedido por WhatsApp. No se piden datos de tarjeta: el cobro se coordina por ese mismo canal.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
 
@@ -128,13 +128,13 @@ Envíos y pagos (`js/checkout.js`):
 
 - **Envío Bogotá / Soacha**: $10.000 (contraentrega disponible).
 - **Envío resto de Colombia**: $22.000.
-- **Métodos de pago aceptados**: tarjeta crédito/débito, Nequi, efectivo contraentrega.
+- **Métodos de pago aceptados**: tarjeta crédito/débito, Nequi, efectivo contraentrega. El selector solo informa al negocio cómo piensa pagar la clienta; el cobro se acuerda por WhatsApp y el sitio no captura datos de pago.
 
 ## Estado del proyecto y deuda técnica conocida
 
 En desarrollo activo. Puntos pendientes identificados:
 
-- **Pagos (crítico)**: el formulario pide número de tarjeta, vencimiento y CVV, pero **no hay pasarela**: el mensaje de WhatsApp solo lleva los últimos 4 dígitos y el CVV no se usa en ninguna parte. Es decir, se piden datos sensibles al cliente sin procesarlos, lo que da una falsa sensación de pago en línea y mete al sitio en alcance PCI sin necesidad. Decisión pendiente del negocio: quitar esos campos, o integrar un checkout hospedado / widget oficial (Wompi, Epayco, PayU).
+- **Sin pago en línea**: el cobro se coordina por WhatsApp. Es una decisión del negocio, no una carencia pendiente: los campos de tarjeta, vencimiento y CVV se retiraron del checkout precisamente porque no había pasarela que los procesara. Si más adelante se quiere cobrar en línea, la vía es un checkout hospedado o widget oficial (Wompi, Epayco, PayU) — nunca campos propios de tarjeta en el cliente.
 - **8 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
 
   | Referencia | Tono | Ficha |

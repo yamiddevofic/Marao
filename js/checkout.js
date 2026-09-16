@@ -86,75 +86,6 @@ export function calcularCostosEnvio() {
     formatearPrecio(totalFinal);
 }
 
-export function detectarTipoTarjeta(input) {
-  // Nequi se elige en el selector de método de pago: detectarlo por el prefijo
-  // hacía que un celular 34x/37x se marcara como American Express.
-  const metodoPago = document.getElementById("payment-type-select")?.value;
-  let valor = input.value.replace(/\D/g, "");
-  let valorFormateado = valor.match(/.{1,4}/g)?.join(" ") || "";
-  input.value = valorFormateado;
-
-  const badge = document.getElementById("card-brand-badge");
-  const label = document.getElementById("card-detected-label");
-  if (!badge || !label) return;
-
-  badge.className = "card-badge-dynamic";
-
-  if (valor.length === 0) {
-    badge.innerText = "DESCONOCIDO";
-    label.innerText = "Escribe los dígitos para detectar el tipo";
-    return;
-  }
-
-  if (metodoPago === "nequi") {
-    badge.innerText = "NEQUI";
-    badge.classList.add("nequi");
-    label.innerText =
-      valor.length === 10
-        ? "Número de Nequi Registrado ✔️"
-        : "El número de Nequi debe tener 10 dígitos";
-  } else if (/^4/.test(valor)) {
-    badge.innerText = "VISA";
-    badge.classList.add("visa");
-    label.innerText = "Tarjeta Visa (Débito/Crédito) Detectada ✔️";
-  } else if (/^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[0-1]|2720)/.test(valor)) {
-    badge.innerText = "MASTERCARD";
-    badge.classList.add("mastercard");
-    label.innerText = "Tarjeta MasterCard Detectada ✔️";
-  } else if (/^3[47]/.test(valor)) {
-    badge.innerText = "AMEX";
-    badge.classList.add("amex");
-    label.innerText = "American Express Detectada ✔️";
-  } else {
-    badge.innerText = "OTRA";
-    label.innerText = "Tarjeta de Crédito / Débito Genérica";
-  }
-}
-
-export function formatearFechaExp(input) {
-  let valor = input.value.replace(/\D/g, "").slice(0, 4);
-  if (valor.length >= 3) {
-    valor = valor.slice(0, 2) + "/" + valor.slice(2);
-  }
-  input.value = valor;
-}
-
-export function togglePaymentInputs() {
-  const method = document.getElementById("payment-type-select").value;
-  const cardBox = document.getElementById("card-input-box");
-  const cardInput = document.getElementById("card-number-input");
-  if (!cardBox || !cardInput) return;
-
-  if (method === "efectivo") {
-    cardBox.style.display = "none";
-  } else {
-    cardBox.style.display = "block";
-    cardInput.placeholder =
-      method === "nequi" ? "300 123 4567" : "4000 1234 5678 9010";
-  }
-  detectarTipoTarjeta(cardInput);
-}
-
 export function enviarPedidoWhatsApp() {
   const carrito = getCarrito();
   const usuarioLogueado = getUsuarioLogueado();
@@ -184,34 +115,6 @@ export function enviarPedidoWhatsApp() {
   const selectorMetodoPago = document.getElementById(
     "payment-type-select",
   ).value;
-  const cardInput = document.getElementById("card-number-input");
-  const numTarjeta = cardInput ? cardInput.value.trim() : "";
-  const tipoTarjeta = document.getElementById("card-brand-badge")
-    ? document.getElementById("card-brand-badge").innerText
-    : "";
-
-  if (selectorMetodoPago !== "efectivo") {
-    if (!numTarjeta) {
-      alert("Por favor ingresa el número de tu tarjeta o cuenta.");
-      cardInput.focus();
-      return;
-    }
-
-    const digitos = numTarjeta.replace(/\s+/g, "");
-
-    if (selectorMetodoPago === "nequi" && digitos.length !== 10) {
-      alert("Por favor ingresa un número de cuenta Nequi válido (10 dígitos).");
-      cardInput.focus();
-      return;
-    } else if (
-      selectorMetodoPago !== "nequi" &&
-      (digitos.length < 13 || digitos.length > 19)
-    ) {
-      alert("Por favor ingresa un número de tarjeta válido.");
-      cardInput.focus();
-      return;
-    }
-  }
 
   const selectorEnvio = document.getElementById("shipping-city").value;
   const costoEnvio = selectorEnvio === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
@@ -247,12 +150,7 @@ export function enviarPedidoWhatsApp() {
   lineas.push(`• *Tipo de Envío:* ${textoEnvio}`);
   lineas.push(`• *Dirección:* ${direccion}`);
 
-  let detallePago = `• *Método de Pago:* ${selectorMetodoPago.toUpperCase()}`;
-  if (selectorMetodoPago !== "efectivo" && numTarjeta) {
-    const ultimos4 = numTarjeta.slice(-4);
-    detallePago += ` (${tipoTarjeta} terminada en ****${ultimos4})`;
-  }
-  lineas.push(detallePago);
+  lineas.push(`• *Método de Pago:* ${selectorMetodoPago.toUpperCase()}`);
 
   lineas.push(`• *Total a pagar:* ${formatearPrecio(totalFinal)}`);
   lineas.push("");

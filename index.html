@@ -397,27 +397,13 @@
               </option>
             </select>
 
-            <!-- INPUTS DE TARJETA CON FECHA Y CVV -->
-<div id="card-input-box" class="card-input-container">
-  <label for="card-number-input"><strong>Número de Tarjeta / Cuenta:</strong></label>
-  <div class="input-with-card-icon">
-    <input type="text" id="card-number-input" placeholder="4000 1234 5678 9010" maxlength="19">
-    <span id="card-brand-badge" class="card-badge-dynamic">DESCONOCIDO</span>
-  </div>
-  <span id="card-detected-label" class="detected-type-label">Escribe los dígitos para detectar el tipo</span>
-
-  <!-- CAMPOS ADICIONALES: FECHA Y CVV -->
-  <div id="extra-card-fields" class="card-extra-row">
-    <div class="field-col">
-      <label for="card-expiry-input"><strong>Vencimiento:</strong></label>
-      <input type="text" id="card-expiry-input" placeholder="MM/AA" maxlength="5">
-    </div>
-    <div class="field-col">
-      <label for="card-cvv-input"><strong>CVV / CVC:</strong></label>
-      <input type="password" id="card-cvv-input" placeholder="123" maxlength="4">
-    </div>
-  </div>
-</div>
+            <!-- El cobro se coordina por WhatsApp, así que aquí solo se
+                 recoge la intención de pago. No se piden ni se envían datos de
+                 tarjeta: sin pasarela que los procese, pedirlos solo exponía a
+                 la clienta sin ninguna contrapartida. -->
+            <p class="payment-note">
+              El pago se coordina por WhatsApp al confirmar tu pedido.
+            </p>
 
           <div class="address-input-container">
             <label for="user-address-input"

@@ -14,10 +14,6 @@
   --color-border: #ccc;
   --color-accent: #2f225b;
   --color-danger: #d9534f;
-  --color-visa: #1a1f71;
-  --color-mastercard: #eb001b;
-  --color-amex: #006fcf;
-  --color-nequi: #20003b;
 
   --radius-md: 6px;
   --radius-lg: 8px;
@@ -637,21 +633,9 @@ picture {
   font-family: var(--font-body);
 }
 
-.card-input-container {
-  margin-top: 0.8rem;
-}
-
-.input-with-card-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-top: 0.3rem;
-}
-
-.input-with-card-icon input,
 .address-input-container input {
   width: 100%;
-  padding: 0.6rem 85px 0.6rem 0.6rem;
+  padding: 0.6rem;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   font-family: var(--font-body);
@@ -661,36 +645,10 @@ picture {
   margin-top: var(--spacing-md);
 }
 
-.card-badge-dynamic {
-  position: absolute;
-  right: 6px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: bold;
-  color: var(--color-white);
-  background: #777;
-}
-
-.card-badge-dynamic.visa {
-  background: var(--color-visa);
-}
-.card-badge-dynamic.mastercard {
-  background: var(--color-mastercard);
-}
-.card-badge-dynamic.amex {
-  background: var(--color-amex);
-}
-.card-badge-dynamic.nequi {
-  background: var(--color-nequi);
-}
-
-.detected-type-label {
-  font-size: 0.7rem;
+.payment-note {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
-  display: block;
-  margin-top: 0.2rem;
-  font-style: italic;
 }
 
 .btn-checkout-final {

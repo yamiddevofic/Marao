@@ -35,7 +35,7 @@ Implementados:
 Previstos, todavía no implementados:
 
 - Buscador de productos
-- Pasarela de pagos real (hoy los datos de tarjeta se capturan en el cliente — ver la sección de seguridad)
+- Pasarela de pagos en línea. Hoy el cobro se coordina por WhatsApp y el checkout **no** pide datos de tarjeta; si algún día se integra una, debe ser checkout hospedado o widget oficial del proveedor.
 
 Antes de tocar cualquiera de estos módulos, revisa cómo están implementados los otros para mantener consistencia (nombres de funciones, estructura del DOM, clases CSS).
 
@@ -99,7 +99,9 @@ No hay framework de testing automatizado todavía. Antes de dar una tarea por te
 - Ninguna llave secreta en el código fuente ni en el repo — solo claves públicas si el proveedor lo requiere en cliente.
 - Tratar los datos personales de clientes (nombre, dirección, contacto) con el mismo cuidado que los datos de pago.
 
-> **Estado actual (deuda técnica)**: el checkout pide número de tarjeta, vencimiento y CVV pero no hay pasarela: el pedido sale por WhatsApp con solo los últimos 4 dígitos y el CVV nunca se usa. Se están pidiendo datos sensibles sin procesarlos. No amplíes esa lógica: cualquier trabajo sobre pagos debe ir hacia quitar esos campos o integrar un checkout hospedado.
+> **Estado actual**: el cobro se coordina por WhatsApp. El checkout solo recoge la **intención** de pago (`#payment-type-select`: tarjeta, Nequi o contraentrega) y no pide número de tarjeta, vencimiento ni CVV — esos campos se retiraron porque no había pasarela que los procesara.
+>
+> No los vuelvas a introducir. Si el negocio decide cobrar en línea, la vía es un checkout hospedado o el widget oficial del proveedor (Wompi, Epayco, PayU), nunca campos propios de tarjeta en el cliente.
 
 ## Commits
 

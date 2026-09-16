@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Las tarjetas de pestañas ahora son un carrusel: se deslizan con el dedo, con el teclado o con las flechas del bloque.
 - Se publicó la sección "Accesorios y cuidado para tus lentes" (solución, kit aplicador + pinza, estuche porta-lentes y lavadora manual), que estaba definida pero no se mostraba en la página. Cada accesorio muestra ahora su descripción.
 
+### Removed
+
+- El checkout ya no pide número de tarjeta, vencimiento ni CVV. No había pasarela que procesara esos datos: el pedido siempre se coordinó por WhatsApp, así que pedirlos solo exponía a la clienta sin ninguna contrapartida. En su lugar, el resumen indica que el pago se acuerda por WhatsApp.
+- Elegir "Tarjeta" o "Nequi" ya no obliga a escribir un número para poder enviar el pedido.
+
 ### Changed
 
 - El modal de login decía "guardar tus datos de envío" sin que se guardara nada. Ahora lo hace de verdad, y el texto aclara que es en ese dispositivo.

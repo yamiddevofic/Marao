@@ -20,9 +20,6 @@ import { desplazarCarruselPestanas } from "./carrusel.js";
 import {
   enviarPedidoWhatsApp,
   calcularCostosEnvio,
-  detectarTipoTarjeta,
-  formatearFechaExp,
-  togglePaymentInputs,
   guardarDatosEnvio,
   restaurarDatosEnvio,
 } from "./checkout.js";
@@ -133,26 +130,18 @@ document.addEventListener("change", (event) => {
   if (event.target.id === "shipping-city") {
     calcularCostosEnvio();
     guardarDatosEnvio();
-  } else if (event.target.id === "payment-type-select") {
-    togglePaymentInputs();
   }
 });
 
 document.addEventListener("input", (event) => {
-  if (event.target.id === "card-number-input") {
-    detectarTipoTarjeta(event.target);
-  } else if (event.target.id === "card-expiry-input") {
-    formatearFechaExp(event.target);
-  } else if (event.target.id === "user-address-input") {
+  if (event.target.id === "user-address-input") {
     guardarDireccionConEspera();
   }
 });
 
 window.addEventListener("cart:updated", () => {
   actualizarBadge();
-  // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
-  // los datos de envío y recalcula el resumen.
-  inicializarSesion();
+  calcularCostosEnvio();
 });
 
 /* Al entrar o salir de una cuenta cambia el cajón de datos de envío, así que
@@ -165,5 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarCatalogoLentes();
   renderAccesorios(getAccesorios());
   actualizarBadge();
-  calcularCostosEnvio();
+  // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
+  // los datos de envío y recalcula el resumen.
+  inicializarSesion();
 });
