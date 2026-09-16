@@ -34,13 +34,14 @@
              que el logo quede centrado. -->
         <div class="header-side" aria-hidden="true"></div>
 
-        <div
+        <button
           class="logo-container"
           data-action="mostrar-seccion"
           data-view="tienda"
+          aria-label="MARÃO, ir al inicio"
         >
-          <img src="assets/img/logo.png" alt="MARÃO Logo" class="brand-logo" />
-        </div>
+          <img src="assets/img/logo.png" alt="" class="brand-logo" />
+        </button>
 
         <div class="header-side header-side--fin">
           <button
@@ -141,6 +142,7 @@
               <button
                 class="filter-btn active"
                 data-action="filtrar-lentes"
+                aria-pressed="true"
                 data-group="color"
                 data-filter="todos"
               >
@@ -149,6 +151,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="color"
                 data-filter="miel"
               >
@@ -157,6 +160,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="color"
                 data-filter="verde"
               >
@@ -165,6 +169,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="color"
                 data-filter="gris"
               >
@@ -173,6 +178,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="color"
                 data-filter="azul"
               >
@@ -181,6 +187,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="color"
                 data-filter="cosplay"
               >
@@ -194,6 +201,7 @@
               <button
                 class="filter-btn active"
                 data-action="filtrar-lentes"
+                aria-pressed="true"
                 data-group="pupila"
                 data-filter="todos"
               >
@@ -202,6 +210,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="pupila"
                 data-filter="reducida"
               >
@@ -210,6 +219,7 @@
               <button
                 class="filter-btn"
                 data-action="filtrar-lentes"
+                aria-pressed="false"
                 data-group="pupila"
                 data-filter="estandar"
               >
@@ -217,6 +227,7 @@
               </button>
             </div>
           </div>
+          <p id="catalogo-estado" class="solo-lector" role="status" aria-live="polite"></p>
           <div class="products-grid-lentes" id="grid-lentes-cafe"></div>
           <nav
             class="paginacion"
@@ -333,9 +344,9 @@
 
     <!-- VISTA CARRITO -->
     <main id="view-cart" class="cart-view hidden">
-      <p class="back-link" data-action="mostrar-seccion" data-view="tienda">
+      <button class="back-link" data-action="mostrar-seccion" data-view="tienda">
         &lt; Volver al inicio
-      </p>
+      </button>
 
       <div class="cart-page-layout">
         <div class="cart-items-column">
@@ -378,7 +389,9 @@
           <hr class="dashed-divider" />
 
           <div class="payment-methods-section">
-            <p class="payment-title"><strong>Método de Pago:</strong></p>
+            <label class="payment-title" for="payment-type-select"
+              ><strong>Método de Pago:</strong></label
+            >
 
             <select
               id="payment-type-select"

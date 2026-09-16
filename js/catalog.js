@@ -77,9 +77,11 @@ export function renderLentes(items) {
 
       return `
     <article class="product-card-figma">
+      ${/* Clicable con ratón por comodidad; el camino accesible es el botón del
+             título, así la tarjeta no añade una parada de tabulador duplicada. */ ""}
       ${marcaFoto(prod.img ?? IMG_PLACEHOLDER, `Lente de contacto ${nombre}`, `data-action="open-detail" data-id="${prod.id}"`)}
       <div class="card-info">
-        <h3 data-action="open-detail" data-id="${prod.id}">${nombre}</h3>
+        <h3><button class="card-title-btn" data-action="open-detail" data-id="${prod.id}">${nombre}</button></h3>
         <p class="card-meta">${escapar(detalle)}</p>
         <p class="price">${comprable ? formatearPrecio(prod.precio) : SIN_PRECIO}</p>
       </div>
@@ -121,7 +123,13 @@ export function filtrarLentes(valor, grupo = "pupila") {
   const botones = document.querySelectorAll(
     `.pupil-filters[data-group="${grupo}"] .filter-btn`,
   );
-  botones.forEach((b) => b.classList.toggle("active", b.dataset.filter === valor));
+  botones.forEach((b) => {
+    const activo = b.dataset.filter === valor;
+    b.classList.toggle("active", activo);
+    // El estado no puede vivir solo en una clase CSS: sin esto, quien usa lector
+    // de pantalla no sabe qué filtro está aplicado.
+    b.setAttribute("aria-pressed", String(activo));
+  });
 
   // Un filtro nuevo puede dejar menos páginas que la actual: se vuelve a la 1.
   actualizarCatalogoLentes({ volverAlInicio: true });
@@ -150,6 +158,19 @@ export function actualizarCatalogoLentes({ volverAlInicio = false } = {}) {
   const desde = (paginaActual - 1) * POR_PAGINA;
   renderLentes(filtrados.slice(desde, desde + POR_PAGINA));
   renderPaginacion(totalPaginas, filtrados.length);
+  anunciarResultado(filtrados.length, totalPaginas);
+}
+
+/* El grid se repinta sin avisar: para quien no ve el cambio, la página parece
+   no haber respondido. Esta región lo dice en voz alta. */
+function anunciarResultado(total, totalPaginas) {
+  const estado = document.getElementById("catalogo-estado");
+  if (!estado) return;
+
+  estado.textContent =
+    total === 0
+      ? "No hay lentes con esa combinación de tono y pupila."
+      : `${total} referencia${total === 1 ? "" : "s"}, página ${paginaActual} de ${totalPaginas}.`;
 }
 
 export function irAPaginaLentes(pagina) {

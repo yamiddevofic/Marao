@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- El logo del encabezado, el enlace "Volver al inicio" y el nombre de cada lente ya se pueden usar con el teclado: antes eran texto o imágenes que solo respondían al ratón.
+- El selector de método de pago no tenía etiqueta asociada; ahora sí.
+- Los botones de filtro comunican cuál está aplicado, y el catálogo anuncia cuántas referencias quedan y en qué página, para quien navega con lector de pantalla.
+- En la vista del carrito, el botón de quitar producto, los selectores de envío y pago y el enlace de volver eran más pequeños que el mínimo para tocarlos con el dedo.
+
 - Los modales (detalle del lente, iniciar sesión y perfil) ya se pueden cerrar con la tecla Escape o tocando fuera de la tarjeta; antes solo respondían al botón de cerrar.
 - Con un modal abierto, el tabulador ya no se escapa al catálogo de detrás: se queda dentro y al cerrar el foco vuelve al elemento que lo abrió.
 - Los modales se anuncian como diálogos con su título, de modo que un lector de pantalla informa de dónde está la persona al abrirlos.
