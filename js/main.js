@@ -16,6 +16,7 @@ import {
   getCarrito,
 } from "./cart.js";
 import { mostrarSeccion } from "./ui.js";
+import { cerrarModalSuperior, hayModalAbierto } from "./modales.js";
 import { desplazarCarruselPestanas } from "./carrusel.js";
 import {
   enviarPedidoWhatsApp,
@@ -125,6 +126,11 @@ document.addEventListener("click", (event) => {
   if (el.closest("#main-nav")) alternarMenu(true);
 
   switch (el.dataset.action) {
+    case "close-modal":
+      /* Solo si el clic cayó en el propio fondo: dentro de la tarjeta, `closest`
+         también devuelve el backdrop y cerraría el modal al tocar su contenido. */
+      if (event.target === el) cerrarModalSuperior();
+      break;
     case "toggle-menu":
       alternarMenu();
       break;
@@ -207,6 +213,19 @@ document.addEventListener("change", (event) => {
 document.addEventListener("input", (event) => {
   if (event.target.id === "user-address-input") {
     guardarDireccionConEspera();
+  }
+});
+
+/* Escape resuelve una cosa a la vez, de arriba abajo: el modal que está encima
+   y, si no hay ninguno, el menú desplegable. Con un único punto de decisión no
+   puede pasar que una pulsación cierre el modal y además el menú de debajo. */
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+
+  if (hayModalAbierto()) {
+    cerrarModalSuperior();
+  } else if (document.getElementById("main-nav")?.classList.contains("abierto")) {
+    alternarMenu(true);
   }
 });
 

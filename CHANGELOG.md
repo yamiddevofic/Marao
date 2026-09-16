@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Los modales (detalle del lente, iniciar sesión y perfil) ya se pueden cerrar con la tecla Escape o tocando fuera de la tarjeta; antes solo respondían al botón de cerrar.
+- Con un modal abierto, el tabulador ya no se escapa al catálogo de detrás: se queda dentro y al cerrar el foco vuelve al elemento que lo abrió.
+- Los modales se anuncian como diálogos con su título, de modo que un lector de pantalla informa de dónde está la persona al abrirlos.
+- En celular, Escape también cierra el menú desplegable.
+
 - Al iniciar sesión el logo del encabezado se corría del centro y quedaba pegado al borde derecho, en celular y en computador. El centrado dependía de un ancho fijo que no podía compensar un lado que crece al entrar a la cuenta.
 - El botón de cerrar sesión medía 13x15 px, por debajo del mínimo para tocarlo con el dedo. Ahora vive dentro del modal de perfil con un tamaño cómodo.
 

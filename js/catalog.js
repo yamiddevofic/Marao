@@ -1,7 +1,7 @@
 import { productosBase, getLentes } from "./productos.js";
 import { COLORES_LENTE } from "./lentes.js";
 import { FICHA_LENTE } from "./constantes.js";
-import { bloquearScroll, desbloquearScroll } from "./scroll-lock.js";
+import { abrirModal, cerrarModal } from "./modales.js";
 import { agregarAlCarrito } from "./cart.js";
 import { formatearPrecio } from "./formato.js";
 
@@ -246,18 +246,11 @@ export function abrirModalDetalle(id) {
   texto("modal-duracion", FICHA_LENTE.duracion);
   texto("modal-tipo", FICHA_LENTE.tipo);
 
-  document.getElementById("modal-product-detail").classList.add("open");
-  bloquearScroll();
+  abrirModal("modal-product-detail");
 }
 
 export function cerrarModalDetalle() {
-  const modal = document.getElementById("modal-product-detail");
-  // Sin esta guarda, cerrar un modal ya cerrado descontaría un bloqueo que
-  // nunca se pidió y devolvería el scroll con otro modal todavía abierto.
-  if (!modal.classList.contains("open")) return;
-
-  modal.classList.remove("open");
-  desbloquearScroll();
+  cerrarModal("modal-product-detail");
 }
 
 export function modificarCantidadModal(delta) {

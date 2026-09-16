@@ -418,8 +418,14 @@
     </main>
 
     <!-- MODAL LOGIN -->
-    <div id="modal-login" class="modal-backdrop">
-      <div class="modal-detail-card login-card">
+    <div id="modal-login" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="modal-detail-card login-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-login"
+        tabindex="-1"
+      >
         <button
           class="close-modal-x"
           data-action="close-login"
@@ -427,7 +433,7 @@
         >
           &times;
         </button>
-        <h3 class="modal-header-title">INICIAR SESIÓN</h3>
+        <h3 class="modal-header-title" id="titulo-login">INICIAR SESIÓN</h3>
 
         <div class="identidad-cuerpo">
           <img
@@ -472,8 +478,14 @@
     </div>
 
     <!-- MODAL PERFIL -->
-    <div id="modal-perfil" class="modal-backdrop">
-      <div class="modal-detail-card perfil-card">
+    <div id="modal-perfil" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="modal-detail-card perfil-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-perfil"
+        tabindex="-1"
+      >
         <button
           class="close-modal-x"
           data-action="close-perfil"
@@ -481,7 +493,7 @@
         >
           &times;
         </button>
-        <h3 class="modal-header-title">MI PERFIL</h3>
+        <h3 class="modal-header-title" id="titulo-perfil">MI PERFIL</h3>
 
         <div class="identidad-cuerpo">
           <img id="perfil-foto" class="perfil-foto" alt="" />
@@ -509,8 +521,14 @@
     </div>
 
     <!-- MODAL DETALLE PRODUCTO -->
-    <div id="modal-product-detail" class="modal-backdrop">
-      <div class="modal-detail-card">
+    <div id="modal-product-detail" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="modal-detail-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-detalle"
+        tabindex="-1"
+      >
         <button
           class="close-modal-x"
           data-action="close-detail"
@@ -518,7 +536,7 @@
         >
           &times;
         </button>
-        <h3 class="modal-header-title">INFORMACIÓN DEL LENTE</h3>
+        <h3 class="modal-header-title" id="titulo-detalle">INFORMACIÓN DEL LENTE</h3>
 
         <div class="modal-detail-body">
           <div class="modal-img-col">

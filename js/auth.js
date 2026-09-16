@@ -1,4 +1,4 @@
-import { bloquearScroll, desbloquearScroll } from "./scroll-lock.js";
+import { abrirModal, cerrarModal } from "./modales.js";
 import {
   CLAVE_SESION,
   claveEnvio,
@@ -43,16 +43,11 @@ export function inicializarSesion() {
 }
 
 export function openLoginModal() {
-  document.getElementById("modal-login").classList.add("open");
-  bloquearScroll();
+  abrirModal("modal-login");
 }
 
 export function cerrarModalLogin() {
-  const modal = document.getElementById("modal-login");
-  if (!modal.classList.contains("open")) return;
-
-  modal.classList.remove("open");
-  desbloquearScroll();
+  cerrarModal("modal-login");
 }
 
 export function cerrarSesion() {
@@ -190,16 +185,11 @@ function pintarModalPerfil() {
 export function abrirModalPerfil() {
   if (!usuarioLogueado) return;
   pintarModalPerfil();
-  document.getElementById("modal-perfil")?.classList.add("open");
-  bloquearScroll();
+  abrirModal("modal-perfil");
 }
 
 export function cerrarModalPerfil() {
-  const modal = document.getElementById("modal-perfil");
-  if (!modal || !modal.classList.contains("open")) return;
-
-  modal.classList.remove("open");
-  desbloquearScroll();
+  cerrarModal("modal-perfil");
 }
 
 // GSI resuelve `data-callback` contra `window` en cuanto carga la librería, y
