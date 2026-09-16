@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- El carrito ya no se pierde al recargar ni al volver de WhatsApp: se guarda en el navegador y se recupera al abrir la página. Si una referencia salió del catálogo mientras tanto, no reaparece.
+- La sesión de Google sobrevive a la recarga: ya no hay que volver a entrar cada vez.
+- Al iniciar sesión, el dispositivo recuerda la dirección y el destino de envío de esa cuenta y los repone en la próxima compra. En un celular compartido, cada cuenta ve solo lo suyo.
+
 - Se sumaron al catálogo los 19 lentes de cosplay (Sharingan, Nezuko, Tanjiro, blancos de terror, fantasía...) a $45.000, con su propio botón de filtro "COSPLAY" junto a los tonos.
 - El catálogo de lentes pasó a tener las 85 referencias reales del documento del catálogo, cada una con su foto, descripción y ficha técnica (tono, cobertura, borde, efecto, marcas y diámetros disponibles).
 - Se pueden filtrar los lentes por tono (café & miel, verde, gris y azul), y ese filtro se combina con el de pupila.
@@ -23,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Se publicó la sección "Accesorios y cuidado para tus lentes" (solución, kit aplicador + pinza, estuche porta-lentes y lavadora manual), que estaba definida pero no se mostraba en la página. Cada accesorio muestra ahora su descripción.
 
 ### Changed
+
+- El modal de login decía "guardar tus datos de envío" sin que se guardara nada. Ahora lo hace de verdad, y el texto aclara que es en ese dispositivo.
 
 - Los iconos del encabezado (carrito y perfil) pasaron de morado a negro.
 - En celular el primer botón de la portada dice solo "CATÁLOGO"; en pantallas grandes sigue diciendo "CATÁLOGO LENTES".

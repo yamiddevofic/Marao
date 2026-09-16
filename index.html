@@ -443,12 +443,25 @@
         <span class="close-modal-x" data-action="close-login">&times;</span>
         <h3>INICIAR SESIÓN EN MARÃO</h3>
         <p class="login-sub">
-          Accede con tu cuenta de Google para guardar tus datos de envío.
+          Accede con tu cuenta de Google y este dispositivo recordará tus datos
+          de envío para tu próxima compra.
         </p>
 
         <!-- La inicialización de Google la hace js/auth.js: el atributo
              data-callback de GSI se resuelve contra window al cargar la
-             librería, cuando los módulos todavía no se han ejecutado. -->
+             librería, cuando los módulos todavía no se han ejecutado.
+
+             El client ID de OAuth es información pública (va en el código de
+             toda página que use GSI); lo que protege la cuenta es la lista de
+             "Orígenes autorizados de JavaScript" en Google Cloud Console, no
+             esconder este valor. Por eso vive aquí y no en un archivo aparte.
+
+             Para activarlo: Google Cloud Console → APIs y servicios →
+             Credenciales → ID de cliente de OAuth (tipo "Aplicación web"), y
+             registrar como orígenes autorizados las direcciones desde las que
+             se sirve el sitio (p. ej. http://127.0.0.1:5500 en desarrollo y el
+             dominio de producción). Mientras diga TU_CLIENT_ID, js/auth.js
+             desactiva el login y lo avisa por consola. -->
         <div class="google-btn-wrapper">
           <div
             id="google-login-config"

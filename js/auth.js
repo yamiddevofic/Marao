@@ -1,9 +1,39 @@
 import { bloquearScroll, desbloquearScroll } from "./scroll-lock.js";
+import { CLAVE_SESION, leer, guardar, borrar } from "./almacenamiento.js";
 
-let usuarioLogueado = null;
+/**
+ * El perfil se restaura de `localStorage` para que recargar no cierre la
+ * sesión.
+ *
+ * Importante para quien siga este código: esto NO es autenticación. El JWT de
+ * Google se decodifica sin verificar la firma (`parseJwt`), porque no hay
+ * backend que pueda validarla. La identidad aquí es decorativa — sirve para
+ * saludar por el nombre y para separar los datos de envío de dos personas que
+ * comparten el celular. Nada del sistema debe confiar en este valor para
+ * conceder acceso a algo.
+ */
+let usuarioLogueado = restaurarSesion();
+
+function restaurarSesion() {
+  const perfil = leer(CLAVE_SESION, null);
+  if (!perfil || typeof perfil.email !== "string") return null;
+  return perfil;
+}
+
+/* Mismo patrón que `cart:updated`: quien necesite reaccionar se suscribe, en
+   vez de que auth.js llame directamente a los módulos que dependen de esto. */
+function notificarSesion() {
+  window.dispatchEvent(new CustomEvent("sesion:cambiada"));
+}
 
 export function getUsuarioLogueado() {
   return usuarioLogueado;
+}
+
+/* La llama `main.js` al arrancar, para pintar la sesión que se restauró. */
+export function inicializarSesion() {
+  actualizarInterfazUsuario();
+  notificarSesion();
 }
 
 export function openLoginModal() {
@@ -21,7 +51,9 @@ export function cerrarModalLogin() {
 
 export function cerrarSesion() {
   usuarioLogueado = null;
+  borrar(CLAVE_SESION);
   actualizarInterfazUsuario();
+  notificarSesion();
 }
 
 function parseJwt(token) {
@@ -53,7 +85,9 @@ export function handleCredentialResponse(response) {
     email: data.email || "",
     foto: data.picture || "",
   };
+  guardar(CLAVE_SESION, usuarioLogueado);
   actualizarInterfazUsuario();
+  notificarSesion();
   cerrarModalLogin();
 }
 

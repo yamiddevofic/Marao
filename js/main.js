@@ -23,11 +23,14 @@ import {
   detectarTipoTarjeta,
   formatearFechaExp,
   togglePaymentInputs,
+  guardarDatosEnvio,
+  restaurarDatosEnvio,
 } from "./checkout.js";
 import {
   openLoginModal,
   cerrarModalLogin,
   cerrarSesion,
+  inicializarSesion,
 } from "./auth.js";
 
 function actualizarBadge() {
@@ -114,9 +117,22 @@ document.addEventListener("click", (event) => {
   }
 });
 
+/* La dirección se guarda mientras se escribe: sin espera, cada tecla sería una
+   escritura a localStorage y una serialización JSON completa. */
+function conEspera(fn, ms = 400) {
+  let temporizador;
+  return (...args) => {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => fn(...args), ms);
+  };
+}
+
+const guardarDireccionConEspera = conEspera(guardarDatosEnvio);
+
 document.addEventListener("change", (event) => {
   if (event.target.id === "shipping-city") {
     calcularCostosEnvio();
+    guardarDatosEnvio();
   } else if (event.target.id === "payment-type-select") {
     togglePaymentInputs();
   }
@@ -127,12 +143,22 @@ document.addEventListener("input", (event) => {
     detectarTipoTarjeta(event.target);
   } else if (event.target.id === "card-expiry-input") {
     formatearFechaExp(event.target);
+  } else if (event.target.id === "user-address-input") {
+    guardarDireccionConEspera();
   }
 });
 
 window.addEventListener("cart:updated", () => {
   actualizarBadge();
-  calcularCostosEnvio();
+  // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
+  // los datos de envío y recalcula el resumen.
+  inicializarSesion();
+});
+
+/* Al entrar o salir de una cuenta cambia el cajón de datos de envío, así que
+   el formulario se repuebla con los de quien corresponda. */
+window.addEventListener("sesion:cambiada", () => {
+  restaurarDatosEnvio();
 });
 
 document.addEventListener("DOMContentLoaded", () => {

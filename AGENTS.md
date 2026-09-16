@@ -43,6 +43,8 @@ Antes de tocar cualquiera de estos módulos, revisa cómo están implementados l
 
 - **Delegación de eventos**: `js/main.js` escucha `click`, `change` e `input` en `document` y despacha por el atributo `data-action`. Para agregar una interacción, añade un `data-action` en el HTML y su `case` en el switch — nunca un `addEventListener` suelto por tarjeta ni un `onclick` en el markup.
 - **Evento `cart:updated`**: cualquier cambio del carrito se notifica con este `CustomEvent` en `window`. Quien necesite reaccionar (badge, resumen de envío) se suscribe; no se llama al render desde `cart.js`.
+- **Evento `sesion:cambiada`**: entrar o salir de una cuenta se notifica con este `CustomEvent` en `window`, igual que `cart:updated`. Quien dependa de la sesión se suscribe; `auth.js` no llama a los módulos que dependen de ella.
+- **Persistencia**: todo lo que se guarda pasa por `js/almacenamiento.js`, nunca por `localStorage` directo — ese módulo envuelve cada acceso en `try/catch` porque en modo privado el solo hecho de tocarlo lanza. El carrito se guarda como `{id, cantidad}` y se revalida contra `productosBase` al restaurar; los datos de envío van por cuenta (`claveEnvio`). No se persiste nada del método de pago.
 - **Design tokens**: usa las variables CSS de `:root` (`--color-*`, `--font-body`, `--font-display`, `--spacing-*`, `--radius-*`, `--gutter`) en vez de valores literales.
 - **Idioma del código**: nombres de variables y funciones en español (`agregarAlCarrito`, `calcularCostosEnvio`); nombres de archivos y mensajes de commit en inglés.
 - **Breakpoint único**: `@media (min-width: 769px)` en `css/styles.css`. No introduzcas breakpoints nuevos sin motivo.

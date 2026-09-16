@@ -12,7 +12,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
 - **Checkout**: selección de método de pago y envío del pedido por WhatsApp.
-- **Login con Google**: acceso con cuenta de Google (SDK GSI) para prellenar los datos del cliente.
+- **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
 
 La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart`.
@@ -47,6 +47,7 @@ Pag_Marao/
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
 │   ├── carrusel.js     # Desplazamiento del carrusel de pestañas
 │   ├── scroll-lock.js  # Congela el scroll de la página con un modal abierto
+│   ├── almacenamiento.js # Persistencia en localStorage (carrito, sesión, envío)
 │   ├── formato.js      # Formato de precios en pesos colombianos
 │   └── ui.js           # Navegación entre vistas (tienda / carrito)
 ├── assets/img/         # Imágenes (productos, marca, hero)
@@ -64,6 +65,11 @@ Pag_Marao/
 - **Categorías de producto**: cada producto lleva un `tipo` (`reducida` / `estandar` para lentes, `pestana`, `accesorio`). Los helpers `getLentes()` y `getAccesorios()` de `productos.js` son la única fuente de esa partición — no filtres por precio ni por rango de `id`.
 - **Productos sin precio**: hoy no hay ninguno, pero la salvaguarda sigue activa — un producto con `precio: null` se publica mostrando "Precio por confirmar", con el botón deshabilitado, y `agregarAlCarrito()` lo rechaza. Dejar entrar algo sin precio mandaría un pedido a $0 por WhatsApp.
 - **Datos de lentes**: `js/lentes.js` es un archivo generado a partir del documento del catálogo y del set de fotos; cada referencia añade `color`, `cobertura`, `borde`, `efecto`, `promocion`, `alias` y `presentaciones` (marca + diámetro + pupila). `constantes.js` existe para que `lentes.js` y `productos.js` compartan `IMG_PATH` y `PRECIO_LENTES` sin ciclo de imports.
+- **Persistencia**: `js/almacenamiento.js` envuelve `localStorage` con `try/catch` en cada acceso, porque en modo privado o con el almacenamiento bloqueado el solo hecho de tocarlo lanza; si falla, el sitio sigue funcionando sin memoria. Guarda tres cosas bajo el prefijo `marao:`:
+  - **Carrito** (`marao:carrito`): solo `id` y `cantidad`. Al restaurar se revalida contra `productosBase`, así que una referencia retirada o sin precio no vuelve y un carrito viejo nunca manda un precio desactualizado por WhatsApp.
+  - **Sesión** (`marao:sesion`): el perfil de Google, para que recargar no cierre la sesión. No es autenticación (ver deuda técnica).
+  - **Datos de envío** (`marao:envio:<email>`, o `marao:envio:anonimo` sin sesión): dirección y destino. Se reasignan **siempre** al cambiar de cuenta, incluso cuando no hay datos guardados: reponer solo cuando hay valor dejaría en pantalla el destino de quien usó el navegador antes, y con él una tarifa de envío que esa persona no eligió. Nunca se guarda nada del método de pago.
+- **Evento `sesion:cambiada`**: entrar o salir de una cuenta se notifica con este `CustomEvent` en `window`, igual que `cart:updated`. Quien dependa de la sesión se suscribe en vez de que `auth.js` lo llame directamente.
 - **Modales y scroll**: al abrir un modal se llama a `bloquearScroll()` (`js/scroll-lock.js`) y al cerrarlo a `desbloquearScroll()`. Usa `position: fixed` sobre el `body` porque `overflow: hidden` no frena el scroll en iOS, y lleva un contador interno para soportar un modal sobre otro. Si añades un modal nuevo, engánchalo a ese par de funciones.
 - **Render del catálogo**: `actualizarCatalogoLentes()` (`js/catalog.js`) es el único punto que pinta el grid; filtros, paginación y carga inicial pasan por ahí en vez de llamar a `renderLentes()` directamente.
 - **Precios**: siempre con `formatearPrecio()` (`js/formato.js`), que fuerza el formato `es-CO`. Nunca `toLocaleString()` sin locale.
@@ -146,7 +152,6 @@ En desarrollo activo. Puntos pendientes identificados:
 
 - **18 fotos sin ficha — pendiente del proveedor** (`lentesSinFicha` en `js/lentes.js`): el caso inverso. Hay foto pero el documento no las describe, así que falta su tipo de pupila y su cobertura, que no se pueden deducir de la imagen. No se publican para no inventar datos de producto. Con esos dos campos, cada una pasa al array `lentes` y el catálogo sube de 104 a 122 referencias.
 - **Accesorios sin foto**: `estuche.jpg`, `solucion.jpg`, `pinzas.jpg` y `lavadora.jpg` no existen en el repo; se muestran con el placeholder.
-- **Carrito sin persistencia**: vive solo en memoria; se pierde al recargar. Persistir en `localStorage`.
 - **Catálogo hardcodeado**: `js/lentes.js` (85 referencias) y `js/productos.js` son archivos estáticos. Con este volumen ya conviene migrar a JSON externo o API, y cargarlo bajo demanda.
 - **Inventario/stock**: sin control de disponibilidad.
 - **Buscador de productos**: previsto en `AGENTS.md`, aún no implementado.

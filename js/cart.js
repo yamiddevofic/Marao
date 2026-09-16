@@ -1,9 +1,45 @@
 import { productosBase } from "./productos.js";
 import { formatearPrecio } from "./formato.js";
+import { CLAVE_CARRITO, leer, guardar } from "./almacenamiento.js";
 
-let carrito = [];
+let carrito = restaurarCarrito();
 
+/**
+ * Del almacenamiento solo vuelven `id` y `cantidad`; el resto se reconstruye
+ * desde el catálogo vigente. Guardar el producto entero dejaría el precio y el
+ * nombre congelados en el momento en que se añadió, y un carrito viejo podría
+ * mandar por WhatsApp un pedido con un precio que ya no existe.
+ *
+ * Una referencia que desapareció del catálogo, o que perdió el precio, no
+ * vuelve: es la misma regla que aplica `agregarAlCarrito`.
+ */
+function restaurarCarrito() {
+  const guardado = leer(CLAVE_CARRITO, []);
+  if (!Array.isArray(guardado)) return [];
+
+  return guardado.flatMap((item) => {
+    const prod = productosBase.find((p) => p.id === item?.id);
+    if (!prod || typeof prod.precio !== "number") return [];
+
+    const cantidad = Number(item?.cantidad);
+    if (!Number.isInteger(cantidad) || cantidad <= 0) return [];
+
+    return [{ ...prod, cantidad }];
+  });
+}
+
+/* Solo la referencia y cuántas: ver `restaurarCarrito`. */
+function persistirCarrito() {
+  guardar(
+    CLAVE_CARRITO,
+    carrito.map(({ id, cantidad }) => ({ id, cantidad })),
+  );
+}
+
+/* Todo cambio del carrito pasa por aquí, así que persistir en este punto cubre
+   añadir, quitar y cambiar cantidades sin repartir escrituras por el módulo. */
 function notificarActualizacion() {
+  persistirCarrito();
   window.dispatchEvent(new CustomEvent("cart:updated"));
 }
 
