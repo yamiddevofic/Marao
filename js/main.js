@@ -101,11 +101,15 @@ const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
 
 let temporizadorFeedback;
 
-function mostrarFeedback(mensaje) {
+function mostrarFeedback(mensaje, icono) {
   const feedback = document.getElementById("ui-feedback");
   if (!feedback) return;
+  const texto = feedback.querySelector(".ui-feedback-text");
+  const iconoElemento = feedback.querySelector("i");
+  if (!texto || !iconoElemento) return;
   clearTimeout(temporizadorFeedback);
-  feedback.textContent = mensaje;
+  texto.textContent = mensaje;
+  iconoElemento.className = `fa-solid ${icono}`;
   feedback.classList.remove("visible");
   requestAnimationFrame(() => feedback.classList.add("visible"));
   temporizadorFeedback = setTimeout(() => feedback.classList.remove("visible"), 2800);
@@ -186,15 +190,18 @@ document.addEventListener("click", (event) => {
       break;
     case "add-to-cart":
       agregarAlCarrito(id);
-      mostrarFeedback(`${productosBase.find((producto) => producto.id === id)?.nombre ?? "Producto"} añadido al carrito.`);
+      mostrarFeedback(
+        `${productosBase.find((producto) => producto.id === id)?.nombre ?? "Producto"} añadido al carrito.`,
+        "fa-circle-check",
+      );
       break;
     case "remove-item":
-      mostrarFeedback("Producto eliminado del carrito.");
+      mostrarFeedback("Producto eliminado del carrito.", "fa-trash-can");
       eliminarDelCarrito(id);
       break;
     case "change-qty":
       cambiarCantidadCart(id, Number(el.dataset.delta));
-      mostrarFeedback("Cantidad del producto actualizada.");
+      mostrarFeedback("Cantidad del producto actualizada.", "fa-arrows-rotate");
       break;
     case "carrusel":
       desplazarCarrusel(el.dataset.carrusel, Number(el.dataset.delta));
