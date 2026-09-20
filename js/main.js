@@ -1,4 +1,4 @@
-import { getAccesorios, getPestanas } from "./productos.js";
+import { getAccesorios, getPestanas, productosBase } from "./productos.js";
 import {
   renderAccesorios,
   renderPestanas,
@@ -99,6 +99,18 @@ function actualizarBadge() {
 
 const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
 
+let temporizadorFeedback;
+
+function mostrarFeedback(mensaje) {
+  const feedback = document.getElementById("ui-feedback");
+  if (!feedback) return;
+  clearTimeout(temporizadorFeedback);
+  feedback.textContent = mensaje;
+  feedback.classList.remove("visible");
+  requestAnimationFrame(() => feedback.classList.add("visible"));
+  temporizadorFeedback = setTimeout(() => feedback.classList.remove("visible"), 2800);
+}
+
 document.addEventListener(
   "error",
   (event) => {
@@ -174,12 +186,15 @@ document.addEventListener("click", (event) => {
       break;
     case "add-to-cart":
       agregarAlCarrito(id);
+      mostrarFeedback(`${productosBase.find((producto) => producto.id === id)?.nombre ?? "Producto"} añadido al carrito.`);
       break;
     case "remove-item":
+      mostrarFeedback("Producto eliminado del carrito.");
       eliminarDelCarrito(id);
       break;
     case "change-qty":
       cambiarCantidadCart(id, Number(el.dataset.delta));
+      mostrarFeedback("Cantidad del producto actualizada.");
       break;
     case "carrusel":
       desplazarCarrusel(el.dataset.carrusel, Number(el.dataset.delta));
