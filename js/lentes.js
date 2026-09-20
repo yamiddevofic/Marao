@@ -110,7 +110,7 @@ export const lentes = [
       }
     ],
     img: IMG_LENTES + "miel/angeles-amber-2.jpeg",
-    imagenes: [IMG_LENTES + "miel/angeles-amber-2.jpeg", IMG_LENTES + "miel/angeles-brown.jpeg"]
+    imagenes: [IMG_LENTES + "miel/angeles-amber-2.jpeg"]
   },
   {
     id: 1003,
