@@ -6,5 +6,12 @@
 # procesados. Sus imágenes viven optimizadas en assets/img/lentes/, así que
 # versionar también los originales duplicaría ~16 MB sin aportar nada.
 FOTOS PAGINA/
+FOTOS PAGINA.rar
+FOTOS PAGINA (2)/
 lentes-cosplay/
 lentes-cosplay.zip
+
+# Documentos del negocio de los que salen las fichas y los precios. Lo que el
+# sitio necesita ya vive en js/lentes.js y js/productos.js.
+CATALOGO PAGINA*.docx
+PRODUCTOS WORD*.pdf

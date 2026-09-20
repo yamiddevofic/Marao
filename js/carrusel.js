@@ -1,7 +1,9 @@
 // El carrusel se desplaza con scroll nativo (swipe en móvil, teclado o flechas
 // en escritorio); las flechas solo empujan ese scroll un "paso" = una tarjeta.
-export function desplazarCarruselPestanas(direccion) {
-  const carrusel = document.getElementById("pestanas-carrusel");
+// Lo usan las pestañas y los accesorios: cada flecha dice en `data-carrusel`
+// sobre qué pista actúa.
+export function desplazarCarrusel(id, direccion) {
+  const carrusel = document.getElementById(id);
   if (!carrusel) return;
 
   const maximo = carrusel.scrollWidth - carrusel.clientWidth;
@@ -16,7 +18,7 @@ export function desplazarCarruselPestanas(direccion) {
 }
 
 function calcularPaso(carrusel) {
-  const tarjeta = carrusel.querySelector(".pestana-card");
+  const tarjeta = carrusel.firstElementChild;
   if (!tarjeta) return carrusel.clientWidth;
 
   const gap = Number.parseFloat(getComputedStyle(carrusel).columnGap);

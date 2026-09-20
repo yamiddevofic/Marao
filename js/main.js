@@ -1,6 +1,7 @@
-import { getAccesorios } from "./productos.js";
+import { getAccesorios, getPestanas } from "./productos.js";
 import {
   renderAccesorios,
+  renderPestanas,
   filtrarLentes,
   actualizarCatalogoLentes,
   irAPaginaLentes,
@@ -17,7 +18,7 @@ import {
 } from "./cart.js";
 import { mostrarSeccion } from "./ui.js";
 import { cerrarModalSuperior, hayModalAbierto } from "./modales.js";
-import { desplazarCarruselPestanas } from "./carrusel.js";
+import { desplazarCarrusel } from "./carrusel.js";
 import {
   enviarPedidoWhatsApp,
   calcularCostosEnvio,
@@ -180,8 +181,8 @@ document.addEventListener("click", (event) => {
     case "change-qty":
       cambiarCantidadCart(id, Number(el.dataset.delta));
       break;
-    case "carrusel-pestanas":
-      desplazarCarruselPestanas(Number(el.dataset.delta));
+    case "carrusel":
+      desplazarCarrusel(el.dataset.carrusel, Number(el.dataset.delta));
       break;
     case "checkout":
       enviarPedidoWhatsApp();
@@ -244,6 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ubicarPerfil();
   actualizarCatalogoLentes();
   renderAccesorios(getAccesorios());
+  renderPestanas(getPestanas());
   actualizarBadge();
   // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
   // los datos de envío y recalcula el resumen.

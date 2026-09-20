@@ -241,57 +241,35 @@
   <h2>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h2>
 
   <!-- CARRUSEL: las tarjetas se desplazan en horizontal (swipe o flechas) -->
-  <div class="pestanas-carousel">
+  <div class="carrusel">
     <div
-      class="pestanas-grid"
+      class="carrusel-pista"
       id="pestanas-carrusel"
       tabindex="0"
       role="region"
       aria-label="Carrusel de productos de pestañas"
     >
-    
-    <!-- TARJETA 1: PESTAÑAS -->
-    <div class="pestana-card">
-      <div class="pestana-img-box">
-        <picture><source srcset="assets/img/pestanas-1.webp" type="image/webp"><img src="assets/img/pestanas-1.jpg" alt="Bandeja Pestañas Punto a Punto" loading="lazy"></picture>
-      </div>
-      <div class="pestana-card-footer">
-        <h3>Tabla de Pestañas Punto a Punto</h3>
-        <p class="price">$30.000</p>
-        <button class="btn-add-figma" data-action="add-to-cart" data-id="98">AÑADIR</button>
-      </div>
-    </div>
-
-    <!-- TARJETA 2: PEGANTE -->
-    <div class="pestana-card">
-      <div class="pestana-img-box">
-        <picture><source srcset="assets/img/pegante-1.webp" type="image/webp"><img src="assets/img/pegante-1.jpg" alt="Pegante Bond & Seal" loading="lazy"></picture>
-      </div>
-      <div class="pestana-card-footer">
-        <h3>Pegante para Pestañas (Bond & Seal)</h3>
-        <p class="price">$7.000</p>
-        <button class="btn-add-figma" data-action="add-to-cart" data-id="100">AÑADIR</button>
-      </div>
-    </div>
-
+      <!-- Las tarjetas las pinta renderPestanas() con los datos de js/productos.js -->
     </div>
 
     <div class="carousel-controls">
       <button
         class="carousel-btn"
-        data-action="carrusel-pestanas"
+        data-action="carrusel"
+        data-carrusel="pestanas-carrusel"
         data-delta="-1"
         aria-controls="pestanas-carrusel"
-        aria-label="Ver producto anterior"
+        aria-label="Ver producto de pestañas anterior"
       >
         <i class="fa-solid fa-caret-left" aria-hidden="true"></i>
       </button>
       <button
         class="carousel-btn"
-        data-action="carrusel-pestanas"
+        data-action="carrusel"
+        data-carrusel="pestanas-carrusel"
         data-delta="1"
         aria-controls="pestanas-carrusel"
-        aria-label="Ver producto siguiente"
+        aria-label="Ver producto de pestañas siguiente"
       >
         <i class="fa-solid fa-caret-right" aria-hidden="true"></i>
       </button>
@@ -302,7 +280,41 @@
 
       <section class="starry-section accessories-section" id="accesorios">
         <h2>ACCESORIOS Y CUIDADO PARA TUS LENTES</h2>
-        <div class="accessories-grid" id="grid-accesorios"></div>
+
+        <!-- Mismo carrusel que las pestañas: son 9 accesorios y en una rejilla
+             la sección se volvía interminable. -->
+        <div class="carrusel">
+          <div
+            class="carrusel-pista accessories-grid"
+            id="grid-accesorios"
+            tabindex="0"
+            role="region"
+            aria-label="Carrusel de accesorios"
+          ></div>
+
+          <div class="carousel-controls">
+            <button
+              class="carousel-btn"
+              data-action="carrusel"
+              data-carrusel="grid-accesorios"
+              data-delta="-1"
+              aria-controls="grid-accesorios"
+              aria-label="Ver accesorio anterior"
+            >
+              <i class="fa-solid fa-caret-left" aria-hidden="true"></i>
+            </button>
+            <button
+              class="carousel-btn"
+              data-action="carrusel"
+              data-carrusel="grid-accesorios"
+              data-delta="1"
+              aria-controls="grid-accesorios"
+              aria-label="Ver accesorio siguiente"
+            >
+              <i class="fa-solid fa-caret-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
       </section>
 
       <section class="starry-section why-section" id="por-que-marao">
@@ -567,9 +579,23 @@
               <strong>Descripción:</strong><br />
               <span id="modal-desc"></span>
             </p>
-            <p><strong>Duración:</strong> <span id="modal-duracion"></span></p>
-            <p><strong>Tipo:</strong> <span id="modal-tipo"></span></p>
-          </div>
+             <p><strong>Duración:</strong> <span id="modal-duracion"></span></p>
+             <p><strong>Tipo:</strong> <span id="modal-tipo"></span></p>
+             <dl class="modal-ficha" id="modal-ficha">
+               <dt>Tono</dt>
+               <dd id="modal-color"></dd>
+               <dt>Cobertura</dt>
+               <dd id="modal-cobertura"></dd>
+               <dt>Borde</dt>
+               <dd id="modal-borde"></dd>
+               <dt>Efecto</dt>
+               <dd id="modal-efecto"></dd>
+               <dt>Marcas y diámetros</dt>
+               <dd id="modal-presentaciones"></dd>
+               <dt>Otros nombres</dt>
+               <dd id="modal-alias"></dd>
+             </dl>
+           </div>
         </div>
 
         <div class="modal-action-bar">

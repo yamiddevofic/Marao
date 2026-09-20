@@ -26,12 +26,12 @@ Implementados:
 - Modal de perfil (`#modal-perfil`): foto, nombre, correo y cerrar sesión
 - Inicio (hero de portada)
 - Catálogo: lentes de contacto (`js/catalog.js`, con filtros por pupila)
-- Catálogo: pestañas pelo a pelo (carrusel de tarjetas estáticas en `index.html` + `js/carrusel.js`)
+- Catálogo: pestañas pelo a pelo (carrusel renderizado desde datos, `renderPestanas()` + `js/carrusel.js`)
 - Modal de detalle de producto
 - Carrito de compras (`js/cart.js`)
 - Checkout con pedido por WhatsApp (`js/checkout.js`)
 - Login con Google (`js/auth.js`)
-- Accesorios y "¿Por qué comprar en MARÃO?" (secciones con fondo de estrellas, clase `.starry-section`)
+- Accesorios (mismo carrusel que las pestañas, `renderAccesorios()`) y "¿Por qué comprar en MARÃO?" (secciones con fondo de estrellas, clase `.starry-section`)
 - Contacto (footer)
 
 Previstos, todavía no implementados:
@@ -58,8 +58,11 @@ Antes de tocar cualquiera de estos módulos, revisa cómo están implementados l
 - **Design tokens**: usa las variables CSS de `:root` (`--color-*`, `--font-body`, `--font-display`, `--spacing-*`, `--radius-*`, `--gutter`) en vez de valores literales.
 - **Idioma del código**: nombres de variables y funciones en español (`agregarAlCarrito`, `calcularCostosEnvio`); nombres de archivos y mensajes de commit en inglés.
 - **Breakpoint único**: `@media (min-width: 769px)` en `css/styles.css`. No introduzcas breakpoints nuevos sin motivo.
-- **Convenciones de móvil**: están en la skill `mobile-web` (`.claude/skills/mobile-web/`) — áreas táctiles, alturas `dvh`, zoom de iOS en formularios, desbordes y modales. Aplícalas al tocar cualquier vista y verifica con `scripts/audit-mobile.js` antes de dar el trabajo por terminado.
-- **Categorías de producto**: usa `getLentes()` / `getAccesorios()` de `js/productos.js`, nunca filtres el catálogo por precio ni por rango de `id`.
+- **Convenciones de móvil**: están en la skill `mobile-web` (`.claude/skills/mobile-web/`) — áreas táctiles, alturas `dvh`, zoom de iOS en formularios, desbordes y modales. Aplícalas al tocar cualquier vista y verifica con `.claude/skills/mobile-web/scripts/audit-mobile.js` antes de dar el trabajo por terminado.
+- **Categorías de producto**: usa `getLentes()` / `getAccesorios()` / `getPestanas()` de `js/productos.js`, nunca filtres el catálogo por precio ni por rango de `id`.
+- **Nada de tarjetas de producto a mano en el HTML**: el nombre y el precio se escriben una sola vez, en `js/productos.js`. Las tarjetas de pestañas vivían duplicadas en `index.html` y de ahí salieron dos bugs de `data-id` mal copiado y un producto que nunca se mostró. Un catálogo nuevo se pinta desde los datos, como `renderLentes()`, `renderAccesorios()` y `renderPestanas()`.
+- **Carruseles**: pestañas y accesorios comparten pista (`.carrusel` + `.carrusel-pista`), flechas y `js/carrusel.js`. Cada flecha dice sobre qué pista actúa con `data-action="carrusel"` y `data-carrusel="<id>"`. La columna que contiene una pista necesita `min-width: 0`: sin eso su ancho mínimo es el de todas las tarjetas sumadas y se come la fila.
+- **Alto de las tarjetas**: el nombre reserva siempre dos renglones y la descripción tres (`-webkit-line-clamp`), para que el precio y el botón caigan a la misma altura en toda la fila. Los textos de `js/productos.js` están escritos para caber ahí; si escribes uno más largo, se recorta.
 - **Tipografías**: `--font-display` (Bitter) para el hero, `--font-ui` (Blinker) para catálogos, carrusel y secciones con estrellas, `--font-body` (Montserrat) para el resto. Los controles de formulario no heredan la fuente: hay que declararla.
 - **Precios**: siempre con `formatearPrecio()` de `js/formato.js` (formato `es-CO`), nunca `toLocaleString()` sin locale.
 - **Google Identity Services**: la inicialización se hace desde `js/auth.js` (hook `window.onGoogleLibraryLoad`), no con los atributos `data-callback` / `g_id_onload` de GSI: la librería resuelve esa configuración antes de que corran los módulos ES.

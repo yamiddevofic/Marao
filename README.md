@@ -6,8 +6,8 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 
 - **Inicio / Tienda** (`#view-store`): hero de portada + catálogo dual (lentes de contacto y pestañas pelo a pelo).
 - **Catálogo de lentes** (`#lentes`): grid renderizado desde JS con filtros combinables por tono (café & miel / verde / gris / azul) y por pupila (reducida / estándar), paginado de 6 referencias.
-- **Catálogo de pestañas** (`#pestanas`): carrusel horizontal con tarjetas estáticas en el HTML (tabla punto a punto y pegante Bond & Seal) que agregan al carrito por `data-id`. En escritorio ocupa la mitad derecha de la página, llega al borde y la imagen del hero se monta sobre su parte superior.
-- **Accesorios** (`#accesorios`): grid renderizado desde JS con los productos de tipo `accesorio`, con nombre, precio y descripción.
+- **Catálogo de pestañas** (`#pestanas`): carrusel horizontal renderizado desde JS (`renderPestanas()`) con los productos de tipo `pestana`. En escritorio ocupa el 55% derecho de la página, llega al borde y la imagen del hero se monta sobre su parte superior.
+- **Accesorios** (`#accesorios`): mismo carrusel, renderizado desde JS (`renderAccesorios()`) con los productos de tipo `accesorio`, con nombre, precio y descripción.
 - **¿Por qué comprar en MARÃO?** (`#por-que-marao`): tres argumentos de venta estáticos (envíos, calidad, WhatsApp).
 - **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
@@ -40,14 +40,14 @@ Pag_Marao/
 ├── js/
 │   ├── main.js         # Punto de entrada: render inicial y delegación de eventos
 │   ├── constantes.js   # Constantes compartidas (IMG_PATH, PRECIO_LENTES)
-│   ├── lentes.js       # Catálogo cosmético: 85 referencias con ficha técnica
+│   ├── lentes.js       # Catálogo cosmético: 102 referencias con ficha técnica
 │   ├── cosplay.js      # Línea cosplay: 19 referencias
 │   ├── productos.js    # Une lentes + pestañas + accesorios en productosBase
 │   ├── catalog.js      # Render de catálogo, filtros y modal de detalle
 │   ├── cart.js         # Estado y operaciones del carrito
 │   ├── checkout.js     # Costos de envío, medios de pago y pedido por WhatsApp
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
-│   ├── carrusel.js     # Desplazamiento del carrusel de pestañas
+│   ├── carrusel.js     # Desplazamiento de los carruseles (pestañas y accesorios)
 │   ├── scroll-lock.js  # Congela el scroll de la página con un modal abierto
 │   ├── almacenamiento.js # Persistencia en localStorage (carrito, sesión, envío)
 │   ├── formato.js      # Formato de precios en pesos colombianos
@@ -64,7 +64,7 @@ Pag_Marao/
 - **Sin estado global en `window`**: cada módulo exporta lo que necesita. La única excepción es `window.handleCredentialResponse`, requerida por el SDK de Google.
 - **Delegación de eventos**: `main.js` escucha `click`, `change` e `input` a nivel de `document` y despacha según el atributo `data-action` del elemento (`add-to-cart`, `open-detail`, `checkout`, `filtrar-lentes`, etc.). No hay `onclick` en el markup.
 - **Comunicación del carrito**: `cart.js` emite el evento `cart:updated` en `window`; `main.js` lo escucha para refrescar el badge del header y recalcular los costos de envío.
-- **Categorías de producto**: cada producto lleva un `tipo` (`reducida` / `estandar` para lentes, `pestana`, `accesorio`). Los helpers `getLentes()` y `getAccesorios()` de `productos.js` son la única fuente de esa partición — no filtres por precio ni por rango de `id`.
+- **Categorías de producto**: cada producto lleva un `tipo` (`reducida` / `estandar` para lentes, `pestana`, `accesorio`). Los helpers `getLentes()`, `getAccesorios()` y `getPestanas()` de `productos.js` son la única fuente de esa partición — no filtres por precio ni por rango de `id`.
 - **Productos sin precio**: hoy no hay ninguno, pero la salvaguarda sigue activa — un producto con `precio: null` se publica mostrando "Precio por confirmar", con el botón deshabilitado, y `agregarAlCarrito()` lo rechaza. Dejar entrar algo sin precio mandaría un pedido a $0 por WhatsApp.
 - **Datos de lentes**: `js/lentes.js` es un archivo generado a partir del documento del catálogo y del set de fotos; cada referencia añade `color`, `cobertura`, `borde`, `efecto`, `promocion`, `alias` y `presentaciones` (marca + diámetro + pupila). `constantes.js` existe para que `lentes.js` y `productos.js` compartan `IMG_PATH` y `PRECIO_LENTES` sin ciclo de imports.
 - **Persistencia**: `js/almacenamiento.js` envuelve `localStorage` con `try/catch` en cada acceso, porque en modo privado o con el almacenamiento bloqueado el solo hecho de tocarlo lanza; si falla, el sitio sigue funcionando sin memoria. Guarda tres cosas bajo el prefijo `marao:`:
@@ -118,15 +118,26 @@ Catálogo (`js/lentes.js` y `js/productos.js`):
 
 | Producto                              | Precio  | Estado                     |
 | ------------------------------------- | ------- | -------------------------- |
-| Lentes cosméticos (85 referencias en `js/lentes.js`) | $45.000 | Publicado (filtros por tono y pupila, paginado de 6) |
+| Lentes cosméticos (102 referencias en `js/lentes.js`) | $45.000 | Publicado (filtros por tono y pupila, paginado de 6) |
 | Lentes cosplay (19 referencias en `js/cosplay.js`) | $45.000 | Publicado (filtro "Cosplay"; sin clasificación por pupila) |
-| Tabla de pestañas punto a punto       | $30.000 | Publicado                  |
-| Bandeja pestañas + Bond & Seal (kit)  | $35.000 | Publicado                  |
-| Pegante Bond & Seal                   | $7.000  | Publicado                  |
+| Pestañas cortón                       | $10.000 | Publicado                  |
+| Pestañas libro                        | $30.000 | Publicado                  |
+| Pegante Bond & Seal                   | $10.000 | Publicado                  |
+| Removedor de pestañas                 | $10.000 | Publicado                  |
+| Combo pegante + removedor             | $20.000 | Publicado                  |
+| Combo pegante + removedor + pinzas    | $23.000 | Publicado                  |
+| Pinzas para pestañas                  | $5.000  | Publicado                  |
 | Solución de lentes                    | $17.000 | Publicado (sin imagen)     |
 | Kit aplicador + pinza                 | $5.000  | Publicado (sin imagen)     |
-| Estuche porta-lentes                  | $10.000 | Publicado (sin imagen)     |
-| Lavadora manual para lentes           | $10.000 | Publicado (sin imagen)     |
+| Kit viajero con espejo                | $10.000 | Publicado                  |
+| Kit viajero completo                  | $12.000 | Publicado                  |
+| Lavadora manual para lentes           | $10.000 | Publicado                  |
+| Lavadora ultrasónica                  | $30.000 | Publicado                  |
+| Pinzas abre ojos                      | $10.000 | Publicado                  |
+| Masajeador facial                     | $7.000  | Publicado                  |
+| Jabón para manos                      | $10.000 | Publicado                  |
+
+Los precios de pestañas y accesorios vienen del documento "PRODUCTOS WORD3", donde cada uno va escrito sobre la foto del producto.
 
 Envíos y pagos (`js/checkout.js`):
 
@@ -139,11 +150,10 @@ Envíos y pagos (`js/checkout.js`):
 En desarrollo activo. Puntos pendientes identificados:
 
 - **Sin pago en línea**: el cobro se coordina por WhatsApp. Es una decisión del negocio, no una carencia pendiente: los campos de tarjeta, vencimiento y CVV se retiraron del checkout precisamente porque no había pasarela que los procesara. Si más adelante se quiere cobrar en línea, la vía es un checkout hospedado o widget oficial (Wompi, Epayco, PayU) — nunca campos propios de tarjeta en el cliente.
-- **8 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
+- **7 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
 
   | Referencia | Tono | Ficha |
   | ---------- | ---- | ----- |
-  | Siri Brown | Miel | Freshlady DM 14.2, pupila reducida, con borde |
   | Brazil Girl Amber | Miel | Eyeshare DM 14.0, pupila estándar, sin borde |
   | Brazil Girl Grafito | Gris | Eyeshare DM 14.0, pupila estándar, sin borde |
   | Nigth Storn | Azul | Freshlady DM 14.5, pupila realista, con borde |
@@ -152,15 +162,14 @@ En desarrollo activo. Puntos pendientes identificados:
   | Vaadhoo | Azul | Freshlady DM 14.2, pupila realista, sin borde — **sin descripción** |
   | Zafiro / Ocean Blue | Azul | Freshlady DM 14.2, media cobertura, con borde — **sin descripción** |
 
-  Se comprobó por similitud de nombre contra las 97 fotos del set, sin filtrar por tono: ninguna corresponde a estas ocho. Las coincidencias altas son falsas (`siri brown` ↔ `rusian-brown` solo comparten el sufijo; `zafiro/ocean blue` ↔ `ocean-brown` es de tono miel). Al recibirlas, basta con dejarlas en `assets/img/lentes/<tono>/` (600px de lado, `.jpeg` + `.webp`) y poner la ruta en `img`/`imagenes` de la referencia en `js/lentes.js`.
+  Se comprobó por similitud de nombre contra las 101 fotos del set, sin filtrar por tono: ninguna corresponde a estas siete. Las coincidencias altas son falsas (`zafiro/ocean blue` ↔ `ocean-brown` es de tono miel). Al recibirlas, basta con dejarlas en `assets/img/lentes/<tono>/` (600px de lado, `.jpeg` + `.webp`) y poner la ruta en `img`/`imagenes` de la referencia en `js/lentes.js`.
 
-- **18 fotos sin ficha — pendiente del proveedor** (`lentesSinFicha` en `js/lentes.js`): el caso inverso. Hay foto pero el documento no las describe, así que falta su tipo de pupila y su cobertura, que no se pueden deducir de la imagen. No se publican para no inventar datos de producto. Con esos dos campos, cada una pasa al array `lentes` y el catálogo sube de 104 a 122 referencias.
-- **Accesorios sin foto**: `estuche.jpg`, `solucion.jpg`, `pinzas.jpg` y `lavadora.jpg` no existen en el repo; se muestran con el placeholder.
-- **Catálogo hardcodeado**: `js/lentes.js` (85 referencias) y `js/productos.js` son archivos estáticos. Con este volumen ya conviene migrar a JSON externo o API, y cargarlo bajo demanda.
+- **4 fotos sin ficha — pendiente del proveedor** (`lentesSinFicha` en `js/lentes.js`): el caso inverso. Hay foto pero el documento no las describe, así que falta su tipo de pupila y su cobertura, que no se pueden deducir de la imagen. No se publican para no inventar datos de producto. Empezaron siendo 18: la versión "CATALOGO PAGINA #2 (Autoguardado)" trajo la ficha de 13 y `RIO BUSIO` resultó ser la misma referencia que `RIO BUZIO`. Quedan `ANGELES N ESMERALD`, `CAT BELL`, `OCEAN BROWN` y `RUSIAN BROWN`.
+- **2 accesorios sin foto**: solución de lentes y kit aplicador + pinza no aparecen en "PRODUCTOS WORD3"; se muestran con el placeholder (`img: null`).
+- **Catálogo hardcodeado**: `js/lentes.js` (102 referencias) y `js/productos.js` son archivos estáticos. Con este volumen ya conviene migrar a JSON externo o API, y cargarlo bajo demanda.
 - **Inventario/stock**: sin control de disponibilidad.
 - **Buscador de productos**: previsto en `AGENTS.md`, aún no implementado.
 - **Login con Google**: el JWT se decodifica en el cliente sin verificar la firma; sirve para prellenar datos, no como autenticación real. Requiere backend para validarlo.
-- **Precios de pestañas hardcodeados en el HTML**: las dos tarjetas de `#pestanas` repiten nombre y precio en el markup, así que un cambio en `productos.js` no se refleja ahí. Renderizarlas desde los datos como el resto del catálogo.
 - **Testing**: no hay pruebas automatizadas; la verificación es manual en el navegador.
 - **Responsive**: layout mobile-first funcionando con un solo breakpoint (769px); falta pulir en dispositivos reales, especialmente catálogo y carrito.
 

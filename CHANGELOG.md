@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Cuatro lentes nuevos del documento del catálogo, con su foto y su ficha: Kitty Pink, Bluersht Pink, Taylor Violet y Gem Pink ($45.000 cada uno).
+- Trece referencias que tenían foto pero no ficha entraron por fin al catálogo con la versión nueva del documento: Aqua Blue, Melburth, 3 Con Hazel, Mel Beige, Queen Chocolate, Rio Ocre, Angeles Emarald, Awaken Green, Breeze Green, Cambusi Green, Rio Buzio, OMG Black y Pattaya Black. El catálogo pasó de 85 a 102 lentes.
+- Siri Brown ya no se vende a ciegas: llegó su foto y dejó de mostrarse con el placeholder.
+- Once productos nuevos de pestañas y accesorios, con foto y precio del documento del negocio: pestañas cortón ($10.000), pestañas libro ($30.000), removedor ($10.000), combo pegante + removedor ($20.000), combo pegante + removedor + pinzas ($23.000), pinzas para pestañas ($5.000), kit viajero completo ($12.000), lavadora ultrasónica ($30.000), pinzas abre ojos ($10.000), masajeador facial ($7.000) y jabón para manos ($10.000).
+- Los accesorios que se vendían sin que nadie pudiera verlos ya tienen foto real: kit viajero con espejo y lavadora manual. Solo quedan dos con placeholder (solución de lentes y kit aplicador + pinza), que no vienen en el documento.
+- Los accesorios pasaron a carrusel, como las pestañas: se deslizan con el dedo, con el teclado o con las flechas.
+
 - En celular la navegación se agrupa en un menú hamburguesa, con el carrito siempre a la vista junto al botón del menú. El encabezado pasó de ocupar el 20% de la pantalla a menos del 10%, y el menú dejó de partirse en dos filas.
 - El perfil es ahora una opción del menú con foto y nombre: al tocar "Ver perfil" se abre un modal con los datos de la cuenta y el botón de cerrar sesión.
 
@@ -31,11 +38,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Salieron del catálogo "Tabla de pestañas punto a punto" ($30.000) y "Bandeja pestañas + Bond & Seal" ($35.000): el documento nuevo del negocio las reemplaza por pestañas cortón y pestañas libro. La segunda, además, nunca llegó a mostrarse en la tienda.
 - El checkout ya no pide número de tarjeta, vencimiento ni CVV. No había pasarela que procesara esos datos: el pedido siempre se coordinó por WhatsApp, así que pedirlos solo exponía a la clienta sin ninguna contrapartida. En su lugar, el resumen indica que el pago se acuerda por WhatsApp.
 - Elegir "Tarjeta" o "Nequi" ya no obliga a escribir un número para poder enviar el pedido.
 
 ### Changed
 
+- El precio pasa a mandar sobre el nombre en todas las tarjetas: más grande y más pesado, con el nombre en peso medio. Las tarjetas de pestañas además subieron un punto de tamaño de letra.
+- En computador el catálogo de lentes ocupa el 45% de la fila y el de pestañas el 55%. Antes la rejilla decía mitad y mitad, pero el carrusel de pestañas no dejaba encoger su columna y se quedaba con tres cuartos de la fila, así que los lentes salían apretados.
+- El pegante Bond & Seal pasó de $7.000 a $10.000, según el documento nuevo del negocio.
+- El estuche porta-lentes se llama ahora "Kit viajero con espejo", para distinguirlo del kit viajero completo.
 - Los modales de iniciar sesión y de perfil se rediseñaron: fondo claro en vez del beige, más aire entre bloques y una ficha de datos con líneas finas. El texto apagado pasó de leerse a duras penas sobre el beige a tener contraste holgado.
 - En computador el carrito y el perfil quedaron juntos en la esquina derecha (carrito a la izquierda, perfil a la derecha) siguiendo el diseño, y más cerca del borde.
 - El modal de perfil muestra ahora la dirección de envío guardada de esa cuenta.
@@ -59,6 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
 ### Fixed
+
+- En una misma fila, el precio y el botón de todas las tarjetas caen ahora a la misma altura. Un nombre que ocupaba dos renglones corría hacia abajo el resto de su tarjeta y la fila quedaba despareja.
 
 - El logo del encabezado, el enlace "Volver al inicio" y el nombre de cada lente ya se pueden usar con el teclado: antes eran texto o imágenes que solo respondían al ratón.
 - El selector de método de pago no tenía etiqueta asociada; ahora sí.

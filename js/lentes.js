@@ -6,7 +6,13 @@ import { IMG_PATH, PRECIO_LENTES } from "./constantes.js";
  * Extraído del documento "CATALOGO PAGINA #2" (fichas técnicas) y del set de
  * fotos "FOTOS PAGINA" (imágenes por tono). Cada referencia combina ambas
  * fuentes: los atributos vienen de la ficha y la foto del set, emparejadas por
- * nombre.
+ * nombre. Cuando las dos fuentes escriben distinto un mismo lente (MELBURTH /
+ * MELHBURTH BLACK, RIO OCRE / RIO OCHRE), manda el nombre de la foto y el del
+ * documento queda en `alias`.
+ *
+ * Donde la ficha no dice la pupila pero la referencia cuelga de un título de
+ * sección que sí ("GRIS PUPILA ESTANDAR"), se toma la del título: es el caso de
+ * OMG BLACK y PATTAYA BLACK.
  *
  * Campos propios de un lente (además de los comunes a `productosBase`):
  * - `tipo`:           pupila "reducida" | "estandar" — es el filtro ya existente.
@@ -21,9 +27,9 @@ import { IMG_PATH, PRECIO_LENTES } from "./constantes.js";
  * - `alias`:          otros nombres comerciales de la misma referencia.
  * - `imagenes`:       todas las fotos disponibles; `img` es la principal.
  *
- * 8 referencias del documento aún no tienen foto en el set y quedan con
+ * 7 referencias del documento aún no tienen foto en el set y quedan con
  * `img: null` (el listener de `main.js` les pone el placeholder):
- * SIRI BROWN, BRAZIL GIRL AMBER, BRAZIL GIRL GRAFITO, NIGTH STORN, VIOLET MIRAGE, PEACOCK BLUE, VAADHOO, ZAFIRO.
+ * BRAZIL GIRL AMBER, BRAZIL GIRL GRAFITO, NIGTH STORN, VIOLET MIRAGE, PEACOCK BLUE, VAADHOO, ZAFIRO.
  */
 
 const IMG_LENTES = IMG_PATH + "lentes/";
@@ -40,6 +46,28 @@ export const COLORES_LENTE = {
 };
 
 export const lentes = [
+  {
+    id: 1090,
+    nombre: "3 CON HAZEL",
+    alias: [],
+    desc: "Lentes de aspecto natural y sutil, con una alta pigmentación pero de cambio sutil, su tono base es miel con matices verdosos, cuenta con un aro lineal en tono oscuro pero difuminado.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "miel",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: null,
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "miel/3-con-hazel.jpeg",
+    imagenes: [IMG_LENTES + "miel/3-con-hazel.jpeg"]
+  },
   {
     id: 1001,
     nombre: "AMBER",
@@ -236,7 +264,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Muneca marca",
+    efecto: "Muñeca",
     promocion: false,
     presentaciones: [
       {
@@ -259,6 +287,28 @@ export const lentes = [
     imagenes: [IMG_LENTES + "miel/diamond-brown.jpeg"]
   },
   {
+    id: 1091,
+    nombre: "MEL BEIGE",
+    alias: [],
+    desc: "Lentes de aspecto sutil y natural, su tono base café miel claro perfecto para aclarar el color base de tus ojos, no cuenta con un aro lineal y es pupila estándar.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "miel",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: null,
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "miel/mel-beige.jpeg",
+    imagenes: [IMG_LENTES + "miel/mel-beige.jpeg"]
+  },
+  {
     id: 1010,
     nombre: "MILK COFEE",
     alias: [],
@@ -268,7 +318,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Coreano marca",
+    efecto: "Coreano",
     promocion: false,
     presentaciones: [
       {
@@ -348,13 +398,35 @@ export const lentes = [
         pupila: "Estandar"
       },
       {
-        marca: "FERSHLADY",
+        marca: "FRESHLADY",
         diametro: "14.2",
         pupila: "Realista"
       }
     ],
     img: IMG_LENTES + "miel/pataya-brown.jpeg",
     imagenes: [IMG_LENTES + "miel/pataya-brown.jpeg"]
+  },
+  {
+    id: 1092,
+    nombre: "QUEEN CHOCOLATE",
+    alias: [],
+    desc: "Lente de aspecto natural o sutil, aporta luminosidad y aclara la base natural del ojo uno o dos niveles, ideal para cafe medios a oscuros. Porcentaje en color del 30%.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "miel",
+    cobertura: "Baja",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.0",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "miel/queen-chocolate.jpeg",
+    imagenes: [IMG_LENTES + "miel/queen-chocolate.jpeg"]
   },
   {
     id: 1014,
@@ -366,7 +438,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Baja",
     borde: "Con borde ligero",
-    efecto: "Ojo muneca",
+    efecto: "Muñeca",
     promocion: false,
     presentaciones: [
       {
@@ -379,6 +451,28 @@ export const lentes = [
     imagenes: [IMG_LENTES + "miel/rainy-mood-hazel.jpeg"]
   },
   {
+    id: 1093,
+    nombre: "RIO OCRE",
+    alias: ["RIO OCHRE"],
+    desc: "Lente de aspecto natural y sutil, su tono base es miel avellana ideal para aclarar, no tiene aro lineal, es un lente plano para cambios muy sutiles.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "miel",
+    cobertura: "Baja",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "miel/rio-ocre.jpeg",
+    imagenes: [IMG_LENTES + "miel/rio-ocre.jpeg"]
+  },
+  {
     id: 1015,
     nombre: "SECRET BROWN",
     alias: [],
@@ -388,7 +482,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Alta",
     borde: "Con borde ligero",
-    efecto: "Medialuna marca",
+    efecto: "Medialuna",
     promocion: false,
     presentaciones: [
       {
@@ -419,8 +513,8 @@ export const lentes = [
         pupila: null
       }
     ],
-    img: null,
-    imagenes: []
+    img: IMG_LENTES + "miel/siri-brown.jpeg",
+    imagenes: [IMG_LENTES + "miel/siri-brown.jpeg"]
   },
   {
     id: 1017,
@@ -432,7 +526,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Media",
     borde: "Sin borde",
-    efecto: "Medialuna marca",
+    efecto: "Medialuna",
     promocion: false,
     presentaciones: [
       {
@@ -520,7 +614,7 @@ export const lentes = [
     color: "miel",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Foxi marca",
+    efecto: "Foxi",
     promocion: false,
     presentaciones: [
       {
@@ -643,6 +737,28 @@ export const lentes = [
     imagenes: [IMG_LENTES + "miel/strar-brown.jpeg"]
   },
   {
+    id: 1094,
+    nombre: "ANGELES EMARALD",
+    alias: [],
+    desc: "Lente de aspecto notorio, sin aro lineal o borde, su base es en color verde aguamarina con matices azulados, tiene lineas o venas que simulan un iris real, tiene una pupila reducida (3,5 mm).",
+    precio: PRECIO_LENTES,
+    tipo: "reducida",
+    color: "verde",
+    cobertura: "Alta",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.2",
+        pupila: null
+      }
+    ],
+    img: IMG_LENTES + "verde/angeles-emarald.jpeg",
+    imagenes: [IMG_LENTES + "verde/angeles-emarald.jpeg"]
+  },
+  {
     id: 1027,
     nombre: "APHRODITE",
     alias: [],
@@ -665,6 +781,77 @@ export const lentes = [
     imagenes: [IMG_LENTES + "verde/afrodita.jpeg"]
   },
   {
+    id: 1095,
+    nombre: "AWAKEN GREEN",
+    alias: [],
+    desc: "Lente de aspecto notorio con aro lineal difuminado, su base en color es turquesa con su tono verde y un delicado tono celeste, ideal para cambios notorios, creando una transición difuminada entre la base real y el lente; es pupila estándar.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "verde",
+    cobertura: "Alta",
+    borde: "Con borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.5",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "verde/awaken-green.jpeg",
+    imagenes: [IMG_LENTES + "verde/awaken-green.jpeg"]
+  },
+  {
+    id: 1096,
+    nombre: "BREEZE GREEN",
+    alias: [],
+    desc: "Lente de aspecto hiperrealista, cuenta con un aro lineal ligeramente difuminado de color verde degradado, con un tono base verde oliva que combina tonos verdes suaves con matices cálidos marrón-miel hacia el centro. Su pupila es reducida en un (3.8 mm).",
+    precio: PRECIO_LENTES,
+    tipo: "reducida",
+    color: "verde",
+    cobertura: "Alta",
+    borde: "Con borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.2",
+        pupila: null
+      },
+      {
+        marca: "FRESHLADY",
+        diametro: "14.2",
+        pupila: null
+      }
+    ],
+    img: IMG_LENTES + "verde/breeze-green.jpeg",
+    imagenes: [IMG_LENTES + "verde/breeze-green.jpeg"]
+  },
+  {
+    id: 1097,
+    nombre: "CAMBUSI GREEN",
+    alias: [],
+    desc: "Lente de aspecto sutil y natural, su tono base es verde pero con un relleno tipo amarillo suave hacia el centro de la pupila, no cuenta con aro lineal y es ideal para aclarar.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "verde",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: null,
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "verde/cambusi-green-2.jpeg",
+    imagenes: [IMG_LENTES + "verde/cambusi-green-2.jpeg", IMG_LENTES + "verde/cambusi-green.jpeg"]
+  },
+  {
     id: 1028,
     nombre: "CLEOPATRA GREEN",
     alias: [],
@@ -683,7 +870,7 @@ export const lentes = [
         pupila: null
       },
       {
-        marca: "MILL CREEK",
+        marca: "MILCRECK",
         diametro: "14.2",
         pupila: null
       }
@@ -701,7 +888,7 @@ export const lentes = [
     color: "verde",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Muneca alta",
+    efecto: "Muñeca",
     promocion: false,
     presentaciones: [
       {
@@ -781,7 +968,7 @@ export const lentes = [
     promocion: false,
     presentaciones: [
       {
-        marca: "MILL CREK",
+        marca: "MILCRECK",
         diametro: "14.2",
         pupila: null
       }
@@ -869,6 +1056,28 @@ export const lentes = [
     ],
     img: IMG_LENTES + "verde/pataya-green.jpeg",
     imagenes: [IMG_LENTES + "verde/pataya-green.jpeg"]
+  },
+  {
+    id: 1098,
+    nombre: "RIO BUZIO",
+    alias: ["RIO BUSIO"],
+    desc: "Lente de aspecto natural y sutil, su tono base es verde oliva con pigmentación media, ideal para aclarar y dar cambios sutiles, no cuenta con un aro lineal y es de pupila estándar.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "verde",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: null,
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "verde/rio-buzio.jpeg",
+    imagenes: [IMG_LENTES + "verde/rio-buzio.jpeg", IMG_LENTES + "verde/rio-busio.jpeg"]
   },
   {
     id: 1036,
@@ -968,7 +1177,7 @@ export const lentes = [
     color: "verde",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Foxi alta",
+    efecto: "Foxi",
     promocion: false,
     presentaciones: [
       {
@@ -1145,6 +1354,28 @@ export const lentes = [
     imagenes: [IMG_LENTES + "gris/blackpost-gray.jpeg"]
   },
   {
+    id: 1086,
+    nombre: "BLUSERHT PINK",
+    alias: [],
+    desc: "Lente de aspecto notorio natural, con un tono base rosado morado con matices blancas, un detalle más demarcado en forma de estrella al lado posterior del lente, cuenta con ser una pupila normal y tiene un aro lineal en color violeta oscuro pero muy sutil, ya que con solo el color base el ojo ya se ve expresivo.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Alta",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/bluserh-pink.jpeg",
+    imagenes: [IMG_LENTES + "gris/bluserh-pink.jpeg"]
+  },
+  {
     id: 1048,
     nombre: "BRAZIL GIRL QUARTZ",
     alias: [],
@@ -1225,7 +1456,7 @@ export const lentes = [
     color: "gris",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Muneca alta",
+    efecto: "Muñeca",
     promocion: false,
     presentaciones: [
       {
@@ -1246,6 +1477,28 @@ export const lentes = [
     ],
     img: IMG_LENTES + "gris/diamond-gray.jpeg",
     imagenes: [IMG_LENTES + "gris/diamond-gray.jpeg"]
+  },
+  {
+    id: 1087,
+    nombre: "GEM PINK",
+    alias: [],
+    desc: "Lente de aspecto natural y sutil, su color base es rosado pálido con matices rosadas más fuertes que el tono base alrededor de todo el irís, no cuenta con aro lineal demarcado y es pupila normal.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Baja",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "EYESHARE",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/gem-pink.jpeg",
+    imagenes: [IMG_LENTES + "gris/gem-pink.jpeg"]
   },
   {
     id: 1052,
@@ -1307,6 +1560,50 @@ export const lentes = [
     imagenes: [IMG_LENTES + "gris/ice-gray.jpeg"]
   },
   {
+    id: 1088,
+    nombre: "KITTY PINK",
+    alias: [],
+    desc: "Lente de aspecto notorio natural, con un tono base rosado morado con matices blancas, un detalle más demarcado en forma de estrella al lado posterior del lente, cuenta con ser una pupila normal y tiene un aro lineal en color violeta oscuro pero muy sutil, ya que con solo el color base el ojo ya se ve expresivo.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Media",
+    borde: "Con borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MILCRECK",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/kitty-pink.jpeg",
+    imagenes: [IMG_LENTES + "gris/kitty-pink.jpeg"]
+  },
+  {
+    id: 1099,
+    nombre: "MELBURTH",
+    alias: ["MELHBURTH BLACK"],
+    desc: "Lente de aspecto natural, su tono base es negro grisaceo, sin aro lineal, con un diámetro de 14.2, ideal para cambios llamativos pero a la vez sutiles, con una pupila estándar.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "EYESHARE",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/melburth.jpeg",
+    imagenes: [IMG_LENTES + "gris/melburth.jpeg"]
+  },
+  {
     id: 1054,
     nombre: "OCEAN DARK GRAY",
     alias: [],
@@ -1349,6 +1646,55 @@ export const lentes = [
     ],
     img: IMG_LENTES + "gris/ocean-gray.jpeg",
     imagenes: [IMG_LENTES + "gris/ocean-gray.jpeg"]
+  },
+  {
+    id: 1100,
+    nombre: "OMG BLACK",
+    alias: [],
+    desc: "Lente tipo cosplay, su base es negro, sin aro lineal o borde, es ideal para maquillaje de disfraz o maquillaje coreano, tiene un diámetro de 14.5 ideal para agrandar el iris.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Alta",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "MAGISTER",
+        diametro: "14.0",
+        pupila: null
+      },
+      {
+        marca: "FRESHLADY",
+        diametro: "14.5",
+        pupila: null
+      }
+    ],
+    img: IMG_LENTES + "gris/omg-black.jpeg",
+    imagenes: [IMG_LENTES + "gris/omg-black.jpeg"]
+  },
+  {
+    id: 1101,
+    nombre: "PATTAYA BLACK",
+    alias: [],
+    desc: "Lente de aspecto notorio, su tono base es negro con un subtono griseceo hacia la pupila, sin aro lineal o borde, para cambios notorios o marcados.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Alta",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "EYESHARE",
+        diametro: "14.2",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/pattaya-black.jpeg",
+    imagenes: [IMG_LENTES + "gris/pattaya-black.jpeg"]
   },
   {
     id: 1056,
@@ -1404,7 +1750,7 @@ export const lentes = [
     color: "gris",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Medialuna alta",
+    efecto: "Medialuna",
     promocion: false,
     presentaciones: [
       {
@@ -1437,6 +1783,28 @@ export const lentes = [
     ],
     img: IMG_LENTES + "gris/snowy.jpeg",
     imagenes: [IMG_LENTES + "gris/snowy.jpeg"]
+  },
+  {
+    id: 1089,
+    nombre: "TAYLOR VIOLET",
+    alias: [],
+    desc: "Lente de aspecto notorio, su color base es morado con matices violetas al rededor de la pupila, no cuenta con un aro lineal pero es para cambios llamativos.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "gris",
+    cobertura: "Baja",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "EYESHARE",
+        diametro: "14.0",
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "gris/taylor-violet.jpeg",
+    imagenes: [IMG_LENTES + "gris/taylor-violet.jpeg"]
   },
   {
     id: 1060,
@@ -1540,7 +1908,7 @@ export const lentes = [
     promocion: false,
     presentaciones: [
       {
-        marca: "MILCREK",
+        marca: "MILCRECK",
         diametro: "14.2",
         pupila: null
       }
@@ -1569,6 +1937,28 @@ export const lentes = [
     ],
     img: IMG_LENTES + "azul/angeles-n-vioelt.jpeg",
     imagenes: [IMG_LENTES + "azul/angeles-n-vioelt.jpeg"]
+  },
+  {
+    id: 1102,
+    nombre: "AQUA BLUE",
+    alias: [],
+    desc: "Lente de aspecto natural y sutil, con un diámetro 14.5 que hace ver el ojo mucho más expresivo en tamaño, su tono base es azul agua y no cuenta con aro lineal. Reacciona a diferentes tonalidades de ojos.",
+    precio: PRECIO_LENTES,
+    tipo: "estandar",
+    color: "azul",
+    cobertura: "Media",
+    borde: "Sin borde",
+    efecto: null,
+    promocion: false,
+    presentaciones: [
+      {
+        marca: "FRESH GO",
+        diametro: null,
+        pupila: "Estandar"
+      }
+    ],
+    img: IMG_LENTES + "azul/aqua-blue.jpeg",
+    imagenes: [IMG_LENTES + "azul/aqua-blue.jpeg"]
   },
   {
     id: 1066,
@@ -1646,7 +2036,7 @@ export const lentes = [
     color: "azul",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Muneca alta",
+    efecto: "Muñeca",
     promocion: false,
     presentaciones: [
       {
@@ -1859,7 +2249,7 @@ export const lentes = [
     color: "azul",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Medialuna marca",
+    efecto: "Medialuna",
     promocion: false,
     presentaciones: [
       {
@@ -1881,7 +2271,7 @@ export const lentes = [
     color: "azul",
     cobertura: "Alta",
     borde: "Con borde",
-    efecto: "Meialuna alta",
+    efecto: "Medialuna",
     promocion: false,
     presentaciones: [
       {
@@ -2038,13 +2428,18 @@ export const lentes = [
  * catálogo. No se publican porque falta el tipo de pupila y la cobertura, que
  * son datos del producto y no se pueden deducir de la imagen. Cuando el negocio
  * complete esos campos, cada entrada pasa al array `lentes` de arriba.
+ *
+ * Empezaron siendo 18. La versión "CATALOGO PAGINA #2 (Autoguardado)" trajo la
+ * ficha de 13 de ellas y RIO BUSIO resultó ser la misma referencia que RIO
+ * BUZIO (quedó como su segunda foto). Estas 4 siguen sin aparecer en ninguna
+ * versión del documento.
  */
 export const lentesSinFicha = [
   {
-    nombre: "AQUA BLUE",
-    color: "azul",
-    img: IMG_LENTES + "azul/aqua-blue.jpeg",
-    imagenes: [IMG_LENTES + "azul/aqua-blue.jpeg"]
+    nombre: "ANGELES N ESMERALD",
+    color: "verde",
+    img: IMG_LENTES + "verde/angeles-n-esmerald.jpeg",
+    imagenes: [IMG_LENTES + "verde/angeles-n-esmerald.jpeg"]
   },
   {
     nombre: "CAT BELL",
@@ -2053,99 +2448,15 @@ export const lentesSinFicha = [
     imagenes: [IMG_LENTES + "gris/cat-bell.jpeg"]
   },
   {
-    nombre: "MELBURTH",
-    color: "gris",
-    img: IMG_LENTES + "gris/melburth.jpeg",
-    imagenes: [IMG_LENTES + "gris/melburth.jpeg"]
-  },
-  {
-    nombre: "OMG BLACK",
-    color: "gris",
-    img: IMG_LENTES + "gris/omg-black.jpeg",
-    imagenes: [IMG_LENTES + "gris/omg-black.jpeg"]
-  },
-  {
-    nombre: "PATTAYA BLACK",
-    color: "gris",
-    img: IMG_LENTES + "gris/pattaya-black.jpeg",
-    imagenes: [IMG_LENTES + "gris/pattaya-black.jpeg"]
-  },
-  {
-    nombre: "3 CON HAZEL",
-    color: "miel",
-    img: IMG_LENTES + "miel/3-con-hazel.jpeg",
-    imagenes: [IMG_LENTES + "miel/3-con-hazel.jpeg"]
-  },
-  {
-    nombre: "MEL BEIGE",
-    color: "miel",
-    img: IMG_LENTES + "miel/mel-beige.jpeg",
-    imagenes: [IMG_LENTES + "miel/mel-beige.jpeg"]
-  },
-  {
     nombre: "OCEAN BROWN",
     color: "miel",
     img: IMG_LENTES + "miel/ocean-brown.jpeg",
     imagenes: [IMG_LENTES + "miel/ocean-brown.jpeg"]
   },
   {
-    nombre: "QUEEN CHOCOLATE",
-    color: "miel",
-    img: IMG_LENTES + "miel/queen-chocolate.jpeg",
-    imagenes: [IMG_LENTES + "miel/queen-chocolate.jpeg"]
-  },
-  {
-    nombre: "RIO OCRE",
-    color: "miel",
-    img: IMG_LENTES + "miel/rio-ocre.jpeg",
-    imagenes: [IMG_LENTES + "miel/rio-ocre.jpeg"]
-  },
-  {
     nombre: "RUSIAN BROWN",
     color: "miel",
     img: IMG_LENTES + "miel/rusian-brown.jpeg",
     imagenes: [IMG_LENTES + "miel/rusian-brown.jpeg"]
-  },
-  {
-    nombre: "ANGELES EMARALD",
-    color: "verde",
-    img: IMG_LENTES + "verde/angeles-emarald.jpeg",
-    imagenes: [IMG_LENTES + "verde/angeles-emarald.jpeg"]
-  },
-  {
-    nombre: "ANGELES N ESMERALD",
-    color: "verde",
-    img: IMG_LENTES + "verde/angeles-n-esmerald.jpeg",
-    imagenes: [IMG_LENTES + "verde/angeles-n-esmerald.jpeg"]
-  },
-  {
-    nombre: "AWAKEN GREEN",
-    color: "verde",
-    img: IMG_LENTES + "verde/awaken-green.jpeg",
-    imagenes: [IMG_LENTES + "verde/awaken-green.jpeg"]
-  },
-  {
-    nombre: "BREEZE GREEN",
-    color: "verde",
-    img: IMG_LENTES + "verde/breeze-green.jpeg",
-    imagenes: [IMG_LENTES + "verde/breeze-green.jpeg"]
-  },
-  {
-    nombre: "CAMBUSI GREEN",
-    color: "verde",
-    img: IMG_LENTES + "verde/cambusi-green-2.jpeg",
-    imagenes: [IMG_LENTES + "verde/cambusi-green-2.jpeg", IMG_LENTES + "verde/cambusi-green.jpeg"]
-  },
-  {
-    nombre: "RIO BUSIO",
-    color: "verde",
-    img: IMG_LENTES + "verde/rio-busio.jpeg",
-    imagenes: [IMG_LENTES + "verde/rio-busio.jpeg"]
-  },
-  {
-    nombre: "RIO BUZIO",
-    color: "verde",
-    img: IMG_LENTES + "verde/rio-buzio.jpeg",
-    imagenes: [IMG_LENTES + "verde/rio-buzio.jpeg"]
   }
 ];

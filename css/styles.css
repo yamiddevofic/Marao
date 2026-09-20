@@ -41,6 +41,10 @@
   --gutter: 5%;
   /* Cuánto baja la imagen del hero sobre el bloque de pestañas (solo escritorio) */
   --hero-overlap: 2.5rem;
+  /* Franja que se recorta del borde superior de la foto del hero: su primera
+     fila de píxeles deja una línea que se lee como un corte. En porcentaje
+     para que el recorte se vea igual en móvil que en escritorio. */
+  --hero-trim: 2%;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
@@ -370,13 +374,27 @@ h1,
 
 .hero-image {
   width: 100%;
-  aspect-ratio: 500 / 834;
+  /* La foto es apaisada (1200x935). Encajarla en un marco vertical la
+     recortaba hasta dejar solo una franja de pelo, que se leia como si la
+     imagen se repitiera. Aqui manda la proporcion real: se ve entera. */
+  aspect-ratio: 1200 / 935;
+  /* Marco de referencia de la foto, que sobresale por arriba y se recorta. */
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-img-element {
+  /* Pegada al borde inferior y un poco más alta que el marco: lo que sobra
+     asoma por arriba y lo recorta el overflow. Solo se corta arriba. */
+  position: absolute;
+  inset: auto 0 0 0;
+  display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% + var(--hero-trim));
   object-fit: cover;
+  /* Si algun redondeo obliga a recortar, que sea por abajo: la cara queda
+     en la mitad superior. */
+  object-position: center 35%;
 }
 
 /* CATALOGOS Y CARDS */
@@ -393,9 +411,19 @@ h1,
 }
 
 .dual-catalog h2 {
-  font-size: 28px;
+  /* Entre el breakpoint y ~1000px la columna se estrecha y con 28px fijos el
+     título se iba a un tercer renglón; el tamaño acompaña al ancho de página
+     en vez de abrir otro breakpoint. */
+  font-size: clamp(21px, 2.2vw, 28px);
   line-height: 1.25;
   text-align: center;
+  /* Como en el diseño: el título se lee en dos renglones parejos, centrado en
+     su columna, en vez de estirarse de borde a borde. `balance` reparte las
+     palabras entre los dos renglones; la medida máxima evita que entre un
+     tercero cuando la columna es ancha. */
+  max-width: 30ch;
+  margin-inline: auto;
+  text-wrap: balance;
 }
 
 /* Aire debajo de todos los títulos de sección. */
@@ -463,8 +491,7 @@ picture {
   color: var(--color-white);
 }
 
-.products-grid-lentes,
-.accessories-grid {
+.products-grid-lentes {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.75rem;
@@ -498,6 +525,32 @@ picture {
   padding: var(--spacing-sm) 0.4rem;
 }
 
+.pestana-card-footer .btn-add-figma {
+  font-size: 22px;
+}
+
+/* Las tarjetas de accesorio van en fila y todas reparten igual su alto entre
+   foto y texto: el nombre ocupa siempre dos renglones y la descripción tres,
+   así un texto largo no estira el bloque de texto de toda la fila. Los textos
+   de `js/productos.js` están escritos para caber ahí sin recortarse. */
+.card-title,
+.card-desc,
+.card-title-btn,
+.pestana-card-footer h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nombre del accesorio: mismo alto de dos renglones que el de los lentes. */
+.card-title {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  height: calc(2 * 1.3em);
+  -webkit-line-clamp: 2;
+}
+
 .product-card-figma h3 {
   margin: 0;
 }
@@ -509,7 +562,11 @@ picture {
   width: 100%;
   padding: 0.25rem 0;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  height: calc(2 * 1.3em + 0.5rem);
+  -webkit-line-clamp: 2;
   letter-spacing: 0.02em;
   background: none;
   border: none;
@@ -519,9 +576,11 @@ picture {
   text-align: center;
 }
 
+/* El precio es lo primero que se busca en una tarjeta: va más grande y más
+   pesado que el nombre, no al revés. */
 .product-card-figma .price {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 23px;
+  font-weight: 800;
 }
 
 .btn-add-figma {
@@ -538,13 +597,17 @@ picture {
   border-radius: 0;
 }
 
-/* TARJETAS PESTAÑAS */
-.pestanas-carousel {
+/* CARRUSELES: pestañas y accesorios comparten pista, flechas y medidas. */
+.carrusel {
   margin-top: var(--spacing-md);
+  min-width: 0;
 }
 
-.pestanas-grid {
+.carrusel-pista {
   display: flex;
+  /* Sin esto, el ancho mínimo de la pista es la suma de sus tarjetas y la
+     columna que la contiene crece en vez de dejar que la pista haga scroll. */
+  min-width: 0;
   gap: var(--spacing-lg);
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -553,11 +616,11 @@ picture {
   padding-bottom: var(--spacing-sm);
 }
 
-.pestanas-grid::-webkit-scrollbar {
+.carrusel-pista::-webkit-scrollbar {
   display: none;
 }
 
-.pestanas-grid:focus-visible {
+.carrusel-pista:focus-visible {
   outline: 2px solid var(--color-white);
   outline-offset: 4px;
 }
@@ -565,8 +628,14 @@ picture {
 /* Sin scroll-snap: como la última tarjeta asoma parcialmente, su punto de
    anclaje cae fuera del scroll máximo y el navegador devolvía la vista al
    inicio en cuanto se usaban las flechas. */
-.pestanas-grid > .pestana-card {
+/* Las pestañas conservan su tamaño de siempre; los accesorios van más chicos
+   porque son nueve y la foto ya viene recortada en cuadrado. */
+.carrusel-pista > .pestana-card {
   flex: 0 0 80%;
+}
+
+.carrusel-pista > .product-card-figma {
+  flex: 0 0 46%;
 }
 
 /* Flechas planas en los extremos del bloque, como en el diseño. */
@@ -641,13 +710,16 @@ picture {
 }
 
 .pestana-card-footer h3 {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 500;
   line-height: 1.3;
+  height: calc(2 * 1.3em);
+  -webkit-line-clamp: 2;
 }
 
 .pestana-card-footer .price {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
 }
 
 /* CARRITO */
@@ -1311,6 +1383,9 @@ body.scroll-bloqueado {
   font-size: 0.7rem;
   line-height: 1.35;
   margin-top: 0.2rem;
+  /* Tres renglones fijos: es lo que cabe sin que la tarjeta crezca. */
+  height: calc(3 * 1.35em);
+  -webkit-line-clamp: 3;
 }
 
 /* ¿POR QUÉ COMPRAR EN MARÃO? */
@@ -1541,13 +1616,17 @@ body.scroll-bloqueado {
   .hero-image {
     flex: 0 0 auto;
     width: min(40vw, 500px);
+    /* La columna la mide el texto de al lado, no la proporcion de la foto:
+       asi no queda una franja de fondo bajo la imagen. El recorte lateral
+       es intencional y va centrado en la cara. */
+    aspect-ratio: auto;
+    align-self: stretch;
     /* Queda por encima del bloque de pestañas, que sube para solaparse. */
-    position: relative;
     z-index: 1;
   }
 
   .hero-img-element {
-    height: 100%;
+    object-position: center;
   }
 
   /* La columna de pestañas continúa la imagen del hero: sin separación arriba
@@ -1555,11 +1634,19 @@ body.scroll-bloqueado {
      El padding pasa a cada columna para no perder el margen de los lentes. */
   .dual-catalog {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 45% 55%;
     align-items: stretch;
     padding: 0;
     gap: 0;
     margin-top: calc(var(--hero-overlap) * -1);
+  }
+
+  /* Sin esto el reparto de arriba no se cumple: el ancho mínimo de una columna
+     de rejilla es el de su contenido, y el carrusel de pestañas mide lo que
+     suman sus tarjetas, así que se quedaba con tres cuartos de la fila. */
+  .catalog-col-lentes,
+  .catalog-col-pestanas {
+    min-width: 0;
   }
 
   .catalog-col-lentes {
@@ -1577,20 +1664,48 @@ body.scroll-bloqueado {
     flex-direction: column;
   }
 
-  /* Las tarjetas conservan su tamaño; la segunda queda parcialmente visible
-     para que se note que el carrusel se puede desplazar. */
-  .pestanas-grid > .pestana-card {
+  /* La segunda tarjeta de pestañas queda parcialmente visible para que se note
+     que el carrusel se desplaza; de accesorios caben cuatro y pico. */
+  .carrusel-pista > .pestana-card {
     flex-basis: 62%;
+  }
+
+  .carrusel-pista > .product-card-figma {
+    flex-basis: 22%;
+  }
+
+  /* En escritorio las flechas acompañan la pista y quedan disponibles sin
+     obligar a buscar los controles debajo del carrusel. */
+  .accessories-section .carrusel {
+    position: relative;
+  }
+
+  .accessories-section .carrusel-pista {
+    padding-inline: 2.5rem;
+  }
+
+  .accessories-section .carousel-controls {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    margin-top: 0;
+    pointer-events: none;
+  }
+
+  .accessories-section .carousel-btn {
+    background: var(--color-dark);
+    border-radius: 50%;
+    pointer-events: auto;
+  }
+
+  .accessories-section .carousel-btn:focus-visible {
+    outline: 3px solid var(--color-white);
+    outline-offset: 3px;
   }
 
   .products-grid-lentes {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-xl);
-  }
-
-  .accessories-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2.5rem;
   }
 
   .starry-section {
@@ -1660,7 +1775,9 @@ body.scroll-bloqueado {
   }
 
   .why-grid {
-    grid-template-columns: repeat(3, 1fr);
+    /* `minmax(0, 1fr)` y no `1fr`: entre el breakpoint y ~830px el ancho mínimo
+       de las tarjetas desbordaba la página a lo ancho. */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--spacing-xl);
     justify-content: center;
   }

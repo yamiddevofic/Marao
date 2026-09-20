@@ -99,14 +99,42 @@ export function renderAccesorios(items) {
     .map(
       (acc) => `
     <article class="product-card-figma">
-      ${marcaFoto(acc.img, escapar(acc.nombre))}
+      ${marcaFoto(acc.img ?? IMG_PLACEHOLDER, escapar(acc.nombre))}
       <div class="card-info">
-        <h3>${escapar(acc.nombre)}</h3>
+        <h3 class="card-title">${escapar(acc.nombre)}</h3>
         <p class="price">${formatearPrecio(acc.precio)}</p>
         <p class="card-desc">${escapar(acc.desc)}</p>
       </div>
       <button class="btn-add-figma" data-action="add-to-cart" data-id="${acc.id}">AÑADIR</button>
     </article>
+  `,
+    )
+    .join("");
+}
+
+/**
+ * Tarjetas del carrusel de pestañas. Antes estaban escritas a mano en
+ * `index.html`, con el nombre y el precio repetidos ahí y en los datos: de esa
+ * duplicación salieron tarjetas que agregaban al carrito el producto de al lado.
+ * `js/carrusel.js` mide `.pestana-card` para calcular el paso, así que esa clase
+ * tiene que sobrevivir a cualquier cambio de markup.
+ */
+export function renderPestanas(items) {
+  const container = document.getElementById("pestanas-carrusel");
+  if (!container) return;
+  container.innerHTML = items
+    .map(
+      (prod) => `
+    <div class="pestana-card">
+      <div class="pestana-img-box">
+        ${marcaFoto(prod.img ?? IMG_PLACEHOLDER, escapar(prod.nombre))}
+      </div>
+      <div class="pestana-card-footer">
+        <h3>${escapar(prod.nombre)}</h3>
+        <p class="price">${formatearPrecio(prod.precio)}</p>
+        <button class="btn-add-figma" data-action="add-to-cart" data-id="${prod.id}">AÑADIR</button>
+      </div>
+    </div>
   `,
     )
     .join("");
@@ -266,6 +294,24 @@ export function abrirModalDetalle(id) {
   texto("modal-desc", `${prod.desc}\n${FICHA_LENTE.notaComodidad}`);
   texto("modal-duracion", FICHA_LENTE.duracion);
   texto("modal-tipo", FICHA_LENTE.tipo);
+  const ficha = document.getElementById("modal-ficha");
+  const esLenteConFicha = Array.isArray(prod.presentaciones);
+  if (ficha) ficha.hidden = !esLenteConFicha;
+  if (esLenteConFicha) {
+    texto("modal-color", COLORES_LENTE[prod.color] ?? prod.color);
+    texto("modal-cobertura", prod.cobertura ?? "No especificada");
+    texto("modal-borde", prod.borde ?? "No especificado");
+    texto("modal-efecto", prod.efecto ?? "Ninguno");
+    texto(
+      "modal-presentaciones",
+      prod.presentaciones
+        .map(({ marca, diametro, pupila }) =>
+          `${marca}${diametro ? `, ${diametro} DM` : ""} (${pupila})`,
+        )
+        .join("; "),
+    );
+    texto("modal-alias", prod.alias?.length ? prod.alias.join(", ") : "No tiene");
+  }
 
   abrirModal("modal-product-detail");
 }
