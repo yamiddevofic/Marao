@@ -1,4 +1,10 @@
-import { getAccesorios, getPestanas, productosBase } from "./productos.js";
+import {
+  getAccesorios,
+  getPestanas,
+  productosBase,
+  establecerProductos,
+} from "./productos.js";
+import { cargarProductos } from "./catalogo-remoto.js";
 import {
   renderAccesorios,
   renderPestanas,
@@ -263,8 +269,13 @@ window.addEventListener("sesion:cambiada", () => {
   restaurarDatosEnvio();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   ubicarPerfil();
+  try {
+    establecerProductos(await cargarProductos());
+  } catch (error) {
+    console.warn("[catalogo] Se usará el catálogo local:", error.message);
+  }
   restaurarCatalogoDesdeRuta();
   renderAccesorios(getAccesorios());
   renderPestanas(getPestanas());

@@ -75,6 +75,7 @@ export function renderLentes(items) {
         .filter(Boolean)
         .join(" · ");
       const comprable = typeof prod.precio === "number";
+      const agotado = prod.estado === "agotado";
 
       return `
     <article class="product-card-figma">
@@ -86,7 +87,7 @@ export function renderLentes(items) {
         <p class="card-meta">${escapar(detalle)}</p>
         <p class="price">${comprable ? formatearPrecio(prod.precio) : SIN_PRECIO}</p>
       </div>
-      <button class="btn-add-figma" ${comprable ? `data-action="add-to-cart" data-id="${prod.id}"` : "disabled"}>${comprable ? "AÑADIR" : "PRÓXIMAMENTE"}</button>
+      <button class="btn-add-figma" ${comprable && !agotado ? `data-action="add-to-cart" data-id="${prod.id}"` : "disabled"}>${agotado ? "AGOTADO" : comprable ? "AÑADIR" : "PRÓXIMAMENTE"}</button>
     </article>
   `;
     })
@@ -106,7 +107,7 @@ export function renderAccesorios(items) {
         <p class="price">${formatearPrecio(acc.precio)}</p>
         <p class="card-desc">${escapar(acc.desc)}</p>
       </div>
-      <button class="btn-add-figma" data-action="add-to-cart" data-id="${acc.id}">AÑADIR</button>
+        <button class="btn-add-figma" ${acc.estado === "agotado" ? "disabled" : `data-action="add-to-cart" data-id="${acc.id}"`}>${acc.estado === "agotado" ? "AGOTADO" : "AÑADIR"}</button>
     </article>
   `,
     )
@@ -133,7 +134,7 @@ export function renderPestanas(items) {
       <div class="pestana-card-footer">
         <h3>${escapar(prod.nombre)}</h3>
         <p class="price">${formatearPrecio(prod.precio)}</p>
-        <button class="btn-add-figma" data-action="add-to-cart" data-id="${prod.id}">AÑADIR</button>
+        <button class="btn-add-figma" ${prod.estado === "agotado" ? "disabled" : `data-action="add-to-cart" data-id="${prod.id}"`}>${prod.estado === "agotado" ? "AGOTADO" : "AÑADIR"}</button>
       </div>
     </div>
   `,

@@ -53,6 +53,10 @@ export function agregarAlCarrito(id, cantidad = 1) {
     console.warn(`[cart] Producto con id ${id} no existe en el catálogo.`);
     return;
   }
+  if (prod.estado === "agotado") {
+    console.warn(`[cart] "${prod.nombre}" está agotado.`);
+    return;
+  }
   // Última barrera: la UI ya deshabilita el botón, pero un producto sin precio
   // confirmado no puede entrar al carrito ni acabar en el pedido de WhatsApp.
   if (typeof prod.precio !== "number") {

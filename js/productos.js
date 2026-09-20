@@ -145,7 +145,18 @@ const otrosProductos = [
   },
 ];
 
-export const productosBase = [...lentes, ...lentesCosplay, ...otrosProductos];
+export let productosBase = [...lentes, ...lentesCosplay, ...otrosProductos];
+
+export function establecerProductos(productos) {
+  productosBase = productos.map((producto) => ({
+    ...producto,
+    desc: producto.descripcion ?? producto.desc ?? "",
+    img: producto.imagen ?? producto.img ?? null,
+    imagenes: producto.imagenes ?? [],
+    alias: producto.alias ?? [],
+    presentaciones: producto.presentaciones ?? [],
+  }));
+}
 
 /* "cosplay" es un tipo de lente más, pero no se clasifica por pupila: entra en
    `getLentes()` y queda fuera de los filtros de pupila reducida/estándar. */
