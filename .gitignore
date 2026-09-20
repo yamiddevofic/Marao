@@ -1,8 +1,8 @@
 .opencode/
 
-.claude/
-!.claude/
+.claude/*
 !.claude/skills/
+.claude/skills/*
 !.claude/skills/git-github/
 !.claude/skills/git-github/SKILL.md
 
