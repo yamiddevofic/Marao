@@ -110,7 +110,7 @@ export const lentes = [
       }
     ],
     img: IMG_LENTES + "miel/angeles-amber-2.jpeg",
-    imagenes: [IMG_LENTES + "miel/angeles-amber-2.jpeg", IMG_LENTES + "miel/angeles-amber.jpeg"]
+    imagenes: [IMG_LENTES + "miel/angeles-amber-2.jpeg", IMG_LENTES + "miel/angeles-brown.jpeg"]
   },
   {
     id: 1003,
@@ -131,8 +131,8 @@ export const lentes = [
         pupila: null
       }
     ],
-    img: IMG_LENTES + "miel/angeles-brown.jpeg",
-    imagenes: [IMG_LENTES + "miel/angeles-brown.jpeg"]
+    img: IMG_LENTES + "miel/angeles-amber.jpeg",
+    imagenes: [IMG_LENTES + "miel/angeles-amber.jpeg"]
   },
   {
     id: 1004,
