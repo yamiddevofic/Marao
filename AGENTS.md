@@ -65,6 +65,7 @@ Antes de tocar cualquiera de estos módulos, revisa cómo están implementados l
 - **Alto de las tarjetas**: el nombre reserva siempre dos renglones y la descripción tres (`-webkit-line-clamp`), para que el precio y el botón caigan a la misma altura en toda la fila. Los textos de `js/productos.js` están escritos para caber ahí; si escribes uno más largo, se recorta.
 - **Tipografías**: `--font-display` (Bitter) para el hero, `--font-ui` (Blinker) para catálogos, carrusel y secciones con estrellas, `--font-body` (Montserrat) para el resto. Los controles de formulario no heredan la fuente: hay que declararla.
 - **Precios**: siempre con `formatearPrecio()` de `js/formato.js` (formato `es-CO`), nunca `toLocaleString()` sin locale.
+- **URL e historial**: tienda y carrito comparten el documento, pero `js/ui.js` conserva la vista en `?vista=carrito`; `js/catalog.js` conserva filtros, página y detalle en query params. Usa `pushState` para acciones del usuario y `popstate` para Atrás/Adelante. Añadir un producto no debe cambiar de vista automáticamente.
 - **Google Identity Services**: la inicialización se hace desde `js/auth.js` (hook `window.onGoogleLibraryLoad`), no con los atributos `data-callback` / `g_id_onload` de GSI: la librería resuelve esa configuración antes de que corran los módulos ES.
 - **Datos externos en el DOM**: lo que venga de Google (nombre, email, foto) se asigna con `textContent` o como atributo, nunca interpolado en `innerHTML`.
 

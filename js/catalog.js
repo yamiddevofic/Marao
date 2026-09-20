@@ -4,6 +4,7 @@ import { FICHA_LENTE } from "./constantes.js";
 import { abrirModal, cerrarModal } from "./modales.js";
 import { agregarAlCarrito } from "./cart.js";
 import { formatearPrecio } from "./formato.js";
+import { actualizarRuta } from "./ui.js";
 
 /** Referencias del catálogo que aún no tienen foto en el set de imágenes. */
 const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
@@ -147,6 +148,7 @@ export function renderPestanas(items) {
 export function filtrarLentes(valor, grupo = "pupila") {
   if (!(grupo in filtros)) return;
   filtros[grupo] = valor;
+  actualizarRuta({ [grupo]: valor === "todos" ? null : valor, pagina: null, detalle: null });
 
   const botones = document.querySelectorAll(
     `.pupil-filters[data-group="${grupo}"] .filter-btn`,
@@ -206,6 +208,7 @@ export function irAPaginaLentes(pagina) {
   if (!Number.isInteger(destino) || destino < 1) return;
 
   paginaActual = destino;
+  actualizarRuta({ pagina: destino === 1 ? null : destino, detalle: null });
   actualizarCatalogoLentes();
   document.getElementById("lentes")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -270,9 +273,10 @@ function renderGaleria(prod) {
     .join("");
 }
 
-export function abrirModalDetalle(id) {
+export function abrirModalDetalle(id, { historial = true } = {}) {
   const prod = productosBase.find((p) => p.id === id);
   if (!prod) return;
+  if (historial) actualizarRuta({ vista: null, detalle: id });
   productoSeleccionadoModal = prod;
   cantidadModal = 1;
   actualizarCantidadModal();
@@ -316,7 +320,30 @@ export function abrirModalDetalle(id) {
   abrirModal("modal-product-detail");
 }
 
-export function cerrarModalDetalle() {
+export function restaurarCatalogoDesdeRuta() {
+  const parametros = new URLSearchParams(window.location.search);
+  const color = parametros.get("color");
+  const pupila = parametros.get("pupila");
+  const pagina = Number(parametros.get("pagina"));
+
+  if (color && ["miel", "verde", "gris", "azul", "cosplay"].includes(color)) {
+    filtros.color = color;
+  }
+  if (pupila && ["reducida", "estandar", "cosplay"].includes(pupila)) {
+    filtros.pupila = pupila;
+  }
+  if (Number.isInteger(pagina) && pagina > 0) paginaActual = pagina;
+
+  actualizarCatalogoLentes();
+  document.querySelectorAll(".pupil-filters .filter-btn").forEach((boton) => {
+    const grupo = boton.closest(".pupil-filters")?.dataset.group;
+    boton.classList.toggle("active", boton.dataset.filter === filtros[grupo]);
+    boton.setAttribute("aria-pressed", String(boton.dataset.filter === filtros[grupo]));
+  });
+}
+
+export function cerrarModalDetalle({ historial = true } = {}) {
+  if (historial) actualizarRuta({ detalle: null });
   cerrarModal("modal-product-detail");
 }
 

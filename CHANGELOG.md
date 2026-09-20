@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- La tienda, el carrito, los filtros, la paginación y el detalle de lentes ahora tienen enlaces compartibles y restauran su estado con el historial del navegador.
 - Cuatro lentes nuevos del documento del catálogo, con su foto y su ficha: Kitty Pink, Bluersht Pink, Taylor Violet y Gem Pink ($45.000 cada uno).
 - Trece referencias que tenían foto pero no ficha entraron por fin al catálogo con la versión nueva del documento: Aqua Blue, Melburth, 3 Con Hazel, Mel Beige, Queen Chocolate, Rio Ocre, Angeles Emarald, Awaken Green, Breeze Green, Cambusi Green, Rio Buzio, OMG Black y Pattaya Black. El catálogo pasó de 85 a 102 lentes.
 - Siri Brown ya no se vende a ciegas: llegó su foto y dejó de mostrarse con el placeholder.

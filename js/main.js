@@ -9,6 +9,7 @@ import {
   cerrarModalDetalle,
   modificarCantidadModal,
   agregarDesdeModal,
+  restaurarCatalogoDesdeRuta,
 } from "./catalog.js";
 import {
   agregarAlCarrito,
@@ -16,7 +17,7 @@ import {
   cambiarCantidadCart,
   getCarrito,
 } from "./cart.js";
-import { mostrarSeccion } from "./ui.js";
+import { mostrarSeccion, vistaDesdeRuta } from "./ui.js";
 import { cerrarModalSuperior, hayModalAbierto } from "./modales.js";
 import { desplazarCarrusel } from "./carrusel.js";
 import {
@@ -173,7 +174,6 @@ document.addEventListener("click", (event) => {
       break;
     case "add-to-cart":
       agregarAlCarrito(id);
-      mostrarSeccion("carrito");
       break;
     case "remove-item":
       eliminarDelCarrito(id);
@@ -243,11 +243,23 @@ window.addEventListener("sesion:cambiada", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   ubicarPerfil();
-  actualizarCatalogoLentes();
+  restaurarCatalogoDesdeRuta();
   renderAccesorios(getAccesorios());
   renderPestanas(getPestanas());
   actualizarBadge();
   // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
   // los datos de envío y recalcula el resumen.
   inicializarSesion();
+
+  const detalle = Number(new URLSearchParams(window.location.search).get("detalle"));
+  mostrarSeccion(vistaDesdeRuta(), { historial: false });
+  if (Number.isInteger(detalle) && detalle > 0) abrirModalDetalle(detalle, { historial: false });
+});
+
+window.addEventListener("popstate", () => {
+  restaurarCatalogoDesdeRuta();
+  mostrarSeccion(vistaDesdeRuta(), { historial: false });
+  const detalle = Number(new URLSearchParams(window.location.search).get("detalle"));
+  if (Number.isInteger(detalle) && detalle > 0) abrirModalDetalle(detalle, { historial: false });
+  else cerrarModalDetalle({ historial: false });
 });

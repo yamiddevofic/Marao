@@ -1,6 +1,10 @@
 .opencode/
 
 .claude/
+!.claude/
+!.claude/skills/
+!.claude/skills/git-github/
+!.claude/skills/git-github/SKILL.md
 
 # Material fuente del catálogo: el RAR de fotos y el paquete de cosplay ya
 # procesados. Sus imágenes viven optimizadas en assets/img/lentes/, así que

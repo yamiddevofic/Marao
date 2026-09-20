@@ -17,7 +17,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
 
-La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart`.
+La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart` y conserva la vista en la URL (`?vista=carrito`). Los filtros, la página y el detalle del lente también se pueden compartir mediante los parámetros `color`, `pupila`, `pagina` y `detalle`; Atrás y Adelante restauran ese estado.
 
 ## Stack técnico
 
@@ -76,6 +76,7 @@ Pag_Marao/
 - **Modales**: `js/modales.js` centraliza apertura, cierre, pila de modales abiertos, foco y trampa de tabulador. Escape cierra el de encima; el clic en el fondo cierra ese mismo. El bloqueo de scroll se pide desde ahí y no desde cada modal, que es lo que antes se repetía en tres sitios.
 - **Modales y scroll**: al abrir un modal se llama a `bloquearScroll()` (`js/scroll-lock.js`) y al cerrarlo a `desbloquearScroll()`. Usa `position: fixed` sobre el `body` porque `overflow: hidden` no frena el scroll en iOS, y lleva un contador interno para soportar un modal sobre otro. Si añades un modal nuevo, engánchalo a ese par de funciones.
 - **Render del catálogo**: `actualizarCatalogoLentes()` (`js/catalog.js`) es el único punto que pinta el grid; filtros, paginación y carga inicial pasan por ahí en vez de llamar a `renderLentes()` directamente.
+- **URL del catálogo**: `js/ui.js` mantiene la vista en el historial del navegador y `js/catalog.js` serializa filtros, página y detalle en query params. Añadir un producto no saca a la clienta del catálogo; el carrito se abre desde su control dedicado.
 - **Precios**: siempre con `formatearPrecio()` (`js/formato.js`), que fuerza el formato `es-CO`. Nunca `toLocaleString()` sin locale.
 - **Formatos de imagen**: cada foto existe en `.webp` (lo que sirve el navegador) y `.jpeg` junto a ella como respaldo. El dataset guarda solo el `.jpeg` y `marcaFoto()` (`js/catalog.js`) arma el `<picture>` derivando el WebP; una regla global `picture { display: contents }` evita que ese envoltorio altere el layout. Las fotos se guardan a 600px de lado máximo, que es lo que se ve incluso en pantallas retina.
 - **Imágenes de producto**: un listener global de `error` en `main.js` (fase de captura, porque `error` no burbujea) reemplaza cualquier imagen rota por `assets/img/placeholder-producto.svg`.
