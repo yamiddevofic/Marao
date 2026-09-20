@@ -130,9 +130,7 @@ export function enviarPedidoWhatsApp() {
   lineas.push("");
 
   if (usuarioLogueado) {
-    lineas.push(
-      `• *Cliente:* ${usuarioLogueado.nombre} (${usuarioLogueado.email})`,
-    );
+    lineas.push(`• *Cliente:* ${usuarioLogueado.nombre}`);
     lineas.push("");
   }
 
