@@ -120,39 +120,46 @@ export function enviarPedidoWhatsApp() {
   const costoEnvio = selectorEnvio === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
   const textoEnvio =
     selectorEnvio === "nacional"
-      ? "A toda Colombia ($22.000)"
-      : "Bogotá / Soacha Contraentrega ($10.000)";
+      ? "A toda Colombia"
+      : "Bogotá / Soacha";
+  const textoMetodoPago = {
+    tarjeta: "Tarjeta de crédito o débito",
+    nequi: "Nequi",
+    efectivo: "Pago contraentrega",
+  }[selectorMetodoPago] ?? selectorMetodoPago;
 
   let subtotal = 0;
   let lineas = [];
 
-  lineas.push("¡Hola MARÃO! Quiero realizar el siguiente pedido desde la web:");
+  lineas.push("*PEDIDO NUEVO - MARÃO*");
   lineas.push("");
+  lineas.push(`*Cliente:* ${usuarioLogueado?.nombre ?? "Cliente sin iniciar sesión"}`);
+  lineas.push("");
+  lineas.push("*PRODUCTOS*");
 
-  if (usuarioLogueado) {
-    lineas.push(`• *Cliente:* ${usuarioLogueado.nombre}`);
-    lineas.push("");
-  }
-
-  carrito.forEach((item, index) => {
+  carrito.forEach((item) => {
     const totalProd = item.precio * item.cantidad;
     subtotal += totalProd;
-    lineas.push(
-      `${index + 1}. *${item.nombre}* x${item.cantidad} - ${formatearPrecio(totalProd)}`,
-    );
+    lineas.push(`- ${item.nombre}`);
+    lineas.push(`  Cantidad: ${item.cantidad} | Subtotal: ${formatearPrecio(totalProd)}`);
   });
 
   const totalFinal = subtotal + costoEnvio;
 
   lineas.push("");
-  lineas.push(`• *Tipo de Envío:* ${textoEnvio}`);
-  lineas.push(`• *Dirección:* ${direccion}`);
-
-  lineas.push(`• *Método de Pago:* ${selectorMetodoPago.toUpperCase()}`);
-
-  lineas.push(`• *Total a pagar:* ${formatearPrecio(totalFinal)}`);
+  lineas.push("*ENTREGA*");
+  lineas.push(`Destino: ${textoEnvio}`);
+  lineas.push(`Dirección: ${direccion}`);
   lineas.push("");
-  lineas.push("¡Quedo atento(a) para confirmar la entrega de mi pedido!");
+  lineas.push("*PAGO*");
+  lineas.push(`Método: ${textoMetodoPago}`);
+  lineas.push("");
+  lineas.push("*RESUMEN*");
+  lineas.push(`Subtotal productos: ${formatearPrecio(subtotal)}`);
+  lineas.push(`Envío: ${formatearPrecio(costoEnvio)}`);
+  lineas.push(`*TOTAL: ${formatearPrecio(totalFinal)}*`);
+  lineas.push("");
+  lineas.push("Pendiente de confirmar disponibilidad y entrega.");
 
   const mensajeTexto = lineas.join("\n");
   const urlWA = `https://wa.me/573243744983?text=${encodeURIComponent(mensajeTexto)}`;
