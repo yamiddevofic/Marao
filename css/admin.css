@@ -28,6 +28,16 @@ textarea { font: inherit; }
 
 img { max-width: 100%; }
 
+/* El atributo `hidden` del navegador usa `display: none`, pero cualquier regla
+   con `display` (grid, inline-flex...) lo pisa. Estos elementos se muestran y
+   ocultan por JS, así que su versión oculta necesita ganar en especificidad. */
+.admin-campo[hidden],
+.admin-fieldset[hidden],
+.admin-button[hidden],
+.admin-fab-menu[hidden] {
+  display: none;
+}
+
 .admin-header {
   position: sticky;
   top: 0;
@@ -508,8 +518,6 @@ img { max-width: 100%; }
   background: var(--color-white);
   box-shadow: var(--admin-card-shadow);
 }
-
-.admin-fab-menu[hidden] { display: none; }
 
 .admin-fab-toggle {
   display: grid;
