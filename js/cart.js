@@ -36,6 +36,13 @@ function persistirCarrito() {
   );
 }
 
+function marcarImagenCarrito(src, alt) {
+  const imagen = `<img src="${src}" alt="${alt}" loading="lazy">`;
+  if (src.endsWith(".svg")) return imagen;
+  const webp = src.replace(/\.jpe?g$/i, ".webp");
+  return `<picture><source srcset="${webp}" type="image/webp">${imagen}</picture>`;
+}
+
 /* Todo cambio del carrito pasa por aquí, así que persistir en este punto cubre
    añadir, quitar y cambiar cantidades sin repartir escrituras por el módulo. */
 function notificarActualizacion() {
@@ -108,7 +115,7 @@ export function renderCarritoPagina() {
     .map(
       (item) => `
     <div class="cart-item-row">
-      <img src="${item.img}" alt="${item.nombre}" loading="lazy">
+      ${marcarImagenCarrito(item.img, item.nombre)}
       <div class="cart-item-details">
         <p><strong>Producto:</strong> ${item.nombre}</p>
         <p><strong>Detalle:</strong> Lente / Accesorio original MARÃO</p>
