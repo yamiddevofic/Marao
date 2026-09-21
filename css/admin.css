@@ -17,7 +17,7 @@ button, input, select { font: inherit; }
 .admin-status-dot { color: var(--color-success, #31956d); font-size: .8rem; white-space: nowrap; }
 .admin-status-dot span { display: inline-block; width: .5rem; height: .5rem; margin-right: .35rem; border-radius: 50%; background: var(--color-success, #31956d); }
 .admin-login-card, .admin-products-card { max-width: 900px; padding: clamp(1.5rem, 4vw, 3rem); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-white); box-shadow: 0 1rem 3rem rgb(62 53 48 / 8%); }
-.admin-login-card { max-width: 480px; }
+.admin-login-card { max-width: 480px; margin: 2rem auto 0; }
 .admin-login-icon { display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: 1.5rem; border-radius: var(--radius-lg); color: var(--color-accent); background: var(--color-accent-soft); font-size: 1.5rem; }
 .admin-login-card h3 { margin: .6rem 0; font: 600 1.8rem var(--font-display); }
 .admin-login-card p, .admin-message { color: var(--color-text-muted); }
