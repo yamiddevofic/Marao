@@ -99,7 +99,7 @@
             <a href="#contacto" data-action="mostrar-seccion" data-view="tienda">CONTACTO</a>
           </li>
           <li>
-            <a href="#admin" data-action="mostrar-seccion" data-view="admin">ADMINISTRACIÓN</a>
+            <a href="admin.html">ADMINISTRACIÓN</a>
           </li>
         </ul>
       </nav>
@@ -451,31 +451,6 @@
       </div>
     </main>
 
-    <main id="view-admin" class="admin-view hidden">
-      <section class="admin-card" id="admin">
-        <h1>ADMINISTRACIÓN</h1>
-        <div id="admin-acceso">
-          <p id="admin-mensaje" class="admin-mensaje">Inicia sesión con la cuenta administradora.</p>
-          <form class="admin-login-form" data-action="admin-login-form">
-            <label for="admin-email">Correo</label>
-            <input id="admin-email" name="email" type="email" autocomplete="username" required />
-            <label for="admin-password">Contraseña</label>
-            <input id="admin-password" name="password" type="password" autocomplete="current-password" required />
-            <button class="btn-primary" type="submit">ENTRAR</button>
-          </form>
-        </div>
-        <div id="admin-panel-contenido" hidden>
-          <p id="admin-estado" class="admin-mensaje"></p>
-          <button class="btn-secondary" data-action="admin-logout">CERRAR SESIÓN ADMINISTRATIVA</button>
-          <div class="admin-table-wrap">
-            <table>
-              <thead><tr><th>Producto</th><th>Tipo</th><th>Estado</th></tr></thead>
-              <tbody id="admin-productos"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </main>
 
     <!-- MODAL LOGIN -->
     <div id="modal-login" class="modal-backdrop" data-action="close-modal">

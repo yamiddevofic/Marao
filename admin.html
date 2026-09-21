@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#171326" />
+    <title>Administración | MARÃO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Blinker:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <main class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="admin-brand" href="index.html" aria-label="Volver a MARÃO">
+          <span class="admin-brand-mark">M</span>
+          <span><strong>MARÃO</strong><small>CONTROL CENTER</small></span>
+        </a>
+        <div class="admin-sidebar-copy">
+          <span class="eyebrow">Panel privado</span>
+          <h1>Tu catálogo,<br /><em>bajo control.</em></h1>
+          <p>Gestiona la disponibilidad de tus productos sin tocar el código de la tienda.</p>
+        </div>
+        <a class="admin-back-link" href="index.html">← Volver a la tienda</a>
+      </aside>
+
+      <section class="admin-content" aria-labelledby="admin-title">
+        <div class="admin-content-header">
+          <div>
+            <span class="eyebrow">Administración</span>
+            <h2 id="admin-title">Productos</h2>
+            <p class="admin-subtitle">Actualiza el estado que verá tu clientela.</p>
+          </div>
+          <div class="admin-status-dot"><span></span> Supabase conectado</div>
+        </div>
+
+        <section id="admin-acceso" class="admin-login-card" aria-labelledby="login-title">
+          <div class="admin-login-icon">✦</div>
+          <span class="eyebrow">Acceso seguro</span>
+          <h3 id="login-title">Bienvenida, administradora</h3>
+          <p id="admin-mensaje">Inicia sesión con la cuenta administradora.</p>
+          <form class="admin-login-form" data-action="admin-login-form">
+            <label for="admin-email">Correo</label>
+            <input id="admin-email" name="email" type="email" autocomplete="username" placeholder="admin@marao.com" required />
+            <label for="admin-password">Contraseña</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+            <button class="admin-button admin-button--primary" type="submit">Entrar al panel <span>↗</span></button>
+          </form>
+        </section>
+
+        <section id="admin-panel-contenido" class="admin-products-card" hidden>
+          <div class="admin-toolbar">
+            <div>
+              <span class="eyebrow">Inventario visible y oculto</span>
+              <p id="admin-estado" class="admin-message"></p>
+            </div>
+            <button class="admin-button admin-button--ghost" data-action="admin-logout">Cerrar sesión</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table>
+              <thead><tr><th>Producto</th><th>Categoría</th><th>Disponibilidad</th></tr></thead>
+              <tbody id="admin-productos"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script type="module">
+      import { iniciarSesionAdmin, cerrarSesionAdmin, inicializarAdmin } from "./js/admin.js";
+      document.addEventListener("submit", (event) => {
+        if (event.target.matches('[data-action="admin-login-form"]')) iniciarSesionAdmin(event);
+      });
+      document.addEventListener("click", (event) => {
+        const control = event.target.closest('[data-action="admin-logout"]');
+        if (control) cerrarSesionAdmin();
+      });
+      document.addEventListener("change", (event) => {
+        if (event.target.matches('[data-action="admin-status"]')) {
+          import("./js/admin.js").then(({ manejarEstadoAdmin }) => manejarEstadoAdmin(event.target));
+        }
+      });
+      inicializarAdmin();
+    </script>
+  </body>
+</html>
