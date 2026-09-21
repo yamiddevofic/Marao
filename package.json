@@ -1,0 +1,9 @@
+{
+  "name": "pag-marao",
+  "private": true,
+  "description": "Sitio estático de Marao. Sin build: este package.json solo existe para scripts de mantenimiento (migración y optimización de imágenes).",
+  "type": "module",
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  }
+}

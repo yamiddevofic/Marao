@@ -1,5 +1,7 @@
 .opencode/
 
+node_modules/
+
 .claude/*
 !.claude/skills/
 .claude/skills/*

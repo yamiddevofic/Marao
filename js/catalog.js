@@ -17,13 +17,7 @@ const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
 const marcaFoto = (src, alt, extras = "") => {
   const esPlaceholder = src.endsWith(".svg");
   const img = `<img src="${escapar(src)}" alt="${alt}" loading="lazy" ${extras}>`;
-  // Solo las fotos locales tienen un .webp hermano subido junto a ellas. Las
-  // remotas (Supabase) no lo garantizan: si el navegador soporta WebP, elige
-  // esa <source> por tipo sin comprobar si el archivo existe, y a diferencia
-  // de un <img onerror> el <picture> no recupera el <img> cuando esa petición
-  // falla en red. Envolver solo lo local evita mostrar el ícono roto.
-  const esLocal = src.startsWith("assets/");
-  if (esPlaceholder || !esLocal) return img;
+  if (esPlaceholder) return img;
   return `<picture><source srcset="${escapar(src.replace(/\.jpe?g$/i, ".webp"))}" type="image/webp">${img}</picture>`;
 };
 
