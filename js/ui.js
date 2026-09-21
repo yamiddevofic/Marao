@@ -18,12 +18,15 @@ export function actualizarRuta(cambios = {}, { reemplazar = false } = {}) {
 export function mostrarSeccion(seccion, { historial = true } = {}) {
   const tienda = document.getElementById("view-store");
   const carrito = document.getElementById("view-cart");
-  if (!tienda || !carrito) return;
+  const admin = document.getElementById("view-admin");
+  if (!tienda || !carrito || !admin) return;
 
   const esCarrito = seccion === "carrito";
-  if (historial) actualizarRuta({ vista: esCarrito ? "carrito" : null, detalle: null });
+  const esAdmin = seccion === "admin";
+  if (historial) actualizarRuta({ vista: esCarrito ? "carrito" : esAdmin ? "admin" : null, detalle: null });
   tienda.classList.toggle("hidden", esCarrito);
   carrito.classList.toggle("hidden", !esCarrito);
+  admin.classList.toggle("hidden", !esAdmin);
 
   if (esCarrito) {
     renderCarritoPagina();
@@ -32,7 +35,6 @@ export function mostrarSeccion(seccion, { historial = true } = {}) {
 }
 
 export function vistaDesdeRuta() {
-  return new URLSearchParams(window.location.search).get("vista") === "carrito"
-    ? "carrito"
-    : "tienda";
+  const vista = new URLSearchParams(window.location.search).get("vista");
+  return vista === "carrito" || vista === "admin" ? vista : "tienda";
 }

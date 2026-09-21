@@ -40,6 +40,12 @@ import {
   abrirModalPerfil,
   cerrarModalPerfil,
 } from "./auth.js";
+import {
+  iniciarSesionAdmin,
+  cerrarSesionAdmin,
+  manejarEstadoAdmin,
+  inicializarAdmin,
+} from "./admin.js";
 
 /**
  * Menú de navegación en móvil.
@@ -167,6 +173,12 @@ document.addEventListener("click", (event) => {
     case "mostrar-seccion":
       mostrarSeccion(el.dataset.view);
       break;
+    case "admin-login":
+      iniciarSesionAdmin();
+      break;
+    case "admin-logout":
+      cerrarSesionAdmin();
+      break;
     case "open-login":
       openLoginModal();
       break;
@@ -233,6 +245,10 @@ function conEspera(fn, ms = 400) {
 const guardarDireccionConEspera = conEspera(guardarDatosEnvio);
 
 document.addEventListener("change", (event) => {
+  if (event.target.matches('[data-action="admin-status"]')) {
+    manejarEstadoAdmin(event.target);
+    return;
+  }
   if (event.target.id === "shipping-city") {
     calcularCostosEnvio();
     guardarDatosEnvio();
@@ -283,6 +299,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
   // los datos de envío y recalcula el resumen.
   inicializarSesion();
+  await inicializarAdmin();
 
   const detalle = Number(new URLSearchParams(window.location.search).get("detalle"));
   mostrarSeccion(vistaDesdeRuta(), { historial: false });
