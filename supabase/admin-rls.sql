@@ -3,6 +3,9 @@
 
 alter table public.productos enable row level security;
 
+drop policy if exists "Public can read visible products" on public.productos;
+drop policy if exists "Admin can update products" on public.productos;
+
 create policy "Public can read visible products"
 on public.productos for select
 to anon, authenticated
