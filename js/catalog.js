@@ -1,4 +1,4 @@
-import { productosBase, getLentes } from "./productos.js";
+import { productosBase, getLentes, esLente } from "./productos.js";
 import { COLORES_LENTE } from "./lentes.js";
 import { FICHA_LENTE } from "./constantes.js";
 import { abrirModal, cerrarModal } from "./modales.js";
@@ -276,7 +276,10 @@ function renderGaleria(prod) {
 
 export function abrirModalDetalle(id, { historial = true } = {}) {
   const prod = productosBase.find((p) => p.id === id);
-  if (!prod) return;
+  /* El modal es la ficha del lente. Pestañas y accesorios no tienen tono,
+     cobertura ni pupila, así que no deben abrir esta ficha: si llega un id que
+     no es lente (por ejemplo desde `?detalle=`), se ignora. */
+  if (!prod || !esLente(prod)) return;
   if (historial) actualizarRuta({ vista: null, detalle: id });
   productoSeleccionadoModal = prod;
   cantidadModal = 1;
@@ -300,7 +303,7 @@ export function abrirModalDetalle(id, { historial = true } = {}) {
   texto("modal-duracion", FICHA_LENTE.duracion);
   texto("modal-tipo", FICHA_LENTE.tipo);
   const ficha = document.getElementById("modal-ficha");
-  const esLenteConFicha = Array.isArray(prod.presentaciones);
+  const esLenteConFicha = esLente(prod);
   if (ficha) ficha.hidden = !esLenteConFicha;
   if (esLenteConFicha) {
     texto("modal-color", COLORES_LENTE[prod.color] ?? prod.color);
