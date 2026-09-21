@@ -67,12 +67,19 @@ async function actualizarEstado(id, estado) {
   window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
 }
 
-export async function iniciarSesionAdmin() {
-  const { error } = await obtenerSupabase().auth.signInWithOAuth({
-    provider: "google",
-    options: { redirectTo: window.location.href },
+export async function iniciarSesionAdmin(evento) {
+  evento.preventDefault();
+  const formulario = evento.currentTarget;
+  const datos = new FormData(formulario);
+  const { data, error } = await obtenerSupabase().auth.signInWithPassword({
+    email: datos.get("email"),
+    password: datos.get("password"),
   });
-  if (error) mostrarMensaje(error.message, true);
+  if (error) {
+    mostrarMensaje(`No se pudo iniciar sesión: ${error.message}`, true);
+    return;
+  }
+  actualizarVistaAdmin(data.user);
 }
 
 export async function cerrarSesionAdmin() {

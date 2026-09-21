@@ -173,9 +173,6 @@ document.addEventListener("click", (event) => {
     case "mostrar-seccion":
       mostrarSeccion(el.dataset.view);
       break;
-    case "admin-login":
-      iniciarSesionAdmin();
-      break;
     case "admin-logout":
       cerrarSesionAdmin();
       break;
@@ -252,6 +249,12 @@ document.addEventListener("change", (event) => {
   if (event.target.id === "shipping-city") {
     calcularCostosEnvio();
     guardarDatosEnvio();
+  }
+});
+
+document.addEventListener("submit", (event) => {
+  if (event.target.matches('[data-action="admin-login-form"]')) {
+    iniciarSesionAdmin(event);
   }
 });
 

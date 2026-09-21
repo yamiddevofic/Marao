@@ -456,7 +456,13 @@
         <h1>ADMINISTRACIÓN</h1>
         <div id="admin-acceso">
           <p id="admin-mensaje" class="admin-mensaje">Inicia sesión con la cuenta administradora.</p>
-          <button class="btn-primary" data-action="admin-login">ENTRAR CON GOOGLE</button>
+          <form class="admin-login-form" data-action="admin-login-form">
+            <label for="admin-email">Correo</label>
+            <input id="admin-email" name="email" type="email" autocomplete="username" required />
+            <label for="admin-password">Contraseña</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required />
+            <button class="btn-primary" type="submit">ENTRAR</button>
+          </form>
         </div>
         <div id="admin-panel-contenido" hidden>
           <p id="admin-estado" class="admin-mensaje"></p>
