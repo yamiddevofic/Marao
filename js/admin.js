@@ -70,6 +70,56 @@ function mostrarMensajeEditor(mensaje, error = false) {
   elemento.classList.toggle("admin-mensaje--error", error);
 }
 
+/** Aviso flotante que confirma o niega una acción y se va solo. */
+let temporizadorToast;
+
+function mostrarToast(mensaje, error = false) {
+  const toast = document.getElementById("admin-toast");
+  if (!toast) return;
+  clearTimeout(temporizadorToast);
+  toast.textContent = mensaje;
+  toast.classList.remove("admin-toast--exito", "admin-toast--error");
+  toast.classList.add(error ? "admin-toast--error" : "admin-toast--exito");
+  toast.hidden = false;
+  requestAnimationFrame(() => toast.classList.add("visible"));
+  temporizadorToast = setTimeout(() => {
+    toast.classList.remove("visible");
+    temporizadorToast = setTimeout(() => {
+      toast.hidden = true;
+    }, 250);
+  }, 3200);
+}
+
+/** Mientras carga el catálogo, el grid muestra un indicador en vez de quedar vacío. */
+function pintarCargando(mensaje = "Cargando catálogo…") {
+  const contenedor = document.getElementById("admin-productos");
+  if (!contenedor) return;
+  contenedor.replaceChildren();
+
+  const bloque = document.createElement("div");
+  bloque.className = "admin-cargando";
+  bloque.setAttribute("role", "status");
+  const spinner = document.createElement("span");
+  spinner.className = "admin-spinner";
+  spinner.setAttribute("aria-hidden", "true");
+  const texto = document.createElement("span");
+  texto.textContent = mensaje;
+  bloque.append(spinner, texto);
+  contenedor.append(bloque);
+}
+
+/** Deja un botón ocupado mientras corre la acción y lo restaura al terminar. */
+function ocuparBoton(boton, texto) {
+  if (!boton) return () => {};
+  const original = boton.textContent;
+  boton.disabled = true;
+  boton.textContent = texto;
+  return () => {
+    boton.disabled = false;
+    boton.textContent = original;
+  };
+}
+
 function pintarResumen(lista) {
   const resumen = document.getElementById("admin-resumen");
   if (!resumen) return;
@@ -166,7 +216,7 @@ function pintarProductos(lista, { vacio = "No hay productos en el catálogo." } 
 
 /* --- Filtros del catálogo --- */
 
-const filtros = { busqueda: "", tipo: "todos", estado: "todos" };
+const filtros = { busqueda: "", tipo: "todos", color: "todos", estado: "todos" };
 
 const normalizar = (texto) =>
   String(texto ?? "")
@@ -178,6 +228,7 @@ function productosFiltrados() {
   const termino = normalizar(filtros.busqueda);
   return productos.filter((producto) => {
     if (filtros.tipo !== "todos" && producto.tipo !== filtros.tipo) return false;
+    if (filtros.color !== "todos" && producto.color !== filtros.color) return false;
     if (filtros.estado !== "todos" && producto.estado !== filtros.estado) return false;
     if (!termino) return true;
     const campos = [producto.nombre, ...(producto.alias ?? [])];
@@ -186,7 +237,12 @@ function productosFiltrados() {
 }
 
 function hayFiltrosActivos() {
-  return Boolean(filtros.busqueda) || filtros.tipo !== "todos" || filtros.estado !== "todos";
+  return (
+    Boolean(filtros.busqueda) ||
+    filtros.tipo !== "todos" ||
+    filtros.color !== "todos" ||
+    filtros.estado !== "todos"
+  );
 }
 
 function aplicarFiltros() {
@@ -206,11 +262,14 @@ function aplicarFiltros() {
 function limpiarFiltros() {
   filtros.busqueda = "";
   filtros.tipo = "todos";
+  filtros.color = "todos";
   filtros.estado = "todos";
   const busqueda = document.getElementById("admin-busqueda");
   if (busqueda) busqueda.value = "";
   const categoria = document.getElementById("admin-filtro-categoria");
   if (categoria) categoria.value = "todos";
+  const color = document.getElementById("admin-filtro-color");
+  if (color) color.value = "todos";
   const estado = document.getElementById("admin-filtro-estado");
   if (estado) estado.value = "todos";
   aplicarFiltros();
@@ -219,6 +278,7 @@ function limpiarFiltros() {
 function leerFiltrosDeControles() {
   filtros.busqueda = document.getElementById("admin-busqueda")?.value ?? "";
   filtros.tipo = document.getElementById("admin-filtro-categoria")?.value ?? "todos";
+  filtros.color = document.getElementById("admin-filtro-color")?.value ?? "todos";
   filtros.estado = document.getElementById("admin-filtro-estado")?.value ?? "todos";
 }
 
@@ -235,6 +295,7 @@ const aplicarFiltrosConEspera = conEspera(aplicarFiltros);
 
 async function cargarProductosAdmin() {
   mostrarMensaje("Cargando catálogo…");
+  pintarCargando();
   const { data, error } = await obtenerSupabase()
     .from("productos")
     .select(
@@ -261,6 +322,7 @@ async function actualizarEstado(id, estado) {
   if (producto) producto.estado = estado;
   pintarResumen(productos);
   mostrarMensaje("Estado actualizado.");
+  mostrarToast("Estado actualizado.");
   window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
 }
 
@@ -341,6 +403,24 @@ function actualizarVistaPrevia(input) {
   vista.src = urlVistaPrevia;
 }
 
+function siguienteId() {
+  return Math.max(0, ...productos.map((producto) => Number(producto.id) || 0)) + 1;
+}
+
+function siguienteOrden() {
+  return Math.max(0, ...productos.map((producto) => Number(producto.orden) || 0)) + 1;
+}
+
+function mostrarCampoId(visible) {
+  const campo = document.getElementById("admin-id-campo");
+  if (campo) campo.hidden = !visible;
+}
+
+function mostrarBotonEliminar(visible) {
+  const boton = document.getElementById("admin-editor-eliminar");
+  if (boton) boton.hidden = !visible;
+}
+
 function abrirEditor(id) {
   const producto = productos.find((item) => item.id === id);
   const formulario = document.getElementById("admin-producto-form");
@@ -348,6 +428,7 @@ function abrirEditor(id) {
 
   productoEditado = producto;
   formulario.reset();
+  formulario.dataset.modo = "editar";
   formulario.dataset.id = String(producto.id);
   mostrarMensajeEditor("");
   formulario.elements.nombre.value = producto.nombre ?? "";
@@ -379,7 +460,39 @@ function abrirEditor(id) {
   const titulo = document.getElementById("admin-editor-title");
   if (titulo) titulo.textContent = producto.nombre;
 
+  mostrarCampoId(false);
+  mostrarBotonEliminar(true);
   actualizarCamposLente();
+  cerrarFab();
+  abrirModal("modal-admin-producto");
+}
+
+function abrirEditorNuevo() {
+  const formulario = document.getElementById("admin-producto-form");
+  if (!formulario) return;
+
+  productoEditado = null;
+  formulario.reset();
+  formulario.dataset.modo = "crear";
+  formulario.dataset.id = "";
+  mostrarMensajeEditor("");
+  formulario.elements.id.value = String(siguienteId());
+  formulario.elements.orden.value = String(siguienteOrden());
+
+  const contenedor = document.getElementById("admin-presentaciones");
+  if (contenedor) contenedor.replaceChildren();
+
+  liberarVistaPrevia();
+  const vista = document.getElementById("admin-foto-preview");
+  if (vista) vista.src = IMG_PLACEHOLDER;
+
+  const titulo = document.getElementById("admin-editor-title");
+  if (titulo) titulo.textContent = "Nuevo producto";
+
+  mostrarCampoId(true);
+  mostrarBotonEliminar(false);
+  actualizarCamposLente();
+  cerrarFab();
   abrirModal("modal-admin-producto");
 }
 
@@ -415,11 +528,14 @@ async function guardarProducto(evento) {
   const formulario = evento.target;
   if (!(formulario instanceof HTMLFormElement)) return;
 
+  const modo = formulario.dataset.modo === "crear" ? "crear" : "editar";
   const id = Number(formulario.dataset.id);
-  if (!Number.isInteger(id)) return;
+  if (modo === "editar" && !Number.isInteger(id)) return;
 
-  const boton = formulario.querySelector('button[type="submit"]');
-  if (boton) boton.disabled = true;
+  const restaurarBoton = ocuparBoton(
+    formulario.querySelector('button[type="submit"]'),
+    modo === "crear" ? "Creando…" : "Guardando…",
+  );
 
   try {
     const datos = new FormData(formulario);
@@ -439,6 +555,17 @@ async function guardarProducto(evento) {
       throw new Error("El precio debe ser un número mayor o igual a cero.");
     }
 
+    if (modo === "crear") {
+      const idCrudo = String(datos.get("id") ?? "").trim();
+      if (idCrudo) {
+        const idNuevo = Number(idCrudo);
+        if (!Number.isInteger(idNuevo) || idNuevo <= 0) {
+          throw new Error("El ID debe ser un número entero positivo.");
+        }
+        cambios.id = idNuevo;
+      }
+    }
+
     if (esTipoLente(cambios.tipo)) {
       cambios.color = datos.get("color") || null;
       cambios.cobertura = datos.get("cobertura") || null;
@@ -450,24 +577,149 @@ async function guardarProducto(evento) {
 
     const archivo = formulario.elements.foto?.files?.[0];
     if (archivo) {
-      const url = await subirImagen(id, archivo);
+      const url = await subirImagen(modo === "crear" ? "nuevo" : id, archivo);
       const previas = productoEditado?.imagenes ?? [];
       cambios.imagen = url;
       cambios.imagenes = [url, ...previas.filter((imagen) => imagen !== url)].slice(0, 4);
     }
 
-    const { error } = await obtenerSupabase().from("productos").update(cambios).eq("id", id);
-    if (error) throw error;
+    const supabase = obtenerSupabase();
+    if (modo === "crear") {
+      const { error } = await supabase.from("productos").insert(cambios);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from("productos").update(cambios).eq("id", id);
+      if (error) throw error;
+    }
 
+    const aviso = `"${cambios.nombre}" ${modo === "crear" ? "creado" : "actualizado"}.`;
     cerrarModal("modal-admin-producto");
     window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
     await cargarProductosAdmin();
-    mostrarMensaje(`"${cambios.nombre}" actualizado.`);
+    mostrarMensaje(aviso);
+    mostrarToast(aviso);
   } catch (error) {
     mostrarMensajeEditor(`No se pudo guardar: ${error.message}`, true);
+    mostrarToast(`No se pudo guardar: ${error.message}`, true);
   } finally {
-    if (boton) boton.disabled = false;
+    restaurarBoton();
   }
+}
+
+/* --- Eliminar con confirmación --- */
+
+let confirmacionPendiente = null;
+
+function abrirConfirmacion({ titulo, mensaje, requiereTexto = false, alConfirmar }) {
+  const modal = document.getElementById("modal-admin-confirmar");
+  if (!modal) return;
+  confirmacionPendiente = alConfirmar;
+
+  const tituloElemento = document.getElementById("admin-confirmar-title");
+  if (tituloElemento) tituloElemento.textContent = titulo;
+  const mensajeElemento = document.getElementById("admin-confirmar-mensaje");
+  if (mensajeElemento) mensajeElemento.textContent = mensaje;
+
+  const campo = document.getElementById("admin-confirmar-campo");
+  const input = document.getElementById("admin-confirmar-input");
+  const boton = document.getElementById("admin-confirmar-boton");
+  if (campo) campo.hidden = !requiereTexto;
+  if (input) input.value = "";
+  if (boton) boton.disabled = requiereTexto;
+
+  cerrarFab();
+  abrirModal("modal-admin-confirmar");
+  if (requiereTexto) input?.focus();
+}
+
+async function ejecutarConfirmacion() {
+  const accion = confirmacionPendiente;
+  if (!accion) return;
+  confirmacionPendiente = null;
+  const restaurarBoton = ocuparBoton(
+    document.getElementById("admin-confirmar-boton"),
+    "Eliminando…",
+  );
+  try {
+    await accion();
+  } finally {
+    restaurarBoton();
+    cerrarModal("modal-admin-confirmar");
+  }
+}
+
+async function eliminarProducto(id) {
+  try {
+    const { error } = await obtenerSupabase().from("productos").delete().eq("id", id);
+    if (error) throw error;
+    cerrarModal("modal-admin-producto");
+    window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
+    await cargarProductosAdmin();
+    mostrarMensaje("Producto eliminado.");
+    mostrarToast("Producto eliminado.");
+  } catch (error) {
+    mostrarMensaje(`No se pudo eliminar: ${error.message}`, true);
+    mostrarToast(`No se pudo eliminar: ${error.message}`, true);
+  }
+}
+
+async function eliminarTodos() {
+  try {
+    const ids = productos.map((producto) => producto.id);
+    if (ids.length === 0) return;
+    const { error } = await obtenerSupabase().from("productos").delete().in("id", ids);
+    if (error) throw error;
+    window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
+    await cargarProductosAdmin();
+    mostrarMensaje("Se eliminaron todos los productos.");
+    mostrarToast("Se eliminaron todos los productos.");
+  } catch (error) {
+    mostrarMensaje(`No se pudo eliminar: ${error.message}`, true);
+    mostrarToast(`No se pudo eliminar: ${error.message}`, true);
+  }
+}
+
+function solicitarEliminar(id) {
+  const producto = productos.find((item) => item.id === id);
+  if (!producto) return;
+  abrirConfirmacion({
+    titulo: "Eliminar producto",
+    mensaje: `Se eliminará "${producto.nombre}". Esta acción no se puede deshacer.`,
+    alConfirmar: () => eliminarProducto(id),
+  });
+}
+
+function solicitarEliminarTodos() {
+  if (productos.length === 0) return;
+  abrirConfirmacion({
+    titulo: "Eliminar todos los productos",
+    mensaje: `Se eliminarán los ${productos.length} productos del catálogo. Esta acción no se puede deshacer.`,
+    requiereTexto: true,
+    alConfirmar: eliminarTodos,
+  });
+}
+
+/* --- Botón flotante de acciones --- */
+
+function alternarFab() {
+  const fab = document.getElementById("admin-fab");
+  const menu = document.getElementById("admin-fab-menu");
+  const boton = fab?.querySelector('[data-action="admin-fab"]');
+  if (!fab || !menu) return;
+  const abierto = menu.hidden;
+  menu.hidden = !abierto;
+  fab.classList.toggle("admin-fab--abierto", abierto);
+  boton?.setAttribute("aria-expanded", String(abierto));
+}
+
+function cerrarFab() {
+  const fab = document.getElementById("admin-fab");
+  const menu = document.getElementById("admin-fab-menu");
+  const boton = fab?.querySelector('[data-action="admin-fab"]');
+  if (!fab || !menu) return;
+  menu.hidden = true;
+  fab.classList.remove("admin-fab--abierto");
+  boton?.setAttribute("aria-expanded", "false");
 }
 
 /* --- Sesión y delegación --- */
@@ -483,6 +735,7 @@ export async function iniciarSesionAdmin(evento) {
   });
   if (error) {
     mostrarMensaje(`No se pudo iniciar sesión: ${error.message}`, true);
+    mostrarToast(`No se pudo iniciar sesión: ${error.message}`, true);
     return;
   }
   actualizarVistaAdmin(data.user);
@@ -498,6 +751,7 @@ export async function manejarEstadoAdmin(elemento) {
     await actualizarEstado(Number(elemento.dataset.id), elemento.value);
   } catch (error) {
     mostrarMensaje(`No se pudo actualizar: ${error.message}`, true);
+    mostrarToast(`No se pudo actualizar: ${error.message}`, true);
   }
 }
 
@@ -519,12 +773,16 @@ async function actualizarVistaAdmin(usuario) {
       await cargarProductosAdmin();
     } catch (error) {
       mostrarMensaje(`No se pudo cargar el catálogo: ${error.message}`, true);
+      mostrarToast(`No se pudo cargar el catálogo: ${error.message}`, true);
     }
   }
 }
 
 function configurarDelegacion() {
   document.addEventListener("click", (event) => {
+    /* El menú del botón flotante se cierra al tocar fuera de él. */
+    if (!event.target.closest(".admin-fab")) cerrarFab();
+
     const el = event.target.closest("[data-action]");
     if (!el) return;
     switch (el.dataset.action) {
@@ -536,6 +794,23 @@ function configurarDelegacion() {
         break;
       case "admin-logout":
         cerrarSesionAdmin();
+        break;
+      case "admin-fab":
+        alternarFab();
+        break;
+      case "admin-nuevo":
+        abrirEditorNuevo();
+        break;
+      case "admin-eliminar-todos":
+        solicitarEliminarTodos();
+        break;
+      case "admin-eliminar": {
+        const formulario = document.getElementById("admin-producto-form");
+        solicitarEliminar(Number(formulario?.dataset.id));
+        break;
+      }
+      case "admin-confirmar":
+        ejecutarConfirmacion();
         break;
       case "admin-edit":
         abrirEditor(Number(el.dataset.id));
@@ -556,6 +831,9 @@ function configurarDelegacion() {
     if (event.target.id === "admin-busqueda") {
       filtros.busqueda = event.target.value;
       aplicarFiltrosConEspera();
+    } else if (event.target.id === "admin-confirmar-input") {
+      const boton = document.getElementById("admin-confirmar-boton");
+      if (boton) boton.disabled = event.target.value.trim().toUpperCase() !== "ELIMINAR";
     }
   });
 
@@ -580,8 +858,15 @@ function configurarDelegacion() {
     }
   });
 
+  /* Escape resuelve una cosa a la vez: el modal de encima y, si no hay
+     ninguno, el menú del botón flotante. */
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && hayModalAbierto()) cerrarModalSuperior();
+    if (event.key !== "Escape") return;
+    if (hayModalAbierto()) {
+      cerrarModalSuperior();
+    } else {
+      cerrarFab();
+    }
   });
 }
 

@@ -17,6 +17,21 @@ to authenticated
 using (auth.jwt() ->> 'email' = 'admin@marao.com')
 with check (auth.jwt() ->> 'email' = 'admin@marao.com');
 
+-- El panel también crea y borra productos (CRUD completo). Igual que el update,
+-- solo la cuenta administradora.
+drop policy if exists "Admin can insert products" on public.productos;
+drop policy if exists "Admin can delete products" on public.productos;
+
+create policy "Admin can insert products"
+on public.productos for insert
+to authenticated
+with check (auth.jwt() ->> 'email' = 'admin@marao.com');
+
+create policy "Admin can delete products"
+on public.productos for delete
+to authenticated
+using (auth.jwt() ->> 'email' = 'admin@marao.com');
+
 -- Storage del bucket "productos".
 -- La lectura es pública porque el catálogo sirve las fotos por URL directa;
 -- escribir solo puede la cuenta administradora. El panel sube desde el

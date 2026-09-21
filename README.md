@@ -16,7 +16,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Modal de perfil**: foto, nombre y correo de la cuenta, con el botón de cerrar sesión.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
-- **Panel de administración** (`admin.html`): acceso con la cuenta administradora, resumen del inventario, filtros por nombre/categoría/estado y edición de la ficha y la foto de cada producto (foto a Supabase Storage). El catálogo del cliente carga desde Supabase (`js/catalogo-remoto.js`).
+- **Panel de administración** (`admin.html`): acceso con la cuenta administradora, resumen del inventario, filtros por nombre/categoría/color/estado y CRUD completo (crear, editar ficha y foto, eliminar uno o vaciar el catálogo). La foto se sube a Supabase Storage. El catálogo del cliente carga desde Supabase (`js/catalogo-remoto.js`).
 
 La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart` y conserva la vista en la URL (`?vista=carrito`). Los filtros, la página y el detalle del lente también se pueden compartir mediante los parámetros `color`, `pupila`, `pagina` y `detalle`; Atrás y Adelante restauran ese estado.
 
