@@ -22,19 +22,25 @@
     </header>
     <main class="admin-shell">
       <section class="admin-content" aria-labelledby="admin-title">
-        <div class="admin-content-header">
-          <div>
-            <span class="eyebrow">Administración</span>
-            <h2 id="admin-title">Productos</h2>
-            <p class="admin-subtitle">Actualiza el estado que verá tu clientela.</p>
-          </div>
-          <div class="admin-status-dot"><span></span> Supabase conectado</div>
-        </div>
+        <h1 id="admin-title" class="solo-lector">Panel de administración</h1>
 
         <section id="admin-acceso" class="admin-login-card" aria-labelledby="login-title">
-          <div class="admin-login-icon">✦</div>
-          <span class="eyebrow">Acceso seguro</span>
-          <h3 id="login-title">Bienvenida, administradora</h3>
+          <div class="admin-login-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h2 id="login-title">Bienvenida, administradora</h2>
           <p id="admin-mensaje">Inicia sesión con la cuenta administradora.</p>
           <form class="admin-login-form" data-action="admin-login-form">
             <label for="admin-email">Correo</label>
@@ -45,37 +51,234 @@
           </form>
         </section>
 
-        <section id="admin-panel-contenido" class="admin-products-card" hidden>
+        <section id="admin-panel-contenido" class="admin-panel" hidden>
           <div class="admin-toolbar">
             <div>
-              <span class="eyebrow">Inventario visible y oculto</span>
-              <p id="admin-estado" class="admin-message"></p>
+              <span class="eyebrow">Inventario</span>
+              <p id="admin-estado" class="admin-message" role="status"></p>
             </div>
-            <button class="admin-button admin-button--ghost" data-action="admin-logout">Cerrar sesión</button>
+            <div class="admin-toolbar-acciones">
+              <div class="admin-status-dot"><span></span> Base de datos conectada</div>
+              <button
+                class="admin-button admin-button--ghost admin-button--icono"
+                data-action="admin-logout"
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
+            </div>
           </div>
-          <div class="admin-table-wrap">
-            <table>
-              <thead><tr><th>Producto</th><th>Categoría</th><th>Disponibilidad</th></tr></thead>
-              <tbody id="admin-productos"></tbody>
-            </table>
+
+          <dl id="admin-resumen" class="admin-resumen">
+            <div class="admin-resumen-item">
+              <dt>Total</dt>
+              <dd id="admin-total">0</dd>
+            </div>
+            <div class="admin-resumen-item">
+              <dt>Disponibles</dt>
+              <dd id="admin-disponibles">0</dd>
+            </div>
+            <div class="admin-resumen-item">
+              <dt>Agotados</dt>
+              <dd id="admin-agotados">0</dd>
+            </div>
+            <div class="admin-resumen-item">
+              <dt>Ocultos</dt>
+              <dd id="admin-ocultos">0</dd>
+            </div>
+          </dl>
+
+          <div class="admin-filtros">
+            <label class="admin-campo admin-filtro-busqueda" for="admin-busqueda">
+              <span class="solo-lector">Buscar producto por nombre</span>
+              <input
+                id="admin-busqueda"
+                name="busqueda"
+                type="search"
+                placeholder="Buscar por nombre…"
+                autocomplete="off"
+                data-action="admin-filtro"
+              />
+            </label>
+            <label class="admin-campo" for="admin-filtro-categoria">
+              <span class="solo-lector">Filtrar por categoría</span>
+              <select id="admin-filtro-categoria" data-action="admin-filtro">
+                <option value="todos">Todas las categorías</option>
+                <option value="reducida">Pupila reducida</option>
+                <option value="estandar">Pupila estándar</option>
+                <option value="cosplay">Cosplay</option>
+                <option value="pestana">Pestañas</option>
+                <option value="accesorio">Accesorio</option>
+              </select>
+            </label>
+            <label class="admin-campo" for="admin-filtro-estado">
+              <span class="solo-lector">Filtrar por estado</span>
+              <select id="admin-filtro-estado" data-action="admin-filtro">
+                <option value="todos">Todos los estados</option>
+                <option value="disponible">disponible</option>
+                <option value="agotado">agotado</option>
+                <option value="oculto">oculto</option>
+              </select>
+            </label>
+            <button type="button" class="admin-button admin-button--ghost" data-action="admin-limpiar-filtros">
+              Limpiar
+            </button>
           </div>
+
+          <div id="admin-productos" class="admin-productos"></div>
         </section>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="modal-admin-producto" data-action="close-modal">
+      <section
+        class="admin-editor"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-editor-title"
+        tabindex="-1"
+      >
+        <header class="admin-editor-header">
+          <div>
+            <span class="eyebrow">Editar ficha</span>
+            <h2 id="admin-editor-title">Producto</h2>
+          </div>
+          <button type="button" class="admin-icon-button" data-action="close-modal" aria-label="Cerrar">×</button>
+        </header>
+
+        <form class="admin-editor-form" id="admin-producto-form" data-action="admin-product-form">
+          <div class="admin-editor-cuerpo">
+            <div class="admin-foto">
+              <img
+                id="admin-foto-preview"
+                class="admin-foto-preview"
+                src="assets/img/placeholder-producto.svg"
+                alt="Vista previa de la foto del producto"
+              />
+              <div class="admin-campo admin-foto-campo">
+                <label for="admin-foto">Foto del producto</label>
+                <input
+                  id="admin-foto"
+                  name="foto"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  data-action="admin-foto"
+                />
+                <p class="admin-hint">JPG, PNG o WebP. Máximo 5 MB.</p>
+              </div>
+            </div>
+
+            <label class="admin-campo" for="admin-nombre">
+              <span>Nombre</span>
+              <input id="admin-nombre" name="nombre" type="text" required />
+            </label>
+
+            <div class="admin-grid-2">
+              <label class="admin-campo" for="admin-precio">
+                <span>Precio (COP)</span>
+                <input id="admin-precio" name="precio" type="number" min="0" step="100" inputmode="numeric" />
+              </label>
+              <label class="admin-campo" for="admin-orden">
+                <span>Orden</span>
+                <input id="admin-orden" name="orden" type="number" step="1" inputmode="numeric" />
+              </label>
+            </div>
+
+            <div class="admin-grid-2">
+              <label class="admin-campo" for="admin-tipo">
+                <span>Categoría</span>
+                <select id="admin-tipo" name="tipo" data-action="admin-tipo">
+                  <option value="reducida">Pupila reducida</option>
+                  <option value="estandar">Pupila estándar</option>
+                  <option value="cosplay">Cosplay</option>
+                  <option value="pestana">Pestañas</option>
+                  <option value="accesorio">Accesorio</option>
+                </select>
+              </label>
+              <label class="admin-campo" for="admin-estado-campo">
+                <span>Estado</span>
+                <select id="admin-estado-campo" name="estado">
+                  <option value="disponible">disponible</option>
+                  <option value="agotado">agotado</option>
+                  <option value="oculto">oculto</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="admin-campo" for="admin-descripcion">
+              <span>Descripción</span>
+              <textarea id="admin-descripcion" name="descripcion" rows="3"></textarea>
+            </label>
+
+            <fieldset id="admin-campos-lente" class="admin-fieldset" hidden>
+              <legend>Ficha de lente</legend>
+              <div class="admin-grid-2">
+                <label class="admin-campo" for="admin-color">
+                  <span>Tono</span>
+                  <select id="admin-color" name="color">
+                    <option value="">Sin tono</option>
+                    <option value="miel">Café &amp; miel</option>
+                    <option value="verde">Verde</option>
+                    <option value="gris">Gris</option>
+                    <option value="azul">Azul</option>
+                  </select>
+                </label>
+                <label class="admin-campo" for="admin-cobertura">
+                  <span>Cobertura</span>
+                  <input id="admin-cobertura" name="cobertura" type="text" />
+                </label>
+              </div>
+              <div class="admin-grid-2">
+                <label class="admin-campo" for="admin-borde">
+                  <span>Borde</span>
+                  <input id="admin-borde" name="borde" type="text" />
+                </label>
+                <label class="admin-campo" for="admin-efecto">
+                  <span>Efecto</span>
+                  <input id="admin-efecto" name="efecto" type="text" />
+                </label>
+              </div>
+              <label class="admin-campo" for="admin-alias">
+                <span>Alias (separados por coma)</span>
+                <input id="admin-alias" name="alias" type="text" />
+              </label>
+
+              <div class="admin-presentaciones-cabecera">
+                <span class="admin-campo-titulo">Presentaciones (marca · diámetro · pupila)</span>
+                <button type="button" class="admin-button admin-button--ghost" data-action="admin-add-presentacion">
+                  Añadir
+                </button>
+              </div>
+              <div id="admin-presentaciones" class="admin-presentaciones"></div>
+            </fieldset>
+          </div>
+
+          <div class="admin-editor-acciones">
+            <p id="admin-editor-mensaje" class="admin-editor-mensaje" role="status"></p>
+            <button type="button" class="admin-button admin-button--ghost" data-action="close-modal">Cancelar</button>
+            <button type="submit" class="admin-button admin-button--primary">Guardar cambios</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
     <script type="module">
-      import { iniciarSesionAdmin, cerrarSesionAdmin, inicializarAdmin } from "./js/admin.js";
-      document.addEventListener("submit", (event) => {
-        if (event.target.matches('[data-action="admin-login-form"]')) iniciarSesionAdmin(event);
-      });
-      document.addEventListener("click", (event) => {
-        const control = event.target.closest('[data-action="admin-logout"]');
-        if (control) cerrarSesionAdmin();
-      });
-      document.addEventListener("change", (event) => {
-        if (event.target.matches('[data-action="admin-status"]')) {
-          import("./js/admin.js").then(({ manejarEstadoAdmin }) => manejarEstadoAdmin(event.target));
-        }
-      });
+      import { inicializarAdmin } from "./js/admin.js";
       inicializarAdmin();
     </script>
   </body>

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- El panel de administración permite editar la ficha completa de cada producto (nombre, descripción, precio, categoría, estado, orden y, en los lentes, tono, cobertura, borde, efecto, alias y presentaciones) y cambiar su foto, que se sube a Supabase Storage con la sesión de la administradora.
+- El panel de administración se rediseñó en clave negra: resumen del inventario, tarjetas con miniatura y filtros por nombre, categoría y estado. Cerrar sesión es ahora un icono.
+
 - La tienda, el carrito, los filtros, la paginación y el detalle de lentes ahora tienen enlaces compartibles y restauran su estado con el historial del navegador.
 - Cuatro lentes nuevos del documento del catálogo, con su foto y su ficha: Kitty Pink, Bluersht Pink, Taylor Violet y Gem Pink ($45.000 cada uno).
 - Trece referencias que tenían foto pero no ficha entraron por fin al catálogo con la versión nueva del documento: Aqua Blue, Melburth, 3 Con Hazel, Mel Beige, Queen Chocolate, Rio Ocre, Angeles Emarald, Awaken Green, Breeze Green, Cambusi Green, Rio Buzio, OMG Black y Pattaya Black. El catálogo pasó de 85 a 102 lentes.
@@ -72,6 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El diseño se adapta a móvil (mobile-first) y las imágenes del catálogo usan carga diferida (lazy loading).
 
 ### Fixed
+
+- El detalle del lente ya no muestra la ficha técnica en productos que no son lentes: pestañas y accesorios no tienen tono, cobertura ni pupila, así que ese bloque (y el modal) quedan solo para lentes.
 
 - En una misma fila, el precio y el botón de todas las tarjetas caen ahora a la misma altura. Un nombre que ocupaba dos renglones corría hacia abajo el resto de su tarjeta y la fila quedaba despareja.
 

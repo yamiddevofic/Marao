@@ -16,3 +16,46 @@ on public.productos for update
 to authenticated
 using (auth.jwt() ->> 'email' = 'admin@marao.com')
 with check (auth.jwt() ->> 'email' = 'admin@marao.com');
+
+-- Storage del bucket "productos".
+-- La lectura es pública porque el catálogo sirve las fotos por URL directa;
+-- escribir solo puede la cuenta administradora. El panel sube desde el
+-- navegador con su sesión, nunca con la clave de servicio.
+
+drop policy if exists "Public can read product images" on storage.objects;
+drop policy if exists "Admin can upload product images" on storage.objects;
+drop policy if exists "Admin can update product images" on storage.objects;
+drop policy if exists "Admin can delete product images" on storage.objects;
+
+create policy "Public can read product images"
+on storage.objects for select
+to anon, authenticated
+using (bucket_id = 'productos');
+
+create policy "Admin can upload product images"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'productos'
+  and auth.jwt() ->> 'email' = 'admin@marao.com'
+);
+
+create policy "Admin can update product images"
+on storage.objects for update
+to authenticated
+using (
+  bucket_id = 'productos'
+  and auth.jwt() ->> 'email' = 'admin@marao.com'
+)
+with check (
+  bucket_id = 'productos'
+  and auth.jwt() ->> 'email' = 'admin@marao.com'
+);
+
+create policy "Admin can delete product images"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'productos'
+  and auth.jwt() ->> 'email' = 'admin@marao.com'
+);
