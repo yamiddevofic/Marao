@@ -16,7 +16,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Modal de perfil**: foto, nombre y correo de la cuenta, con el botón de cerrar sesión.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
-- **Panel de administración** (`admin.html`): acceso con la cuenta administradora, resumen del inventario, filtros por nombre/categoría/color/estado y CRUD completo (crear, editar ficha y foto, eliminar uno o vaciar el catálogo). La foto se sube a Supabase Storage. El catálogo del cliente carga desde Supabase (`js/catalogo-remoto.js`).
+- **Panel de administración** (`admin.html`): acceso con la cuenta administradora, resumen del inventario, filtros por categoría/color/estado y CRUD completo (crear, editar ficha y foto, eliminar uno o vaciar el catálogo). La foto se sube a Supabase Storage. El catálogo del cliente carga desde Supabase (`js/catalogo-remoto.js`).
 
 La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart` y conserva la vista en la URL (`?vista=carrito`). Los filtros, la página y el detalle del lente también se pueden compartir mediante los parámetros `color`, `pupila`, `pagina` y `detalle`; Atrás y Adelante restauran ese estado.
 
@@ -37,14 +37,20 @@ La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` 
 ```
 Pag_Marao/
 ├── index.html          # Página principal (tienda, carrito, modales, footer)
-├── css/styles.css      # Estilos globales + design tokens (variables CSS)
+├── admin.html          # Panel de administración (login, inventario, CRUD)
+├── css/
+│   ├── styles.css      # Estilos globales + design tokens (variables CSS)
+│   └── admin.css       # Estilos del panel de administración
 ├── js/
 │   ├── main.js         # Punto de entrada: render inicial y delegación de eventos
 │   ├── constantes.js   # Constantes compartidas (IMG_PATH, PRECIO_LENTES)
 │   ├── lentes.js       # Catálogo cosmético: 102 referencias con ficha técnica
 │   ├── cosplay.js      # Línea cosplay: 19 referencias
 │   ├── productos.js    # Une lentes + pestañas + accesorios en productosBase
+│   ├── catalogo-remoto.js # Carga el catálogo desde Supabase
 │   ├── catalog.js      # Render de catálogo, filtros y modal de detalle
+│   ├── buscador.js     # Buscador del header (lupa, resultados en vivo)
+│   ├── admin.js        # Panel: sesión, inventario, editor de fichas y CRUD
 │   ├── cart.js         # Estado y operaciones del carrito
 │   ├── checkout.js     # Costos de envío, medios de pago y pedido por WhatsApp
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
@@ -53,6 +59,8 @@ Pag_Marao/
 │   ├── almacenamiento.js # Persistencia en localStorage (carrito, sesión, envío)
 │   ├── formato.js      # Formato de precios en pesos colombianos
 │   └── ui.js           # Navegación entre vistas (tienda / carrito)
+├── supabase/
+│   └── admin-rls.sql   # Políticas RLS de productos y del Storage de fotos
 ├── assets/img/         # Imágenes (productos, marca, hero)
 │   └── lentes/         # Fotos por tono (miel, verde, gris, azul) + cosplay/
 ├── docs/               # Documentación adicional (vacío por ahora)

@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- La tienda y el panel tienen un buscador con lupa en el encabezado. Abre un diálogo con resultados en vivo por nombre y alias; en la tienda un lente abre su ficha y las pestañas o accesorios se resaltan en su sección, y en el panel cada resultado se puede editar.
+
 - El CRUD del panel quedó completo: se pueden crear productos nuevos, eliminar uno desde su ficha (con confirmación) y vaciar el catálogo (confirmando con la palabra ELIMINAR). Las acciones viven en un botón flotante «+» abajo a la derecha, sobrepuesto al contenido.
 
 - El panel de administración permite editar la ficha completa de cada producto (nombre, descripción, precio, categoría, estado, orden y, en los lentes, tono, cobertura, borde, efecto, alias y presentaciones) y cambiar su foto, que se sube a Supabase Storage con la sesión de la administradora.
-- El panel de administración se rediseñó en clave negra: resumen del inventario, tarjetas con miniatura y filtros por nombre, categoría, color y estado. Cerrar sesión es ahora un icono.
+- El panel de administración se rediseñó en clave negra: resumen del inventario, tarjetas con miniatura y filtros por categoría, color y estado. Cerrar sesión es ahora un icono.
 
 - La tienda, el carrito, los filtros, la paginación y el detalle de lentes ahora tienen enlaces compartibles y restauran su estado con el historial del navegador.
 - Cuatro lentes nuevos del documento del catálogo, con su foto y su ficha: Kitty Pink, Bluersht Pink, Taylor Violet y Gem Pink ($45.000 cada uno).

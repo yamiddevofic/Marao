@@ -34,6 +34,7 @@ img { max-width: 100%; }
 .admin-campo[hidden],
 .admin-fieldset[hidden],
 .admin-button[hidden],
+.admin-icon-button[hidden],
 .admin-fab-menu[hidden] {
   display: none;
 }
@@ -83,6 +84,12 @@ img { max-width: 100%; }
 }
 
 .admin-back-link:hover { text-decoration: underline; }
+
+.admin-header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
 .admin-shell { min-height: calc(100dvh - 4.5rem); }
 
@@ -323,8 +330,8 @@ img { max-width: 100%; }
 
 .admin-productos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
 }
 
 .admin-filtros {
@@ -336,69 +343,9 @@ img { max-width: 100%; }
 
 .admin-filtros .admin-button--icono { justify-self: end; }
 
-.admin-producto {
-  display: grid;
-  grid-template-columns: 4.5rem 1fr;
-  grid-template-areas:
-    "foto info"
-    "acciones acciones";
-  align-items: center;
-  gap: 0.9rem 1rem;
-  padding: 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--admin-radius);
-  background: var(--color-white);
-  box-shadow: 0 0.25rem 0.75rem rgb(62 53 48 / 5%);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
+/* La tarjeta del panel es la misma del catálogo de inicio (`.product-card-figma`
+   y sus piezas). Aquí solo se atenúa la que está oculta. */
 .admin-producto--oculto { opacity: 0.72; }
-
-.admin-producto-foto {
-  grid-area: foto;
-  width: 4.5rem;
-  height: 4.5rem;
-  border-radius: 10px;
-  object-fit: cover;
-  background: var(--color-bg);
-}
-
-.admin-producto-info { grid-area: info; min-width: 0; }
-
-.admin-badge {
-  display: inline-block;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  color: var(--admin-accent);
-  background: var(--admin-accent-soft);
-  font-family: var(--font-ui);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.admin-producto-nombre {
-  margin: 0.35rem 0 0.2rem;
-  font: 600 1.05rem var(--font-body);
-  overflow-wrap: anywhere;
-}
-
-.admin-producto-precio {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-family: var(--font-ui);
-  font-weight: 700;
-}
-
-.admin-producto-acciones {
-  grid-area: acciones;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.admin-select-estado { flex: 1 1 auto; min-width: 0; }
 
 .admin-vacio {
   grid-column: 1 / -1;
@@ -407,14 +354,6 @@ img { max-width: 100%; }
   border-radius: var(--admin-radius);
   color: var(--color-text-muted);
   text-align: center;
-}
-
-/* El realce solo donde hay puntero: en táctil no existe :hover. */
-@media (hover: hover) {
-  .admin-producto:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.9rem 1.6rem rgb(62 53 48 / 10%);
-  }
 }
 
 /* --- Editor de ficha --- */
@@ -589,6 +528,17 @@ img { max-width: 100%; }
 .admin-toast--exito { background: #1f7a55; }
 .admin-toast--error { background: var(--color-danger); }
 
+/* El buscador del panel reutiliza las clases .search-* de styles.css; aquí solo
+   lo que cambia respecto a la tienda. */
+.search-field > svg { flex-shrink: 0; color: var(--color-text-muted); }
+.search-result-editar {
+  flex-shrink: 0;
+  color: var(--admin-accent);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .admin-spinner { animation-duration: 1.6s; }
   .admin-toast { transition: none; }
@@ -687,10 +637,11 @@ img { max-width: 100%; }
   }
 
   .admin-resumen { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin-productos { grid-template-columns: repeat(4, 1fr); gap: var(--spacing-xl); }
   .admin-grid-2 { grid-template-columns: 1fr 1fr; }
   .admin-presentacion-row { grid-template-columns: 1fr 1fr 1fr auto; }
   .admin-filtros {
-    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
     align-items: end;
   }
 }

@@ -40,6 +40,7 @@ import {
   abrirModalPerfil,
   cerrarModalPerfil,
 } from "./auth.js";
+import { abrirBuscador, cerrarBuscador, buscar, abrirResultado } from "./buscador.js";
 
 /**
  * Menú de navegación en móvil.
@@ -173,6 +174,24 @@ document.addEventListener("click", (event) => {
     case "close-login":
       cerrarModalLogin();
       break;
+    case "open-search":
+      abrirBuscador();
+      break;
+    case "close-search": {
+      /* El mismo botón borra lo escrito y, si no hay nada, cierra el buscador. */
+      const inputBusqueda = document.getElementById("search-input");
+      if (inputBusqueda?.value) {
+        inputBusqueda.value = "";
+        buscar("");
+        inputBusqueda.focus();
+      } else {
+        cerrarBuscador();
+      }
+      break;
+    }
+    case "search-open":
+      abrirResultado(Number(el.dataset.id));
+      break;
     case "logout":
       cerrarSesion();
       break;
@@ -231,6 +250,10 @@ function conEspera(fn, ms = 400) {
 }
 
 const guardarDireccionConEspera = conEspera(guardarDatosEnvio);
+const buscarConEspera = conEspera(
+  () => buscar(document.getElementById("search-input")?.value),
+  180,
+);
 
 document.addEventListener("change", (event) => {
   if (event.target.id === "shipping-city") {
@@ -243,6 +266,8 @@ document.addEventListener("change", (event) => {
 document.addEventListener("input", (event) => {
   if (event.target.id === "user-address-input") {
     guardarDireccionConEspera();
+  } else if (event.target.id === "search-input") {
+    buscarConEspera();
   }
 });
 

@@ -642,6 +642,7 @@ picture {
 
 .carrusel-pista {
   display: flex;
+  align-items: stretch;
   /* Sin esto, el ancho mínimo de la pista es la suma de sus tarjetas y la
      columna que la contiene crece en vez de dejar que la pista haga scroll. */
   min-width: 0;
@@ -710,6 +711,7 @@ picture {
 .pestana-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
   background-color: var(--color-black);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -717,9 +719,14 @@ picture {
 
 .pestana-img-box {
   width: 100%;
-  /* Slide vertical: la imagen crece con el ancho de la tarjeta en vez de
-     recortarse a una altura fija. */
-  aspect-ratio: 305 / 420;
+  height: clamp(24rem, 98vw, 36rem);
+  flex: 0 0 clamp(24rem, 98vw, 36rem);
+}
+
+.pestana-img-box picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .pestana-img-box img {
@@ -733,6 +740,8 @@ picture {
   color: var(--color-black);
   /* Sin padding lateral: el botón llega hasta los bordes de la tarjeta. */
   padding: 0.8rem 0 0;
+  height: 9.75rem;
+  flex: 0 0 9.75rem;
   text-align: center;
   flex-grow: 1;
   display: flex;
@@ -976,6 +985,139 @@ body.scroll-bloqueado {
   position: relative;
   color: var(--color-text);
   margin: 1rem;
+}
+
+/* --- Buscador --- */
+
+.search-card {
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100% - 2rem));
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.search-field {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-field > i { color: var(--color-text-muted); }
+
+.search-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  outline: none;
+}
+
+.search-cerrar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--color-black);
+  background: transparent;
+  font-size: 1.1rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.search-cerrar:hover,
+.search-cerrar:focus-visible {
+  color: var(--color-black);
+  background: rgb(0 0 0 / 8%);
+}
+
+.search-results {
+  display: grid;
+  gap: 0.25rem;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0.5rem;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-text);
+  background: transparent;
+  font-family: var(--font-body);
+  transition: background 0.15s ease;
+}
+
+.search-result:hover,
+.search-result:focus-visible {
+  background: rgb(0 0 0 / 5%);
+  outline: none;
+}
+
+.search-result img {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--color-surface);
+}
+
+.search-result-info {
+  display: grid;
+  gap: 0.1rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search-result-nombre {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-precio {
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+
+.search-result > i { color: var(--color-text-muted); }
+
+.search-hint {
+  padding: 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Producto señalado desde el buscador (pestañas y accesorios, que no tienen ficha). */
+.resaltado {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 4px;
+  transition: outline-color 0.3s ease;
 }
 
 /* --- Modales de identidad (login y perfil) --- */

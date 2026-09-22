@@ -18,7 +18,33 @@
         <img src="assets/img/logo.png" alt="MARÃO" />
       </a>
       <span class="admin-header-label">PANEL DE ADMINISTRACIÓN</span>
-      <a class="admin-back-link" href="index.html">Volver a la tienda</a>
+      <div class="admin-header-acciones">
+        <button
+          type="button"
+          class="admin-icon-button"
+          id="admin-search-toggle"
+          data-action="admin-open-search"
+          aria-label="Buscar productos"
+          title="Buscar productos"
+          hidden
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <a class="admin-back-link" href="index.html">Volver a la tienda</a>
+      </div>
     </header>
     <main class="admin-shell">
       <section class="admin-content" aria-labelledby="admin-title">
@@ -104,17 +130,6 @@
           </dl>
 
           <div class="admin-filtros">
-            <label class="admin-campo admin-filtro-busqueda" for="admin-busqueda">
-              <span class="solo-lector">Buscar producto por nombre</span>
-              <input
-                id="admin-busqueda"
-                name="busqueda"
-                type="search"
-                placeholder="Buscar por nombre…"
-                autocomplete="off"
-                data-action="admin-filtro"
-              />
-            </label>
             <label class="admin-campo" for="admin-filtro-categoria">
               <span class="solo-lector">Filtrar por categoría</span>
               <select id="admin-filtro-categoria" data-action="admin-filtro">
@@ -207,6 +222,67 @@
         </section>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="modal-admin-busqueda" data-action="close-modal">
+      <div
+        class="search-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-search-title"
+        tabindex="-1"
+      >
+        <h2 id="admin-search-title" class="solo-lector">Buscar productos</h2>
+        <div class="search-field">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            id="admin-search-input"
+            type="text"
+            inputmode="search"
+            enterkeyhint="search"
+            role="searchbox"
+            placeholder="Buscar y editar productos…"
+            aria-label="Buscar productos"
+            autocomplete="off"
+          />
+          <button
+            type="button"
+            class="search-cerrar"
+            data-action="admin-close-search"
+            aria-label="Borrar búsqueda"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div id="admin-search-results" class="search-results"></div>
+        <p id="admin-search-status" class="solo-lector" role="status" aria-live="polite"></p>
+      </div>
+    </div>
 
     <div class="modal-backdrop" id="modal-admin-producto" data-action="close-modal">
       <section

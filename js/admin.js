@@ -16,14 +16,6 @@ const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
 const TIPOS_IMAGEN = ["image/jpeg", "image/png", "image/webp"];
 const EXTENSIONES_IMAGEN = ["jpg", "jpeg", "png", "webp"];
 
-const ETIQUETAS_TIPO = {
-  reducida: "Pupila reducida",
-  estandar: "Pupila estándar",
-  cosplay: "Cosplay",
-  pestana: "Pestañas",
-  accesorio: "Accesorio",
-};
-
 /** Último catálogo cargado, para abrir el editor y leer sus fotos sin otra consulta. */
 let productos = [];
 let productoEditado = null;
@@ -141,11 +133,11 @@ function pintarResumen(lista) {
 
 function crearTarjeta(producto) {
   const tarjeta = document.createElement("article");
-  tarjeta.className = "admin-producto";
+  /* Misma tarjeta que el catálogo de inicio; solo cambia la acción del botón. */
+  tarjeta.className = "product-card-figma";
   if (producto.estado === "oculto") tarjeta.classList.add("admin-producto--oculto");
 
   const imagen = document.createElement("img");
-  imagen.className = "admin-producto-foto";
   imagen.src = producto.imagen ?? IMG_PLACEHOLDER;
   imagen.alt = "";
   imagen.loading = "lazy";
@@ -154,47 +146,23 @@ function crearTarjeta(producto) {
   });
 
   const info = document.createElement("div");
-  info.className = "admin-producto-info";
-  const tipo = document.createElement("span");
-  tipo.className = "admin-badge";
-  tipo.textContent = ETIQUETAS_TIPO[producto.tipo] ?? producto.tipo;
+  info.className = "card-info";
   const nombre = document.createElement("h3");
-  nombre.className = "admin-producto-nombre";
+  nombre.className = "card-title";
   nombre.textContent = producto.nombre;
   const precio = document.createElement("p");
-  precio.className = "admin-producto-precio";
+  precio.className = "price";
   precio.textContent = precioTexto(producto.precio);
-  info.append(tipo, nombre, precio);
-
-  const acciones = document.createElement("div");
-  acciones.className = "admin-producto-acciones";
-
-  const etiquetaEstado = document.createElement("label");
-  etiquetaEstado.className = "admin-select-estado";
-  const textoEstado = document.createElement("span");
-  textoEstado.className = "solo-lector";
-  textoEstado.textContent = `Estado de ${producto.nombre}`;
-  const selector = document.createElement("select");
-  selector.dataset.action = "admin-status";
-  selector.dataset.id = String(producto.id);
-  ESTADOS.forEach((valor) => {
-    const opcion = document.createElement("option");
-    opcion.value = valor;
-    opcion.textContent = valor;
-    opcion.selected = producto.estado === valor;
-    selector.append(opcion);
-  });
-  etiquetaEstado.append(textoEstado, selector);
+  info.append(nombre, precio);
 
   const editar = document.createElement("button");
   editar.type = "button";
-  editar.className = "admin-button admin-button--ghost";
+  editar.className = "btn-add-figma";
   editar.dataset.action = "admin-edit";
   editar.dataset.id = String(producto.id);
-  editar.textContent = "Editar";
+  editar.textContent = "EDITAR";
 
-  acciones.append(etiquetaEstado, editar);
-  tarjeta.append(imagen, info, acciones);
+  tarjeta.append(imagen, info, editar);
   return tarjeta;
 }
 
@@ -216,7 +184,7 @@ function pintarProductos(lista, { vacio = "No hay productos en el catálogo." } 
 
 /* --- Filtros del catálogo --- */
 
-const filtros = { busqueda: "", tipo: "todos", color: "todos", estado: "todos" };
+const filtros = { tipo: "todos", color: "todos", estado: "todos" };
 
 const normalizar = (texto) =>
   String(texto ?? "")
@@ -225,24 +193,16 @@ const normalizar = (texto) =>
     .replace(/[\u0300-\u036f]/g, "");
 
 function productosFiltrados() {
-  const termino = normalizar(filtros.busqueda);
   return productos.filter((producto) => {
     if (filtros.tipo !== "todos" && producto.tipo !== filtros.tipo) return false;
     if (filtros.color !== "todos" && producto.color !== filtros.color) return false;
     if (filtros.estado !== "todos" && producto.estado !== filtros.estado) return false;
-    if (!termino) return true;
-    const campos = [producto.nombre, ...(producto.alias ?? [])];
-    return campos.some((campo) => normalizar(campo).includes(termino));
+    return true;
   });
 }
 
 function hayFiltrosActivos() {
-  return (
-    Boolean(filtros.busqueda) ||
-    filtros.tipo !== "todos" ||
-    filtros.color !== "todos" ||
-    filtros.estado !== "todos"
-  );
+  return filtros.tipo !== "todos" || filtros.color !== "todos" || filtros.estado !== "todos";
 }
 
 function aplicarFiltros() {
@@ -260,12 +220,9 @@ function aplicarFiltros() {
 }
 
 function limpiarFiltros() {
-  filtros.busqueda = "";
   filtros.tipo = "todos";
   filtros.color = "todos";
   filtros.estado = "todos";
-  const busqueda = document.getElementById("admin-busqueda");
-  if (busqueda) busqueda.value = "";
   const categoria = document.getElementById("admin-filtro-categoria");
   if (categoria) categoria.value = "todos";
   const color = document.getElementById("admin-filtro-color");
@@ -276,13 +233,12 @@ function limpiarFiltros() {
 }
 
 function leerFiltrosDeControles() {
-  filtros.busqueda = document.getElementById("admin-busqueda")?.value ?? "";
   filtros.tipo = document.getElementById("admin-filtro-categoria")?.value ?? "todos";
   filtros.color = document.getElementById("admin-filtro-color")?.value ?? "todos";
   filtros.estado = document.getElementById("admin-filtro-estado")?.value ?? "todos";
 }
 
-/* El buscador no filtra en cada tecla: agrupa la escritura y repinta una vez. */
+/* Agrupa la escritura del buscador y repinta una vez, no en cada tecla. */
 function conEspera(fn, ms = 200) {
   let temporizador;
   return (...args) => {
@@ -290,8 +246,6 @@ function conEspera(fn, ms = 200) {
     temporizador = setTimeout(() => fn(...args), ms);
   };
 }
-
-const aplicarFiltrosConEspera = conEspera(aplicarFiltros);
 
 async function cargarProductosAdmin() {
   mostrarMensaje("Cargando catálogo…");
@@ -308,22 +262,6 @@ async function cargarProductosAdmin() {
   productos = data ?? [];
   pintarResumen(productos);
   aplicarFiltros();
-}
-
-async function actualizarEstado(id, estado) {
-  if (!ESTADOS.includes(estado)) return;
-  const { error } = await obtenerSupabase()
-    .from("productos")
-    .update({ estado })
-    .eq("id", id);
-  if (error) throw error;
-
-  const producto = productos.find((item) => item.id === id);
-  if (producto) producto.estado = estado;
-  pintarResumen(productos);
-  mostrarMensaje("Estado actualizado.");
-  mostrarToast("Estado actualizado.");
-  window.dispatchEvent(new CustomEvent("catalogo:actualizado"));
 }
 
 /* --- Editor de ficha --- */
@@ -426,6 +364,7 @@ function abrirEditor(id) {
   const formulario = document.getElementById("admin-producto-form");
   if (!producto || !formulario) return;
 
+  cerrarBusquedaAdmin();
   productoEditado = producto;
   formulario.reset();
   formulario.dataset.modo = "editar";
@@ -722,6 +661,91 @@ function cerrarFab() {
   boton?.setAttribute("aria-expanded", "false");
 }
 
+/* --- Buscador del panel --- */
+
+const escapar = (texto) =>
+  String(texto ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[c],
+  );
+
+function pintarResultadosBusqueda(lista, termino) {
+  const contenedor = document.getElementById("admin-search-results");
+  const estado = document.getElementById("admin-search-status");
+  if (!contenedor) return;
+
+  if (!termino) {
+    contenedor.innerHTML = '<p class="search-hint">Escribe el nombre de un producto.</p>';
+    if (estado) estado.textContent = "";
+    return;
+  }
+
+  if (lista.length === 0) {
+    contenedor.innerHTML = `<p class="search-hint">Sin resultados para “${escapar(termino)}”.</p>`;
+    if (estado) estado.textContent = `Sin resultados para ${termino}.`;
+    return;
+  }
+
+  contenedor.innerHTML = lista
+    .map(
+      (producto) => `
+    <button type="button" class="search-result" data-action="admin-edit" data-id="${producto.id}">
+      <img src="${escapar(producto.imagen ?? IMG_PLACEHOLDER)}" alt="" loading="lazy" />
+      <span class="search-result-info">
+        <span class="search-result-nombre">${escapar(producto.nombre)}</span>
+        <span class="search-result-precio">${precioTexto(producto.precio)}</span>
+      </span>
+      <span class="search-result-editar">Editar</span>
+    </button>`,
+    )
+    .join("");
+
+  if (estado) estado.textContent = `${lista.length} resultado${lista.length === 1 ? "" : "s"}.`;
+}
+
+export function abrirBusquedaAdmin() {
+  const input = document.getElementById("admin-search-input");
+  if (input) input.value = "";
+  pintarResultadosBusqueda([], "");
+  abrirModal("modal-admin-busqueda");
+  input?.focus();
+}
+
+function cerrarBusquedaAdmin() {
+  cerrarModal("modal-admin-busqueda");
+}
+
+export function buscarAdmin(texto) {
+  const termino = String(texto ?? "").trim();
+  const boton = document.querySelector('[data-action="admin-close-search"]');
+  if (boton) {
+    boton.setAttribute("aria-label", termino ? "Borrar búsqueda" : "Cerrar búsqueda");
+  }
+  const buscado = normalizar(termino);
+  const lista = !buscado
+    ? []
+    : productos
+        .filter((producto) =>
+          [producto.nombre, ...(producto.alias ?? [])].some((campo) =>
+            normalizar(campo).includes(buscado),
+          ),
+        )
+        .slice(0, 12);
+  pintarResultadosBusqueda(lista, termino);
+}
+
+const buscarAdminConEspera = conEspera(
+  () => buscarAdmin(document.getElementById("admin-search-input")?.value),
+  180,
+);
+
 /* --- Sesión y delegación --- */
 
 export async function iniciarSesionAdmin(evento) {
@@ -746,15 +770,6 @@ export async function cerrarSesionAdmin() {
   actualizarVistaAdmin(null);
 }
 
-export async function manejarEstadoAdmin(elemento) {
-  try {
-    await actualizarEstado(Number(elemento.dataset.id), elemento.value);
-  } catch (error) {
-    mostrarMensaje(`No se pudo actualizar: ${error.message}`, true);
-    mostrarToast(`No se pudo actualizar: ${error.message}`, true);
-  }
-}
-
 async function actualizarVistaAdmin(usuario) {
   const acceso = document.getElementById("admin-acceso");
   const panel = document.getElementById("admin-panel-contenido");
@@ -762,6 +777,8 @@ async function actualizarVistaAdmin(usuario) {
   const autorizado = esAdmin(usuario);
   acceso.hidden = autorizado;
   panel.hidden = !autorizado;
+  const searchToggle = document.getElementById("admin-search-toggle");
+  if (searchToggle) searchToggle.hidden = !autorizado;
 
   if (!usuario) {
     mostrarMensaje("Inicia sesión con la cuenta administradora.");
@@ -798,6 +815,21 @@ function configurarDelegacion() {
       case "admin-fab":
         alternarFab();
         break;
+      case "admin-open-search":
+        abrirBusquedaAdmin();
+        break;
+      case "admin-close-search": {
+        /* El mismo botón borra lo escrito y, si no hay nada, cierra el buscador. */
+        const inputBusqueda = document.getElementById("admin-search-input");
+        if (inputBusqueda?.value) {
+          inputBusqueda.value = "";
+          buscarAdmin("");
+          inputBusqueda.focus();
+        } else {
+          cerrarBusquedaAdmin();
+        }
+        break;
+      }
       case "admin-nuevo":
         abrirEditorNuevo();
         break;
@@ -828,9 +860,8 @@ function configurarDelegacion() {
   });
 
   document.addEventListener("input", (event) => {
-    if (event.target.id === "admin-busqueda") {
-      filtros.busqueda = event.target.value;
-      aplicarFiltrosConEspera();
+    if (event.target.id === "admin-search-input") {
+      buscarAdminConEspera();
     } else if (event.target.id === "admin-confirmar-input") {
       const boton = document.getElementById("admin-confirmar-boton");
       if (boton) boton.disabled = event.target.value.trim().toUpperCase() !== "ELIMINAR";
@@ -846,9 +877,7 @@ function configurarDelegacion() {
   });
 
   document.addEventListener("change", (event) => {
-    if (event.target.matches('[data-action="admin-status"]')) {
-      manejarEstadoAdmin(event.target);
-    } else if (event.target.matches('[data-action="admin-tipo"]')) {
+    if (event.target.matches('[data-action="admin-tipo"]')) {
       actualizarCamposLente();
     } else if (event.target.matches('[data-action="admin-foto"]')) {
       actualizarVistaPrevia(event.target);

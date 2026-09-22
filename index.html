@@ -52,6 +52,15 @@
         <div class="header-side header-side--fin">
           <button
             class="icon-btn"
+            data-action="open-search"
+            title="Buscar productos"
+            aria-label="Buscar productos"
+          >
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          </button>
+
+          <button
+            class="icon-btn"
             data-action="mostrar-seccion"
             data-view="carrito"
             title="Ver Carrito"
@@ -553,6 +562,42 @@
             CERRAR SESIÓN
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL BUSCADOR -->
+    <div id="modal-busqueda" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="search-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="search-title"
+        tabindex="-1"
+      >
+        <h2 id="search-title" class="solo-lector">Buscar productos</h2>
+        <div class="search-field">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input
+            id="search-input"
+            type="text"
+            inputmode="search"
+            enterkeyhint="search"
+            role="searchbox"
+            placeholder="Buscar lentes, pestañas y accesorios…"
+            aria-label="Buscar productos"
+            autocomplete="off"
+          />
+          <button
+            type="button"
+            class="search-cerrar"
+            data-action="close-search"
+            aria-label="Borrar búsqueda"
+          >
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+        <p id="search-status" class="solo-lector" role="status" aria-live="polite"></p>
       </div>
     </div>
 
