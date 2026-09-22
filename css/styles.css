@@ -411,10 +411,9 @@ h1,
 
 .hero-image {
   width: 100%;
-  /* La foto es apaisada (1200x935). Encajarla en un marco vertical la
-     recortaba hasta dejar solo una franja de pelo, que se leia como si la
-     imagen se repitiera. Aqui manda la proporcion real: se ve entera. */
-  aspect-ratio: 1200 / 935;
+  /* En móvil el hero necesita una composición vertical para que la imagen
+     tenga presencia sin dejar una franja demasiado baja. */
+  aspect-ratio: 4 / 5;
   /* Marco de referencia de la foto, que sobresale por arriba y se recorta. */
   position: relative;
   overflow: hidden;
