@@ -28,6 +28,7 @@ import { cerrarModalSuperior, hayModalAbierto } from "./modales.js";
 import { desplazarCarrusel } from "./carrusel.js";
 import {
   enviarPedidoWhatsApp,
+  iniciarCheckout,
   calcularCostosEnvio,
   guardarDatosEnvio,
   restaurarDatosEnvio,
@@ -232,7 +233,7 @@ document.addEventListener("click", (event) => {
       desplazarCarrusel(el.dataset.carrusel, Number(el.dataset.delta));
       break;
     case "checkout":
-      enviarPedidoWhatsApp();
+      iniciarCheckout();
       break;
     default:
       console.warn(`[ui] Acción desconocida: ${el.dataset.action}`);

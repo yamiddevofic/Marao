@@ -2,6 +2,7 @@ import { getCarrito } from "./cart.js";
 import { getUsuarioLogueado } from "./auth.js";
 import { formatearPrecio } from "./formato.js";
 import { claveEnvio, leer, guardar } from "./almacenamiento.js";
+import { pagarConEpayco } from "./epayco.js";
 
 const ENVIO_LOCAL = 10000;
 const ENVIO_NACIONAL = 22000;
@@ -14,9 +15,8 @@ const ENVIO_NACIONAL = 22000;
  * sin sesión van a un cajón anónimo, y al entrar o salir de una cuenta el
  * formulario se repuebla con los datos de quien corresponde.
  *
- * Deliberadamente NO se guarda nada del método de pago. Los campos de tarjeta
- * ya se piden sin procesarlos (ver la deuda registrada en AGENTS.md);
- * persistirlos agravaría el problema en vez de acotarlo.
+ * Deliberadamente NO se guarda nada del método de pago. Los datos sensibles de
+ * tarjeta se solicitan únicamente dentro del checkout hospedado de ePayco.
  */
 function campoDireccion() {
   return document.getElementById("user-address-input");
@@ -170,4 +170,38 @@ export function enviarPedidoWhatsApp() {
   guardarDatosEnvio();
 
   window.open(urlWA, "_blank");
+}
+
+export async function iniciarCheckout() {
+  const metodo = document.getElementById("payment-type-select")?.value;
+  if (metodo === "efectivo") {
+    enviarPedidoWhatsApp();
+    return;
+  }
+
+  const direccionInput = document.getElementById("user-address-input");
+  const direccion = direccionInput?.value.trim() ?? "";
+  if (!direccion || direccion.length < 8) {
+    alert("Por favor ingresa una dirección de entrega válida y completa.");
+    direccionInput?.focus();
+    return;
+  }
+
+  const selectorEnvio = document.getElementById("shipping-city");
+  const costoEnvio = selectorEnvio?.value === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
+  const subtotal = getCarrito().reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  guardarDatosEnvio();
+
+  try {
+    await pagarConEpayco({
+      total: subtotal + costoEnvio,
+      direccion,
+      destino: selectorEnvio?.value ?? "bogota_soacha",
+      metodoPago: metodo === "nequi" ? "NEQUI" : "CARD",
+      costoEnvio,
+    });
+  } catch (error) {
+    console.error("[checkout] No se pudo iniciar ePayco", error);
+    alert(error instanceof Error ? error.message : "No se pudo iniciar el pago. Intenta de nuevo.");
+  }
 }

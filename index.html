@@ -434,13 +434,12 @@
               </option>
             </select>
 
-            <!-- El cobro se coordina por WhatsApp, así que aquí solo se
-                 recoge la intención de pago. No se piden ni se envían datos de
-                 tarjeta: sin pasarela que los procese, pedirlos solo exponía a
-                 la clienta sin ninguna contrapartida. -->
-            <p class="payment-note">
-              El pago se coordina por WhatsApp al confirmar tu pedido.
-            </p>
+             <!-- Los datos sensibles se solicitan únicamente dentro del checkout
+                  hospedado de ePayco; nunca se piden en este formulario. -->
+             <p class="payment-note" id="payment-note">
+               El método seleccionado se abrirá directamente en el Web Checkout
+               seguro de ePayco. La contraentrega se coordina por WhatsApp.
+             </p>
 
           <div class="address-input-container">
             <label for="user-address-input"
@@ -690,6 +689,12 @@
       </div>
     </footer>
 
-   <script type="module" src="js/main.js"></script>
+   <script src="https://checkout.epayco.co/checkout.js"></script>
+   <script
+     type="module"
+     src="js/main.js"
+     data-epayco-public-key="4c789f4bb9331cd8bed2d9557ccaef4e"
+     data-epayco-test="true"
+   ></script>
   </body>
 </html>

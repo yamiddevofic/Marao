@@ -52,7 +52,8 @@ Pag_Marao/
 │   ├── buscador.js     # Buscador del header (lupa, resultados en vivo)
 │   ├── admin.js        # Panel: sesión, inventario, editor de fichas y CRUD
 │   ├── cart.js         # Estado y operaciones del carrito
-│   ├── checkout.js     # Costos de envío, medios de pago y pedido por WhatsApp
+│   ├── checkout.js     # Costos de envío, medios de pago y checkout
+│   ├── epayco.js       # Web Checkout hospedado de ePayco
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
 │   ├── carrusel.js     # Desplazamiento de los carruseles (pestañas y accesorios)
 │   ├── scroll-lock.js  # Congela el scroll de la página con un modal abierto
@@ -118,6 +119,14 @@ Luego visita <http://localhost:8080>.
 
 > El Client ID es información pública del cliente y puede ir en el HTML, pero no debe comprometer secretos (no uses OAuth con secretos aquí sin backend).
 
+### ePayco
+
+Las opciones **Tarjeta de Crédito / Débito** y **Nequi** abren el Web Checkout hospedado del SDK oficial de ePayco con el método seleccionado. **Contraentrega** continúa por WhatsApp porque no es un método procesable por ePayco. MARAO no captura ni almacena números de tarjeta, vencimientos ni CVV. El frontend requiere estos atributos en el script de `js/main.js`:
+
+- `data-epayco-public-key`: llave pública de pruebas o producción.
+- `data-epayco-test`: `true` para sandbox y `false` para producción.
+La llave pública es visible en el HTML por diseño; no pongas allí la llave privada ni credenciales secretas de ePayco.
+
 ### Pedidos por WhatsApp
 
 El checkout construye un mensaje con el detalle del pedido (productos, cantidades, envío, dirección y total) y lo abre en `wa.me`. El número destino está en `enviarPedidoWhatsApp()` (`js/checkout.js`), actualmente `573243744983`.
@@ -153,13 +162,13 @@ Envíos y pagos (`js/checkout.js`):
 
 - **Envío Bogotá / Soacha**: $10.000 (contraentrega disponible).
 - **Envío resto de Colombia**: $22.000.
-- **Métodos de pago aceptados**: tarjeta crédito/débito, Nequi, efectivo contraentrega. El selector solo informa al negocio cómo piensa pagar la clienta; el cobro se acuerda por WhatsApp y el sitio no captura datos de pago.
+- **Métodos de pago aceptados**: tarjeta crédito/débito mediante ePayco, Nequi y efectivo contraentrega por WhatsApp.
 
 ## Estado del proyecto y deuda técnica conocida
 
 En desarrollo activo. Puntos pendientes identificados:
 
-- **Sin pago en línea**: el cobro se coordina por WhatsApp. Es una decisión del negocio, no una carencia pendiente: los campos de tarjeta, vencimiento y CVV se retiraron del checkout precisamente porque no había pasarela que los procesara. Si más adelante se quiere cobrar en línea, la vía es un checkout hospedado o widget oficial (Wompi, Epayco, PayU) — nunca campos propios de tarjeta en el cliente.
+- **Confirmación de pagos ePayco**: el Web Checkout ya está preparado; las URLs de respuesta y confirmación deben configurarse en el panel de ePayco antes de activar producción.
 - **7 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
 
   | Referencia | Tono | Ficha |
