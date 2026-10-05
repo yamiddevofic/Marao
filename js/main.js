@@ -1,14 +1,9 @@
+import { productosBase, establecerProductos } from "./productos.js";
+import { cargarProductos, cargarCategorias } from "./catalogo-remoto.js";
 import {
-  getAccesorios,
-  getPestanas,
-  productosBase,
-  establecerProductos,
-} from "./productos.js";
-import { cargarProductos } from "./catalogo-remoto.js";
-import {
-  renderAccesorios,
-  renderPestanas,
   filtrarLentes,
+  filtrarCarrusel,
+  restaurarCarruselesDesdeRuta,
   actualizarCatalogoLentes,
   irAPaginaLentes,
   abrirModalDetalle,
@@ -199,6 +194,9 @@ document.addEventListener("click", (event) => {
     case "filtrar-lentes":
       filtrarLentes(el.dataset.filter, el.dataset.group);
       break;
+    case "filtrar-carrusel":
+      filtrarCarrusel(el.dataset.seccion, el.dataset.filter);
+      break;
     case "pagina-lentes":
       irAPaginaLentes(el.dataset.pagina);
       break;
@@ -299,13 +297,13 @@ window.addEventListener("sesion:cambiada", () => {
 document.addEventListener("DOMContentLoaded", async () => {
   ubicarPerfil();
   try {
-    establecerProductos(await cargarProductos());
+    const [productos, categorias] = await Promise.all([cargarProductos(), cargarCategorias()]);
+    establecerProductos(productos, categorias);
   } catch (error) {
     console.warn("[catalogo] Se usará el catálogo local:", error.message);
   }
   restaurarCatalogoDesdeRuta();
-  renderAccesorios(getAccesorios());
-  renderPestanas(getPestanas());
+  restaurarCarruselesDesdeRuta();
   actualizarBadge();
   // Pinta la sesión restaurada y emite `sesion:cambiada`, que a su vez repuebla
   // los datos de envío y recalcula el resumen.
@@ -318,6 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 window.addEventListener("popstate", () => {
   restaurarCatalogoDesdeRuta();
+  restaurarCarruselesDesdeRuta();
   mostrarSeccion(vistaDesdeRuta(), { historial: false });
   const detalle = Number(new URLSearchParams(window.location.search).get("detalle"));
   if (Number.isInteger(detalle) && detalle > 0) abrirModalDetalle(detalle, { historial: false });

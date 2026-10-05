@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Categorías dentro de cada sección (lentes, pestañas y accesorios), creadas por la administradora desde el panel: «Administrar categorías» en el botón flotante permite crearlas, renombrarlas, reordenarlas y eliminarlas (sus productos no se borran, quedan sin categoría). Cada ficha de producto tiene su selector de categoría y la lista del panel un filtro nuevo. En la tienda aparecen como botones de filtro en cada sección, solo si tienen productos, y quedan en la URL. El selector antiguo «Categoría» del panel pasó a llamarse «Sección».
+
 - La tienda y el panel tienen un buscador con lupa en el encabezado. Abre un diálogo con resultados en vivo por nombre y alias; en la tienda un lente abre su ficha y las pestañas o accesorios se resaltan en su sección, y en el panel cada resultado se puede editar.
 
 - El CRUD del panel quedó completo: se pueden crear productos nuevos, eliminar uno desde su ficha (con confirmación) y vaciar el catálogo (confirmando con la palabra ELIMINAR). Las acciones viven en un botón flotante «+» abajo a la derecha, sobrepuesto al contenido.

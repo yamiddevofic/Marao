@@ -245,6 +245,11 @@
               </button>
             </div>
           </div>
+          <!-- Las subcategorías las crea la administradora; filtrarLentes las pinta desde los datos. -->
+          <div class="lentes-filter-wrapper" id="filtros-categoria-lentes" hidden>
+            <span class="filter-label">Categoría:</span>
+            <div class="pupil-filters" data-group="categoria"></div>
+          </div>
           <p id="catalogo-estado" class="solo-lector" role="status" aria-live="polite"></p>
           <div class="products-grid-lentes" id="grid-lentes-cafe"></div>
           <nav
@@ -257,6 +262,8 @@
 
         <div class="catalog-col-pestanas" id="pestanas">
   <h2>REALZA TU MIRADA CON NUESTRAS PESTAÑAS PUNTO A PUNTO</h2>
+
+  <div class="carrusel-filtros" id="filtros-categoria-pestanas" role="group" aria-label="Filtrar pestañas por categoría" hidden></div>
 
   <!-- CARRUSEL: las tarjetas se desplazan en horizontal (swipe o flechas) -->
   <div class="carrusel">
@@ -298,6 +305,8 @@
 
       <section class="starry-section accessories-section" id="accesorios">
         <h2>ACCESORIOS Y CUIDADO PARA TUS LENTES</h2>
+
+        <div class="carrusel-filtros" id="filtros-categoria-accesorios" role="group" aria-label="Filtrar accesorios por categoría" hidden></div>
 
         <!-- Mismo carrusel que las pestañas: son 9 accesorios y en una rejilla
              la sección se volvía interminable. -->

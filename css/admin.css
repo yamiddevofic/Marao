@@ -645,3 +645,44 @@ img { max-width: 100%; }
     align-items: end;
   }
 }
+
+/* --- Administrador de categorías --- */
+
+.admin-categoria-nueva {
+  display: grid;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.admin-categoria-nueva .admin-button--primary { margin-top: 0; }
+
+.admin-categorias-lista { display: grid; gap: 1.25rem; }
+
+.admin-categorias-grupo { display: grid; gap: 0.5rem; }
+
+.admin-categorias-grupo h3 {
+  margin: 0;
+  font: 700 0.85rem var(--font-ui);
+  text-transform: uppercase;
+}
+
+.admin-categoria-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-categoria-fila .admin-campo {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-categoria-cuenta {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 769px) {
+  .admin-categoria-nueva { grid-template-columns: 10rem 1fr auto; }
+}

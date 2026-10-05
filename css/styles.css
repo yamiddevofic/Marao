@@ -527,6 +527,25 @@ picture {
   color: var(--color-white);
 }
 
+/* Subcategorías de pestañas y accesorios, sobre su carrusel. [hidden] se
+   respeta aunque la clase fije display. */
+.carrusel-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 0 var(--spacing-md);
+}
+
+.carrusel-filtros[hidden] {
+  display: none;
+}
+
+/* En las secciones con fondo de estrellas el botón activo (oscuro) se perdía. */
+.starry-section .filter-btn.active {
+  outline: 2px solid var(--color-white);
+}
+
 .products-grid-lentes {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

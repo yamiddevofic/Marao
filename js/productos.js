@@ -147,9 +147,21 @@ const otrosProductos = [
 
 export let productosBase = [...lentes, ...lentesCosplay, ...otrosProductos];
 
-export function establecerProductos(productos) {
+/** Subcategorías del panel: `{ id, nombre, seccion, orden }`. */
+export let categoriasBase = [];
+
+/**
+ * `categoria_id` llega de Supabase; aquí se resuelve a `categoriaId` y a
+ * `subcategoria` (el nombre). No se usa el campo `categoria`: los lentes
+ * cosplay locales ya lo traen con otro significado.
+ */
+export function establecerProductos(productos, categorias = []) {
+  categoriasBase = categorias;
+  const nombres = new Map(categorias.map((categoria) => [categoria.id, categoria.nombre]));
   productosBase = productos.map((producto) => ({
     ...producto,
+    categoriaId: producto.categoria_id ?? null,
+    subcategoria: nombres.get(producto.categoria_id) ?? null,
     desc: producto.descripcion ?? producto.desc ?? "",
     img: producto.imagen ?? producto.img ?? null,
     imagenes: producto.imagenes ?? [],
@@ -173,3 +185,17 @@ export const getLentes = () => productosBase.filter(esLente);
 export const getAccesorios = () => productosBase.filter(esAccesorio);
 
 export const getPestanas = () => productosBase.filter(esPestana);
+
+/** Sección de la tienda a la que pertenece un producto: lente, pestana o accesorio. */
+export const seccionDe = (producto) => (esLente(producto) ? "lente" : producto.tipo);
+
+/**
+ * Subcategorías de una sección que tienen al menos un producto a la venta:
+ * un filtro que no devuelve nada solo confunde a quien compra.
+ */
+export function getCategoriasConProductos(seccion) {
+  const usadas = new Set(
+    productosBase.filter((p) => seccionDe(p) === seccion).map((p) => p.categoriaId),
+  );
+  return categoriasBase.filter((c) => c.seccion === seccion && usadas.has(c.id));
+}

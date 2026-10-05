@@ -1,4 +1,11 @@
-import { productosBase, getLentes, esLente } from "./productos.js";
+import {
+  productosBase,
+  getLentes,
+  getAccesorios,
+  getPestanas,
+  getCategoriasConProductos,
+  esLente,
+} from "./productos.js";
 import { COLORES_LENTE } from "./lentes.js";
 import { FICHA_LENTE } from "./constantes.js";
 import { abrirModal, cerrarModal } from "./modales.js";
@@ -28,7 +35,7 @@ let cantidadModal = 1;
  * Filtros del catálogo de lentes. Se combinan entre sí: el grid muestra las
  * referencias que cumplen los dos a la vez.
  */
-const filtros = { color: "todos", pupila: "todos" };
+const filtros = { color: "todos", pupila: "todos", categoria: "todos" };
 
 /** Referencias por página del grid de lentes. */
 const POR_PAGINA = 6;
@@ -59,7 +66,7 @@ export function renderLentes(items) {
   if (!container) return;
 
   if (items.length === 0) {
-    container.innerHTML = `<p class="catalogo-vacio">No hay lentes con esa combinación de tono y pupila.</p>`;
+    container.innerHTML = `<p class="catalogo-vacio">No hay lentes con esa combinación de filtros.</p>`;
     return;
   }
 
@@ -69,7 +76,7 @@ export function renderLentes(items) {
       const tono = COLORES_LENTE[prod.color] ?? "";
       const detalle = [
         tono,
-        prod.categoria,
+        prod.subcategoria,
         prod.cobertura && `${prod.cobertura} cobertura`,
       ]
         .filter(Boolean)
@@ -170,8 +177,120 @@ function lentesFiltrados() {
   return getLentes().filter(
     (l) =>
       (filtros.color === "todos" || l.color === filtros.color) &&
-      (filtros.pupila === "todos" || l.tipo === filtros.pupila),
+      (filtros.pupila === "todos" || l.tipo === filtros.pupila) &&
+      (filtros.categoria === "todos" || String(l.categoriaId) === filtros.categoria),
   );
+}
+
+/* --- Filtros por subcategoría (las crea la administradora desde el panel) --- */
+
+const botonFiltro = ({ accion, filtro, etiqueta, activo, extras = "" }) =>
+  `<button class="filter-btn${activo ? " active" : ""}" data-action="${accion}" aria-pressed="${activo}" data-filter="${escapar(filtro)}" ${extras}>${escapar(etiqueta)}</button>`;
+
+const opcionesFiltro = (categorias) => [
+  { id: "todos", nombre: "TODAS" },
+  ...categorias.map((c) => ({ id: String(c.id), nombre: c.nombre.toUpperCase() })),
+];
+
+/**
+ * Pinta los botones de subcategoría de lentes. Si la sección no tiene
+ * ninguna, el bloque queda oculto y la tienda se ve como antes.
+ */
+function pintarFiltrosCategoriaLentes() {
+  const bloque = document.getElementById("filtros-categoria-lentes");
+  const grupo = bloque?.querySelector(".pupil-filters");
+  if (!bloque || !grupo) return;
+
+  const categorias = getCategoriasConProductos("lente");
+  // Una categoría que ya no existe (enlace viejo) no puede dejar el grid vacío.
+  if (!categorias.some((c) => String(c.id) === filtros.categoria)) filtros.categoria = "todos";
+
+  bloque.hidden = categorias.length === 0;
+  grupo.innerHTML = opcionesFiltro(categorias)
+    .map((c) =>
+      botonFiltro({
+        accion: "filtrar-lentes",
+        filtro: c.id,
+        etiqueta: c.nombre,
+        activo: filtros.categoria === c.id,
+        extras: 'data-group="categoria"',
+      }),
+    )
+    .join("");
+}
+
+/* Pestañas y accesorios comparten el mismo mecanismo: una pista de carrusel
+   y una fila de botones encima. */
+const CARRUSELES = {
+  pestana: {
+    param: "categoria_pestanas",
+    filtros: "filtros-categoria-pestanas",
+    items: getPestanas,
+    render: renderPestanas,
+    pista: "pestanas-carrusel",
+  },
+  accesorio: {
+    param: "categoria_accesorios",
+    filtros: "filtros-categoria-accesorios",
+    items: getAccesorios,
+    render: renderAccesorios,
+    pista: "grid-accesorios",
+  },
+};
+
+const filtrosCarrusel = { pestana: "todos", accesorio: "todos" };
+
+const itemsCarrusel = (seccion) =>
+  CARRUSELES[seccion].items().filter(
+    (p) =>
+      filtrosCarrusel[seccion] === "todos" || String(p.categoriaId) === filtrosCarrusel[seccion],
+  );
+
+function pintarCarrusel(seccion, { volverAlInicio = false } = {}) {
+  const { filtros: idFiltros, render, pista } = CARRUSELES[seccion];
+  const categorias = getCategoriasConProductos(seccion);
+  if (!categorias.some((c) => String(c.id) === filtrosCarrusel[seccion])) {
+    filtrosCarrusel[seccion] = "todos";
+  }
+
+  const contenedor = document.getElementById(idFiltros);
+  if (contenedor) {
+    contenedor.hidden = categorias.length === 0;
+    contenedor.innerHTML = opcionesFiltro(categorias)
+      .map((c) =>
+        botonFiltro({
+          accion: "filtrar-carrusel",
+          filtro: c.id,
+          etiqueta: c.nombre,
+          activo: filtrosCarrusel[seccion] === c.id,
+          extras: `data-seccion="${seccion}"`,
+        }),
+      )
+      .join("");
+  }
+
+  render(itemsCarrusel(seccion));
+  if (volverAlInicio) document.getElementById(pista)?.scrollTo({ left: 0 });
+}
+
+export function filtrarCarrusel(seccion, valor) {
+  if (!(seccion in CARRUSELES)) return;
+  filtrosCarrusel[seccion] = valor;
+  actualizarRuta({ [CARRUSELES[seccion].param]: valor === "todos" ? null : valor });
+  pintarCarrusel(seccion, { volverAlInicio: true });
+  // Mismo aviso que el catálogo de lentes: el cambio no se ve con lector de pantalla.
+  const total = itemsCarrusel(seccion).length;
+  const estado = document.getElementById("catalogo-estado");
+  if (estado) estado.textContent = `${total} producto${total === 1 ? "" : "s"}.`;
+}
+
+/** Pinta los dos carruseles con el filtro que traiga la URL. */
+export function restaurarCarruselesDesdeRuta() {
+  const parametros = new URLSearchParams(window.location.search);
+  Object.entries(CARRUSELES).forEach(([seccion, { param }]) => {
+    filtrosCarrusel[seccion] = parametros.get(param) ?? "todos";
+    pintarCarrusel(seccion);
+  });
 }
 
 /**
@@ -200,7 +319,7 @@ function anunciarResultado(total, totalPaginas) {
 
   estado.textContent =
     total === 0
-      ? "No hay lentes con esa combinación de tono y pupila."
+      ? "No hay lentes con esa combinación de filtros."
       : `${total} referencia${total === 1 ? "" : "s"}, página ${paginaActual} de ${totalPaginas}.`;
 }
 
@@ -328,6 +447,7 @@ export function restaurarCatalogoDesdeRuta() {
   const parametros = new URLSearchParams(window.location.search);
   const color = parametros.get("color");
   const pupila = parametros.get("pupila");
+  const categoria = parametros.get("categoria");
   const pagina = Number(parametros.get("pagina"));
 
   if (color && ["miel", "verde", "gris", "azul", "cosplay"].includes(color)) {
@@ -336,8 +456,10 @@ export function restaurarCatalogoDesdeRuta() {
   if (pupila && ["reducida", "estandar", "cosplay"].includes(pupila)) {
     filtros.pupila = pupila;
   }
+  filtros.categoria = categoria ?? "todos";
   if (Number.isInteger(pagina) && pagina > 0) paginaActual = pagina;
 
+  pintarFiltrosCategoriaLentes();
   actualizarCatalogoLentes();
   document.querySelectorAll(".pupil-filters .filter-btn").forEach((boton) => {
     const grupo = boton.closest(".pupil-filters")?.dataset.group;

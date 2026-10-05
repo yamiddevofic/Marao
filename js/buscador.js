@@ -40,7 +40,7 @@ function coincidencias(termino) {
   if (!buscado) return [];
   return productosBase
     .filter((producto) =>
-      [producto.nombre, ...(producto.alias ?? [])].some((campo) =>
+      [producto.nombre, producto.subcategoria, ...(producto.alias ?? [])].some((campo) =>
         normalizar(campo).includes(buscado),
       ),
     )

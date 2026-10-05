@@ -131,14 +131,20 @@
 
           <div class="admin-filtros">
             <label class="admin-campo" for="admin-filtro-categoria">
-              <span class="solo-lector">Filtrar por categoría</span>
+              <span class="solo-lector">Filtrar por sección</span>
               <select id="admin-filtro-categoria" data-action="admin-filtro">
-                <option value="todos">Todas las categorías</option>
+                <option value="todos">Todas las secciones</option>
                 <option value="reducida">Pupila reducida</option>
                 <option value="estandar">Pupila estándar</option>
                 <option value="cosplay">Cosplay</option>
                 <option value="pestana">Pestañas</option>
                 <option value="accesorio">Accesorio</option>
+              </select>
+            </label>
+            <label class="admin-campo" for="admin-filtro-subcategoria">
+              <span class="solo-lector">Filtrar por categoría</span>
+              <select id="admin-filtro-subcategoria" data-action="admin-filtro">
+                <option value="todos">Todas las categorías</option>
               </select>
             </label>
             <label class="admin-campo" for="admin-filtro-color">
@@ -190,6 +196,9 @@
             <div class="admin-fab-menu" id="admin-fab-menu" hidden>
               <button type="button" class="admin-button admin-button--ghost" data-action="admin-nuevo">
                 Agregar nuevo producto
+              </button>
+              <button type="button" class="admin-button admin-button--ghost" data-action="admin-categorias">
+                Administrar categorías
               </button>
               <button type="button" class="admin-button admin-button--danger" data-action="admin-eliminar-todos">
                 Eliminar todos
@@ -345,7 +354,7 @@
 
             <div class="admin-grid-2">
               <label class="admin-campo" for="admin-tipo">
-                <span>Categoría</span>
+                <span>Sección</span>
                 <select id="admin-tipo" name="tipo" data-action="admin-tipo">
                   <option value="reducida">Pupila reducida</option>
                   <option value="estandar">Pupila estándar</option>
@@ -363,6 +372,13 @@
                 </select>
               </label>
             </div>
+
+            <label class="admin-campo" for="admin-categoria-id">
+              <span>Categoría</span>
+              <select id="admin-categoria-id" name="categoria_id">
+                <option value="">Sin categoría</option>
+              </select>
+            </label>
 
             <label class="admin-campo" for="admin-descripcion">
               <span>Descripción</span>
@@ -445,6 +461,44 @@
             <button type="submit" class="admin-button admin-button--primary">Guardar cambios</button>
           </div>
         </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="modal-admin-categorias" data-action="close-modal">
+      <section
+        class="admin-editor"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-categorias-title"
+        tabindex="-1"
+      >
+        <header class="admin-editor-header">
+          <div>
+            <span class="eyebrow">Tienda</span>
+            <h2 id="admin-categorias-title">Categorías</h2>
+          </div>
+          <button type="button" class="admin-icon-button" data-action="close-modal" aria-label="Cerrar">×</button>
+        </header>
+
+        <div class="admin-editor-cuerpo">
+          <form class="admin-categoria-nueva" data-action="admin-categoria-form">
+            <label class="admin-campo" for="admin-categoria-seccion">
+              <span>Sección</span>
+              <select id="admin-categoria-seccion" name="seccion">
+                <option value="lente">Lentes</option>
+                <option value="pestana">Pestañas</option>
+                <option value="accesorio">Accesorios</option>
+              </select>
+            </label>
+            <label class="admin-campo" for="admin-categoria-nombre">
+              <span>Nueva categoría</span>
+              <input id="admin-categoria-nombre" name="nombre" type="text" maxlength="40" autocomplete="off" required />
+            </label>
+            <button type="submit" class="admin-button admin-button--primary">Agregar</button>
+          </form>
+          <p id="admin-categorias-mensaje" class="admin-editor-mensaje" role="status"></p>
+          <div id="admin-categorias-lista" class="admin-categorias-lista"></div>
+        </div>
       </section>
     </div>
 
