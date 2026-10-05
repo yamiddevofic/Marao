@@ -1,0 +1,15 @@
+# Lo que Cloudflare NO debe publicar. El sitio son index.html, admin.html,
+# css/, js/ y assets/; todo lo demás es del repo, no de la tienda.
+# node_modules además trae binarios de más de 25 MiB que hacen fallar el deploy.
+node_modules
+.git
+.claude
+.opencode
+scripts
+supabase
+package.json
+package-lock.json
+wrangler.jsonc
+.assetsignore
+.gitignore
+*.md
