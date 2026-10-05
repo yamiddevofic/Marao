@@ -16,8 +16,11 @@ function obtenerDatosPago(total, referencia, direccion, destino, metodoPago, cos
   const productos = carrito
     .map((item) => `${item.nombre} x${item.cantidad} (${formatearPrecio(item.precio * item.cantidad)})`)
     .join(" | ");
-  const zonaEnvio = destino === "nacional" ? "Envío nacional" : "Envío Bogotá / Soacha";
-  const detalle = `${productos} | ${zonaEnvio} (${formatearPrecio(costoEnvio)})`;
+  const zonaEnvio =
+    destino === "nacional"
+      ? "Envío nacional a acordar por WhatsApp"
+      : `Envío Bogotá / Soacha (${formatearPrecio(costoEnvio)})`;
+  const detalle = `${productos} | ${zonaEnvio}`;
   const fotos = carrito
     .map((item) => item.img && new URL(item.img, window.location.href).href)
     .filter(Boolean)

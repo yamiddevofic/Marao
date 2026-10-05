@@ -49,3 +49,29 @@ alter table public.productos
 
 create index if not exists productos_categoria_id_idx
   on public.productos (categoria_id);
+
+-- Categorías de Lentes: pupila reducida, pupila estándar y cosplay Halloween.
+-- Cada lente toma la equivalente a su `tipo`, que se conserva por
+-- compatibilidad (el código anterior filtraba por él).
+update public.categorias
+set nombre = 'Cosplay Halloween', orden = 3
+where seccion = 'lente' and lower(btrim(nombre)) = 'halloween';
+
+insert into public.categorias (nombre, seccion, orden)
+select v.nombre, 'lente', v.orden
+from (values ('Pupila reducida', 1), ('Pupila estándar', 2), ('Cosplay Halloween', 3)) as v(nombre, orden)
+where not exists (
+  select 1 from public.categorias c
+  where c.seccion = 'lente' and lower(btrim(c.nombre)) = lower(v.nombre)
+);
+
+update public.productos p
+set categoria_id = c.id
+from public.categorias c
+where p.categoria_id is null
+  and c.seccion = 'lente'
+  and c.nombre = case p.tipo
+    when 'reducida' then 'Pupila reducida'
+    when 'estandar' then 'Pupila estándar'
+    when 'cosplay' then 'Cosplay Halloween'
+  end;

@@ -35,7 +35,7 @@ let cantidadModal = 1;
  * Filtros del catálogo de lentes. Se combinan entre sí: el grid muestra las
  * referencias que cumplen los dos a la vez.
  */
-const filtros = { color: "todos", pupila: "todos", categoria: "todos" };
+const filtros = { color: "todos", categoria: "todos" };
 
 /** Referencias por página del grid de lentes. */
 const POR_PAGINA = 6;
@@ -74,8 +74,12 @@ export function renderLentes(items) {
     .map((prod) => {
       const nombre = escapar(prod.nombre);
       const tono = COLORES_LENTE[prod.color] ?? "";
+      // "Cosplay · Cosplay Halloween" repetía lo mismo: si la categoría ya
+      // nombra el tono, el tono sobra.
+      const tonoRepetido =
+        tono && prod.subcategoria?.toLowerCase().includes(tono.toLowerCase());
       const detalle = [
-        tono,
+        tonoRepetido ? "" : tono,
         prod.subcategoria,
         prod.cobertura && `${prod.cobertura} cobertura`,
       ]
@@ -150,10 +154,10 @@ export function renderPestanas(items) {
 }
 
 /**
- * @param {string} valor  opción elegida ("todos", "miel", "reducida"...)
- * @param {string} grupo  "color" o "pupila"; cada grupo de botones es independiente.
+ * @param {string} valor  opción elegida ("todos", "miel", o el id de una categoría)
+ * @param {string} grupo  "color" o "categoria"; cada grupo de botones es independiente.
  */
-export function filtrarLentes(valor, grupo = "pupila") {
+export function filtrarLentes(valor, grupo = "categoria") {
   if (!(grupo in filtros)) return;
   filtros[grupo] = valor;
   actualizarRuta({ [grupo]: valor === "todos" ? null : valor, pagina: null, detalle: null });
@@ -177,7 +181,6 @@ function lentesFiltrados() {
   return getLentes().filter(
     (l) =>
       (filtros.color === "todos" || l.color === filtros.color) &&
-      (filtros.pupila === "todos" || l.tipo === filtros.pupila) &&
       (filtros.categoria === "todos" || String(l.categoriaId) === filtros.categoria),
   );
 }
@@ -446,15 +449,11 @@ export function abrirModalDetalle(id, { historial = true } = {}) {
 export function restaurarCatalogoDesdeRuta() {
   const parametros = new URLSearchParams(window.location.search);
   const color = parametros.get("color");
-  const pupila = parametros.get("pupila");
   const categoria = parametros.get("categoria");
   const pagina = Number(parametros.get("pagina"));
 
-  if (color && ["miel", "verde", "gris", "azul", "cosplay"].includes(color)) {
+  if (color && ["miel", "verde", "gris", "azul"].includes(color)) {
     filtros.color = color;
-  }
-  if (pupila && ["reducida", "estandar", "cosplay"].includes(pupila)) {
-    filtros.pupila = pupila;
   }
   filtros.categoria = categoria ?? "todos";
   if (Number.isInteger(pagina) && pagina > 0) paginaActual = pagina;

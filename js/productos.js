@@ -170,8 +170,10 @@ export function establecerProductos(productos, categorias = []) {
   }));
 }
 
-/* "cosplay" es un tipo de lente más, pero no se clasifica por pupila: entra en
-   `getLentes()` y queda fuera de los filtros de pupila reducida/estándar. */
+/* Los tres tipos son la sección Lentes. La tienda ya no filtra por ellos: pupila
+   reducida, estándar y cosplay Halloween son categorías (`categoriaId`) que se
+   gestionan en el panel. `tipo` se conserva porque la columna lo exige y el
+   código anterior lo usaba. */
 export const TIPOS_LENTE = ["reducida", "estandar", "cosplay"];
 
 export const esLente = (producto) => TIPOS_LENTE.includes(producto.tipo);

@@ -4,7 +4,6 @@ import { abrirModal, cerrarModal, cerrarModalSuperior, hayModalAbierto } from ".
 
 const CORREO_ADMIN = "admin@marao.com";
 const ESTADOS = ["disponible", "agotado", "oculto"];
-const TIPOS = ["reducida", "estandar", "cosplay", "pestana", "accesorio"];
 const TIPOS_LENTE = ["reducida", "estandar", "cosplay"];
 const SECCIONES = { lente: "Lentes", pestana: "Pestañas", accesorio: "Accesorios" };
 const IMG_PLACEHOLDER = "assets/img/placeholder-producto.svg";
@@ -37,6 +36,19 @@ function esTipoLente(tipo) {
 }
 
 const seccionDeTipo = (tipo) => (esTipoLente(tipo) ? "lente" : tipo);
+
+/**
+ * La base exige un `tipo` y para los lentes hay tres (reducida, estandar,
+ * cosplay) heredados de cuando la pupila era el tipo. Hoy eso lo dice la
+ * categoría, así que al guardar un lente se conserva el tipo que ya tenía y uno
+ * nuevo entra como "estandar". Pestañas y accesorios: el tipo es la sección.
+ */
+function tipoParaSeccion(seccion) {
+  if (seccion === "lente") {
+    return esTipoLente(productoEditado?.tipo) ? productoEditado.tipo : "estandar";
+  }
+  return seccion in SECCIONES ? seccion : "";
+}
 
 const categoriasDe = (seccion) => categorias.filter((categoria) => categoria.seccion === seccion);
 
@@ -140,13 +152,23 @@ function pintarResumen(lista) {
   asignar("admin-ocultos", cuenta.oculto);
 }
 
-function crearTarjeta(producto) {
-  const tarjeta = document.createElement("article");
-  /* Misma tarjeta que el catálogo de inicio; solo cambia la acción del botón. */
-  tarjeta.className = "product-card-figma";
-  if (producto.estado === "oculto") tarjeta.classList.add("admin-producto--oculto");
+const NOMBRES_ESTADO = { disponible: "Disponible", agotado: "Agotado", oculto: "Oculto" };
+
+/**
+ * Cada producto es una fila y la fila entera es el botón de editar: una sola
+ * parada de tabulador por producto, y su nombre accesible ya incluye sección,
+ * precio y estado.
+ */
+function crearFila(producto) {
+  const fila = document.createElement("button");
+  fila.type = "button";
+  fila.className = "admin-fila";
+  fila.dataset.action = "admin-edit";
+  fila.dataset.id = String(producto.id);
+  if (producto.estado === "oculto") fila.classList.add("admin-fila--oculto");
 
   const imagen = document.createElement("img");
+  imagen.className = "admin-fila-foto";
   imagen.src = producto.imagen ?? IMG_PLACEHOLDER;
   imagen.alt = "";
   imagen.loading = "lazy";
@@ -154,32 +176,34 @@ function crearTarjeta(producto) {
     imagen.src = IMG_PLACEHOLDER;
   });
 
-  const info = document.createElement("div");
-  info.className = "card-info";
-  const nombre = document.createElement("h3");
-  nombre.className = "card-title";
+  const info = document.createElement("span");
+  info.className = "admin-fila-info";
+  const nombre = document.createElement("span");
+  nombre.className = "admin-fila-nombre";
   nombre.textContent = producto.nombre;
-  const precio = document.createElement("p");
-  precio.className = "price";
+  const meta = document.createElement("span");
+  meta.className = "admin-fila-meta";
+  meta.textContent = [SECCIONES[seccionDeTipo(producto.tipo)], nombreCategoria(producto.categoria_id)]
+    .filter(Boolean)
+    .join(" · ");
+  info.append(nombre, meta);
+
+  const precio = document.createElement("span");
+  precio.className = "admin-fila-precio";
   precio.textContent = precioTexto(producto.precio);
-  info.append(nombre, precio);
-  const subcategoria = nombreCategoria(producto.categoria_id);
-  if (subcategoria) {
-    const meta = document.createElement("p");
-    meta.className = "card-meta";
-    meta.textContent = subcategoria;
-    info.append(meta);
-  }
 
-  const editar = document.createElement("button");
-  editar.type = "button";
-  editar.className = "btn-add-figma";
-  editar.dataset.action = "admin-edit";
-  editar.dataset.id = String(producto.id);
-  editar.textContent = "EDITAR";
+  const estado = document.createElement("span");
+  const claveEstado = producto.estado in NOMBRES_ESTADO ? producto.estado : "disponible";
+  estado.className = `admin-estado admin-estado--${claveEstado}`;
+  estado.textContent = NOMBRES_ESTADO[claveEstado];
 
-  tarjeta.append(imagen, info, editar);
-  return tarjeta;
+  const flecha = document.createElement("span");
+  flecha.className = "admin-fila-flecha";
+  flecha.setAttribute("aria-hidden", "true");
+  flecha.textContent = "›";
+
+  fila.append(imagen, info, precio, estado, flecha);
+  return fila;
 }
 
 function pintarProductos(lista, { vacio = "No hay productos en el catálogo." } = {}) {
@@ -195,12 +219,12 @@ function pintarProductos(lista, { vacio = "No hay productos en el catálogo." } 
     return;
   }
 
-  lista.forEach((producto) => contenedor.append(crearTarjeta(producto)));
+  lista.forEach((producto) => contenedor.append(crearFila(producto)));
 }
 
 /* --- Filtros del catálogo --- */
 
-const filtros = { tipo: "todos", categoria: "todos", color: "todos", estado: "todos" };
+const filtros = { seccion: "todos", categoria: "todos", color: "todos", estado: "todos" };
 
 const normalizar = (texto) =>
   String(texto ?? "")
@@ -210,7 +234,7 @@ const normalizar = (texto) =>
 
 function productosFiltrados() {
   return productos.filter((producto) => {
-    if (filtros.tipo !== "todos" && producto.tipo !== filtros.tipo) return false;
+    if (filtros.seccion !== "todos" && seccionDeTipo(producto.tipo) !== filtros.seccion) return false;
     if (filtros.categoria === "sin" && producto.categoria_id != null) return false;
     if (
       filtros.categoria !== "todos" &&
@@ -247,8 +271,8 @@ function limpiarFiltros() {
   Object.keys(filtros).forEach((clave) => {
     filtros[clave] = "todos";
   });
-  const categoria = document.getElementById("admin-filtro-categoria");
-  if (categoria) categoria.value = "todos";
+  const seccion = document.getElementById("admin-filtro-seccion");
+  if (seccion) seccion.value = "todos";
   const subcategoria = document.getElementById("admin-filtro-subcategoria");
   if (subcategoria) subcategoria.value = "todos";
   const color = document.getElementById("admin-filtro-color");
@@ -259,7 +283,7 @@ function limpiarFiltros() {
 }
 
 function leerFiltrosDeControles() {
-  filtros.tipo = document.getElementById("admin-filtro-categoria")?.value ?? "todos";
+  filtros.seccion = document.getElementById("admin-filtro-seccion")?.value ?? "todos";
   filtros.categoria = document.getElementById("admin-filtro-subcategoria")?.value ?? "todos";
   filtros.color = document.getElementById("admin-filtro-color")?.value ?? "todos";
   filtros.estado = document.getElementById("admin-filtro-estado")?.value ?? "todos";
@@ -290,7 +314,7 @@ function pintarFiltroSubcategoria() {
   const select = document.getElementById("admin-filtro-subcategoria");
   if (!select) return;
   const actual = select.value;
-  select.replaceChildren(new Option("Todas las categorías", "todos"), new Option("Sin categoría", "sin"));
+  select.replaceChildren(new Option("Categoría", "todos"), new Option("Sin categoría", "sin"));
   Object.entries(SECCIONES).forEach(([seccion, titulo]) => {
     const lista = categoriasDe(seccion);
     if (lista.length === 0) return;
@@ -381,11 +405,11 @@ function leerPresentaciones() {
  */
 function poblarSelectCategoria(seleccionada) {
   const select = document.getElementById("admin-categoria-id");
-  const tipo = document.getElementById("admin-tipo")?.value;
+  const seccion = document.getElementById("admin-seccion")?.value;
   if (!select) return;
   const valor = String(seleccionada ?? select.value ?? "");
   select.replaceChildren(new Option("Sin categoría", ""));
-  categoriasDe(seccionDeTipo(tipo)).forEach((categoria) =>
+  categoriasDe(seccion).forEach((categoria) =>
     select.append(new Option(categoria.nombre, String(categoria.id))),
   );
   select.value = [...select.options].some((opcion) => opcion.value === valor) ? valor : "";
@@ -393,8 +417,8 @@ function poblarSelectCategoria(seleccionada) {
 
 function actualizarCamposLente() {
   const bloque = document.getElementById("admin-campos-lente");
-  const tipo = document.getElementById("admin-tipo")?.value;
-  if (bloque) bloque.hidden = !esTipoLente(tipo);
+  const seccion = document.getElementById("admin-seccion")?.value;
+  if (bloque) bloque.hidden = seccion !== "lente";
 }
 
 function liberarVistaPrevia() {
@@ -445,7 +469,7 @@ function abrirEditor(id) {
   mostrarMensajeEditor("");
   formulario.elements.nombre.value = producto.nombre ?? "";
   formulario.elements.precio.value = typeof producto.precio === "number" ? producto.precio : "";
-  formulario.elements.tipo.value = producto.tipo ?? "accesorio";
+  formulario.elements.seccion.value = seccionDeTipo(producto.tipo ?? "accesorio");
   formulario.elements.estado.value = producto.estado ?? "disponible";
   formulario.elements.orden.value = Number.isFinite(producto.orden) ? producto.orden : "";
   formulario.elements.descripcion.value = producto.descripcion ?? "";
@@ -476,7 +500,6 @@ function abrirEditor(id) {
   mostrarBotonEliminar(true);
   actualizarCamposLente();
   poblarSelectCategoria(producto.categoria_id);
-  cerrarFab();
   abrirModal("modal-admin-producto");
 }
 
@@ -506,7 +529,6 @@ function abrirEditorNuevo() {
   mostrarBotonEliminar(false);
   actualizarCamposLente();
   poblarSelectCategoria("");
-  cerrarFab();
   abrirModal("modal-admin-producto");
 }
 
@@ -557,14 +579,14 @@ async function guardarProducto(evento) {
       nombre: String(datos.get("nombre") ?? "").trim(),
       descripcion: String(datos.get("descripcion") ?? "").trim(),
       precio: datos.get("precio") === "" ? null : Number(datos.get("precio")),
-      tipo: String(datos.get("tipo") ?? ""),
+      tipo: tipoParaSeccion(String(datos.get("seccion") ?? "")),
       estado: String(datos.get("estado") ?? "disponible"),
       orden: datos.get("orden") === "" ? null : Number(datos.get("orden")),
       categoria_id: Number(datos.get("categoria_id")) || null,
     };
 
     if (!cambios.nombre) throw new Error("El nombre no puede quedar vacío.");
-    if (!TIPOS.includes(cambios.tipo)) throw new Error("Selecciona una categoría válida.");
+    if (!cambios.tipo) throw new Error("Selecciona una sección válida.");
     if (
       cambios.categoria_id !== null &&
       !categoriasDe(seccionDeTipo(cambios.tipo)).some((item) => item.id === cambios.categoria_id)
@@ -648,7 +670,6 @@ function abrirConfirmacion({ titulo, mensaje, requiereTexto = false, alConfirmar
   if (input) input.value = "";
   if (boton) boton.disabled = requiereTexto;
 
-  cerrarFab();
   abrirModal("modal-admin-confirmar");
   if (requiereTexto) input?.focus();
 }
@@ -802,7 +823,6 @@ function pintarCategorias() {
 }
 
 function abrirCategorias() {
-  cerrarFab();
   mostrarMensajeCategorias("");
   pintarCategorias();
   abrirModal("modal-admin-categorias");
@@ -924,29 +944,6 @@ function solicitarEliminarCategoria(id) {
   });
 }
 
-/* --- Botón flotante de acciones --- */
-
-function alternarFab() {
-  const fab = document.getElementById("admin-fab");
-  const menu = document.getElementById("admin-fab-menu");
-  const boton = fab?.querySelector('[data-action="admin-fab"]');
-  if (!fab || !menu) return;
-  const abierto = menu.hidden;
-  menu.hidden = !abierto;
-  fab.classList.toggle("admin-fab--abierto", abierto);
-  boton?.setAttribute("aria-expanded", String(abierto));
-}
-
-function cerrarFab() {
-  const fab = document.getElementById("admin-fab");
-  const menu = document.getElementById("admin-fab-menu");
-  const boton = fab?.querySelector('[data-action="admin-fab"]');
-  if (!fab || !menu) return;
-  menu.hidden = true;
-  fab.classList.remove("admin-fab--abierto");
-  boton?.setAttribute("aria-expanded", "false");
-}
-
 /* --- Buscador del panel --- */
 
 const escapar = (texto) =>
@@ -1065,6 +1062,8 @@ async function actualizarVistaAdmin(usuario) {
   panel.hidden = !autorizado;
   const searchToggle = document.getElementById("admin-search-toggle");
   if (searchToggle) searchToggle.hidden = !autorizado;
+  const logoutToggle = document.getElementById("admin-logout-toggle");
+  if (logoutToggle) logoutToggle.hidden = !autorizado;
 
   if (!usuario) {
     mostrarMensaje("Inicia sesión con la cuenta administradora.");
@@ -1083,9 +1082,6 @@ async function actualizarVistaAdmin(usuario) {
 
 function configurarDelegacion() {
   document.addEventListener("click", (event) => {
-    /* El menú del botón flotante se cierra al tocar fuera de él. */
-    if (!event.target.closest(".admin-fab")) cerrarFab();
-
     const el = event.target.closest("[data-action]");
     if (!el) return;
     switch (el.dataset.action) {
@@ -1097,9 +1093,6 @@ function configurarDelegacion() {
         break;
       case "admin-logout":
         cerrarSesionAdmin();
-        break;
-      case "admin-fab":
-        alternarFab();
         break;
       case "admin-open-search":
         abrirBusquedaAdmin();
@@ -1177,7 +1170,7 @@ function configurarDelegacion() {
   });
 
   document.addEventListener("change", (event) => {
-    if (event.target.matches('[data-action="admin-tipo"]')) {
+    if (event.target.matches('[data-action="admin-seccion"]')) {
       actualizarCamposLente();
       poblarSelectCategoria();
     } else if (event.target.matches('[data-action="admin-foto"]')) {
@@ -1190,15 +1183,9 @@ function configurarDelegacion() {
     }
   });
 
-  /* Escape resuelve una cosa a la vez: el modal de encima y, si no hay
-     ninguno, el menú del botón flotante. */
+  /* Escape cierra solo el modal de encima, no toda la pila. */
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") return;
-    if (hayModalAbierto()) {
-      cerrarModalSuperior();
-    } else {
-      cerrarFab();
-    }
+    if (event.key === "Escape" && hayModalAbierto()) cerrarModalSuperior();
   });
 }
 

@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Categorías dentro de cada sección (lentes, pestañas y accesorios), creadas por la administradora desde el panel: «Administrar categorías» en el botón flotante permite crearlas, renombrarlas, reordenarlas y eliminarlas (sus productos no se borran, quedan sin categoría). Cada ficha de producto tiene su selector de categoría y la lista del panel un filtro nuevo. En la tienda aparecen como botones de filtro en cada sección, solo si tienen productos, y quedan en la URL. El selector antiguo «Categoría» del panel pasó a llamarse «Sección».
+- En Lentes, pupila reducida, pupila estándar y cosplay Halloween pasaron a ser categorías: en la tienda reemplazan la fila fija «Pupila» y el botón de tono «COSPLAY», y en el panel se eligen en el selector de categoría. Los 121 lentes existentes quedaron asignados a la suya.
+- El panel de administración se rediseñó: encabezado con buscar, ver tienda y cerrar sesión; acciones «Categorías» y «Nuevo producto» siempre a la vista (desaparece el botón flotante); indicadores con color por estado; filtros en una sola barra; el inventario es una lista de filas con miniatura, sección y categoría, precio y estado; «Eliminar todos» se movió a una zona de peligro al final.
+
+- Categorías dentro de cada sección (lentes, pestañas y accesorios), creadas por la administradora desde el panel: el botón «Categorías» del panel permite crearlas, renombrarlas, reordenarlas y eliminarlas (sus productos no se borran, quedan sin categoría). Cada ficha de producto tiene su selector de categoría y la lista del panel un filtro nuevo. En la tienda aparecen como botones de filtro en cada sección, solo si tienen productos, y quedan en la URL. Las secciones son tres: Lentes, Pestañas y Accesorios.
 
 - La tienda y el panel tienen un buscador con lupa en el encabezado. Abre un diálogo con resultados en vivo por nombre y alias; en la tienda un lente abre su ficha y las pestañas o accesorios se resaltan en su sección, y en el panel cada resultado se puede editar.
 
@@ -45,15 +48,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nueva sección "¿Por qué comprar en MARÃO?" con los tres argumentos de venta: envíos nacionales, calidad premium y pedidos por WhatsApp.
 - Las tarjetas de pestañas ahora son un carrusel: se deslizan con el dedo, con el teclado o con las flechas del bloque.
 - Se publicó la sección "Accesorios y cuidado para tus lentes" (solución, kit aplicador + pinza, estuche porta-lentes y lavadora manual), que estaba definida pero no se mostraba en la página. Cada accesorio muestra ahora su descripción.
+- Al finalizar el pedido aparece el aviso "Enviar comprobante de pago por WhatsApp": recuerda capturar el comprobante del pago, ofrece continuar al pago seguro (ePayco solo se abre cuando se le pide) y muestra el número del vendedor con un botón para copiarlo. Con destino nacional, el aviso aclara además que el envío se acuerda por ahí.
 
 ### Removed
 
 - Salieron del catálogo "Tabla de pestañas punto a punto" ($30.000) y "Bandeja pestañas + Bond & Seal" ($35.000): el documento nuevo del negocio las reemplaza por pestañas cortón y pestañas libro. La segunda, además, nunca llegó a mostrarse en la tienda.
 - El checkout ya no pide número de tarjeta, vencimiento ni CVV. No había pasarela que procesara esos datos: el pedido siempre se coordinó por WhatsApp, así que pedirlos solo exponía a la clienta sin ninguna contrapartida. En su lugar, el resumen indica que el pago se acuerda por WhatsApp.
 - Elegir "Tarjeta" o "Nequi" ya no obliga a escribir un número para poder enviar el pedido.
+- El resumen de compras dejó de mostrar el selector de método de pago: la intención de pago ya no se pide antes de llegar al checkout, y con ella desaparecieron su etiqueta y su nota de ePayco.
 
 ### Changed
 
+- El envío a toda Colombia ya no se suma al total: no tiene tarifa fija, así que el resumen muestra «A acordar por WhatsApp», ePayco cobra solo los productos y el aviso del comprobante aclara que el envío se acuerda por ese canal. Solo Bogotá y Soacha mantienen el envío de $10.000.
 - El panel da feedback visual: avisos flotantes de éxito o error, indicador de carga mientras trae el catálogo y botones ocupados ("Guardando…", "Eliminando…") durante la acción. Los desplegables dejaron la flecha del sistema por una propia, más limpia.
 
 - El precio pasa a mandar sobre el nombre en todas las tarjetas: más grande y más pesado, con el nombre en peso medio. Las tarjetas de pestañas además subieron un punto de tamaño de letra.

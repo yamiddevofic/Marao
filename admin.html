@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#171326" />
+    <meta name="theme-color" content="#ffffff" />
     <title>Administración | MARÃO</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,10 +14,12 @@
   </head>
   <body>
     <header class="admin-header">
-      <a class="admin-brand" href="index.html" aria-label="Volver a MARÃO">
-        <img src="assets/img/logo.png" alt="MARÃO" />
-      </a>
-      <span class="admin-header-label">PANEL DE ADMINISTRACIÓN</span>
+      <div class="admin-header-marca">
+        <a class="admin-brand" href="index.html" aria-label="Volver a MARÃO">
+          <img src="assets/img/logo.png" alt="MARÃO" />
+        </a>
+        <span class="admin-header-label">Panel</span>
+      </div>
       <div class="admin-header-acciones">
         <button
           type="button"
@@ -28,22 +30,33 @@
           title="Buscar productos"
           hidden
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
-        <a class="admin-back-link" href="index.html">Volver a la tienda</a>
+        <a class="admin-back-link" href="index.html">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>Ver tienda</span>
+        </a>
+        <button
+          type="button"
+          class="admin-icon-button"
+          id="admin-logout-toggle"
+          data-action="admin-logout"
+          aria-label="Cerrar sesión"
+          title="Cerrar sesión"
+          hidden
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
       </div>
     </header>
     <main class="admin-shell">
@@ -52,16 +65,7 @@
 
         <section id="admin-acceso" class="admin-login-card" aria-labelledby="login-title">
           <div class="admin-login-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
@@ -73,84 +77,76 @@
             <input id="admin-email" name="email" type="email" autocomplete="username" placeholder="admin@marao.com" required />
             <label for="admin-password">Contraseña</label>
             <input id="admin-password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
-            <button class="admin-button admin-button--primary" type="submit">Entrar al panel <span>↗</span></button>
+            <button class="admin-button admin-button--primary" type="submit">Entrar al panel</button>
           </form>
         </section>
 
         <section id="admin-panel-contenido" class="admin-panel" hidden>
           <div class="admin-toolbar">
-            <div>
-              <span class="eyebrow">Inventario</span>
+            <div class="admin-toolbar-titulo">
+              <h2>Inventario</h2>
               <p id="admin-estado" class="admin-message" role="status"></p>
             </div>
             <div class="admin-toolbar-acciones">
-              <div class="admin-status-dot"><span></span> Base de datos conectada</div>
-              <button
-                class="admin-button admin-button--ghost admin-button--icono"
-                data-action="admin-logout"
-                aria-label="Cerrar sesión"
-                title="Cerrar sesión"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+              <span class="admin-status-dot" title="Base de datos conectada">
+                <span aria-hidden="true"></span><span class="admin-status-texto">Conectada</span>
+              </span>
+              <button type="button" class="admin-button admin-button--ghost" data-action="admin-categorias">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <line x1="7" y1="7" x2="7.01" y2="7" />
                 </svg>
+                Categorías
+              </button>
+              <button type="button" class="admin-button admin-button--primary" data-action="admin-nuevo">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Nuevo producto
               </button>
             </div>
           </div>
 
           <dl id="admin-resumen" class="admin-resumen">
-            <div class="admin-resumen-item">
+            <div class="admin-resumen-item admin-resumen-item--total">
               <dt>Total</dt>
               <dd id="admin-total">0</dd>
             </div>
-            <div class="admin-resumen-item">
+            <div class="admin-resumen-item admin-resumen-item--disponible">
               <dt>Disponibles</dt>
               <dd id="admin-disponibles">0</dd>
             </div>
-            <div class="admin-resumen-item">
+            <div class="admin-resumen-item admin-resumen-item--agotado">
               <dt>Agotados</dt>
               <dd id="admin-agotados">0</dd>
             </div>
-            <div class="admin-resumen-item">
+            <div class="admin-resumen-item admin-resumen-item--oculto">
               <dt>Ocultos</dt>
               <dd id="admin-ocultos">0</dd>
             </div>
           </dl>
 
           <div class="admin-filtros">
-            <label class="admin-campo" for="admin-filtro-categoria">
+            <label class="admin-campo" for="admin-filtro-seccion">
               <span class="solo-lector">Filtrar por sección</span>
-              <select id="admin-filtro-categoria" data-action="admin-filtro">
-                <option value="todos">Todas las secciones</option>
-                <option value="reducida">Pupila reducida</option>
-                <option value="estandar">Pupila estándar</option>
-                <option value="cosplay">Cosplay</option>
+              <select id="admin-filtro-seccion" data-action="admin-filtro">
+                <option value="todos">Sección</option>
+                <option value="lente">Lentes</option>
                 <option value="pestana">Pestañas</option>
-                <option value="accesorio">Accesorio</option>
+                <option value="accesorio">Accesorios</option>
               </select>
             </label>
             <label class="admin-campo" for="admin-filtro-subcategoria">
               <span class="solo-lector">Filtrar por categoría</span>
               <select id="admin-filtro-subcategoria" data-action="admin-filtro">
-                <option value="todos">Todas las categorías</option>
+                <option value="todos">Categoría</option>
               </select>
             </label>
             <label class="admin-campo" for="admin-filtro-color">
               <span class="solo-lector">Filtrar por color</span>
               <select id="admin-filtro-color" data-action="admin-filtro">
-                <option value="todos">Todos los colores</option>
+                <option value="todos">Color</option>
                 <option value="miel">Café &amp; miel</option>
                 <option value="verde">Verde</option>
                 <option value="gris">Gris</option>
@@ -160,74 +156,36 @@
             <label class="admin-campo" for="admin-filtro-estado">
               <span class="solo-lector">Filtrar por estado</span>
               <select id="admin-filtro-estado" data-action="admin-filtro">
-                <option value="todos">Todos los estados</option>
-                <option value="disponible">disponible</option>
-                <option value="agotado">agotado</option>
-                <option value="oculto">oculto</option>
+                <option value="todos">Estado</option>
+                <option value="disponible">Disponible</option>
+                <option value="agotado">Agotado</option>
+                <option value="oculto">Oculto</option>
               </select>
             </label>
             <button
               type="button"
-              class="admin-button admin-button--ghost admin-button--icono"
+              class="admin-button admin-button--ghost admin-filtros-limpiar"
               data-action="admin-limpiar-filtros"
-              aria-label="Limpiar filtros"
-              title="Limpiar filtros"
             >
-              <svg
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M3 2v6h6" />
                 <path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 8" />
               </svg>
+              Limpiar
             </button>
           </div>
 
           <div id="admin-productos" class="admin-productos"></div>
 
-          <div class="admin-fab" id="admin-fab">
-            <div class="admin-fab-menu" id="admin-fab-menu" hidden>
-              <button type="button" class="admin-button admin-button--ghost" data-action="admin-nuevo">
-                Agregar nuevo producto
-              </button>
-              <button type="button" class="admin-button admin-button--ghost" data-action="admin-categorias">
-                Administrar categorías
-              </button>
-              <button type="button" class="admin-button admin-button--danger" data-action="admin-eliminar-todos">
-                Eliminar todos
-              </button>
+          <section class="admin-peligro" aria-labelledby="admin-peligro-titulo">
+            <div>
+              <h2 id="admin-peligro-titulo">Zona de peligro</h2>
+              <p>Borra todos los productos del catálogo. No se puede deshacer.</p>
             </div>
-            <button
-              type="button"
-              class="admin-fab-toggle"
-              data-action="admin-fab"
-              aria-expanded="false"
-              aria-controls="admin-fab-menu"
-              aria-label="Más opciones"
-              title="Más opciones"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                aria-hidden="true"
-              >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+            <button type="button" class="admin-button admin-button--danger-ghost" data-action="admin-eliminar-todos">
+              Eliminar todos
             </button>
-          </div>
+          </section>
         </section>
       </section>
     </main>
@@ -353,22 +311,20 @@
             </div>
 
             <div class="admin-grid-2">
-              <label class="admin-campo" for="admin-tipo">
+              <label class="admin-campo" for="admin-seccion">
                 <span>Sección</span>
-                <select id="admin-tipo" name="tipo" data-action="admin-tipo">
-                  <option value="reducida">Pupila reducida</option>
-                  <option value="estandar">Pupila estándar</option>
-                  <option value="cosplay">Cosplay</option>
+                <select id="admin-seccion" name="seccion" data-action="admin-seccion">
+                  <option value="lente">Lentes</option>
                   <option value="pestana">Pestañas</option>
-                  <option value="accesorio">Accesorio</option>
+                  <option value="accesorio">Accesorios</option>
                 </select>
               </label>
               <label class="admin-campo" for="admin-estado-campo">
                 <span>Estado</span>
                 <select id="admin-estado-campo" name="estado">
-                  <option value="disponible">disponible</option>
-                  <option value="agotado">agotado</option>
-                  <option value="oculto">oculto</option>
+                  <option value="disponible">Disponible</option>
+                  <option value="agotado">Agotado</option>
+                  <option value="oculto">Oculto</option>
                 </select>
               </label>
             </div>

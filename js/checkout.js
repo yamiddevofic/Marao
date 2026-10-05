@@ -3,9 +3,12 @@ import { getUsuarioLogueado } from "./auth.js";
 import { formatearPrecio } from "./formato.js";
 import { claveEnvio, leer, guardar } from "./almacenamiento.js";
 import { pagarConEpayco } from "./epayco.js";
+import { abrirModal } from "./modales.js";
 
 const ENVIO_LOCAL = 10000;
-const ENVIO_NACIONAL = 22000;
+/* El envío fuera de Bogotá / Soacha no tiene tarifa fija: se acuerda con la
+   clienta por WhatsApp según el destino, así que nunca se suma al total. */
+const ENVIO_NACIONAL = 0;
 
 /**
  * Datos de envío recordados entre visitas.
@@ -81,103 +84,69 @@ export function calcularCostosEnvio() {
   document.getElementById("summary-subtotal").innerText =
     formatearPrecio(subtotal);
   document.getElementById("summary-shipping").innerText =
-    formatearPrecio(costoEnvio);
+    selectorEnvio.value === "nacional"
+      ? "A acordar por WhatsApp"
+      : formatearPrecio(costoEnvio);
   document.getElementById("summary-total").innerText =
     formatearPrecio(totalFinal);
+
+  // Sin productos no hay nada que finalizar: con el resumen en cero el botón
+  // queda bloqueado hasta que el carrito vuelva a tener algo.
+  const botonFinalizar = document.getElementById("btn-finalizar");
+  if (botonFinalizar) botonFinalizar.disabled = subtotal === 0;
 }
 
-export function enviarPedidoWhatsApp() {
-  const carrito = getCarrito();
-  const usuarioLogueado = getUsuarioLogueado();
+/** Copia el WhatsApp del vendedor al portapapeles y avisa del resultado. */
+export async function copiarNumeroVendedor() {
+  const numero = document
+    .getElementById("comprobante-numero")
+    ?.dataset.numero?.trim();
+  const estado = document.getElementById("comprobante-copia-estado");
+  if (!numero) return;
 
-  if (carrito.length === 0) {
-    alert("Tu carrito está vacío. Agrega algún producto antes de finalizar.");
-    return;
+  try {
+    await navigator.clipboard.writeText(numero);
+    if (estado) estado.textContent = "Número copiado.";
+  } catch (error) {
+    console.warn("[checkout] No se pudo copiar el número", error);
+    if (estado) {
+      estado.textContent = "No se pudo copiar. Cópialo manualmente.";
+    }
   }
-
-  const direccionInput = document.getElementById("user-address-input");
-  const direccion = direccionInput ? direccionInput.value.trim() : "";
-
-  if (!direccion) {
-    alert("Por favor ingresa tu dirección exacta de entrega.");
-    if (direccionInput) direccionInput.focus();
-    return;
-  }
-
-  if (direccion.length < 8) {
-    alert(
-      "Por favor ingresa una dirección de entrega válida y completa (ej. Calle 15 # 4-20 Apt 302).",
-    );
-    direccionInput.focus();
-    return;
-  }
-
-  const selectorMetodoPago = document.getElementById(
-    "payment-type-select",
-  ).value;
-
-  const selectorEnvio = document.getElementById("shipping-city").value;
-  const costoEnvio = selectorEnvio === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
-  const textoEnvio =
-    selectorEnvio === "nacional"
-      ? "A toda Colombia"
-      : "Bogotá / Soacha";
-  const textoMetodoPago = {
-    tarjeta: "Tarjeta de crédito o débito",
-    nequi: "Nequi",
-    efectivo: "Pago contraentrega",
-  }[selectorMetodoPago] ?? selectorMetodoPago;
-
-  let subtotal = 0;
-  let lineas = [];
-
-  lineas.push("*PEDIDO NUEVO - MARÃO*");
-  lineas.push("");
-  lineas.push(`*Cliente:* ${usuarioLogueado?.nombre ?? "Cliente sin iniciar sesión"}`);
-  lineas.push("");
-  lineas.push("*PRODUCTOS*");
-
-  carrito.forEach((item) => {
-    const totalProd = item.precio * item.cantidad;
-    subtotal += totalProd;
-    lineas.push(`- ${item.nombre}`);
-    lineas.push(`  Cantidad: ${item.cantidad} | Subtotal: ${formatearPrecio(totalProd)}`);
-  });
-
-  const totalFinal = subtotal + costoEnvio;
-
-  lineas.push("");
-  lineas.push("*ENTREGA*");
-  lineas.push(`Destino: ${textoEnvio}`);
-  lineas.push(`Dirección: ${direccion}`);
-  lineas.push("");
-  lineas.push("*PAGO*");
-  lineas.push(`Método: ${textoMetodoPago}`);
-  lineas.push("");
-  lineas.push("*RESUMEN*");
-  lineas.push(`Subtotal productos: ${formatearPrecio(subtotal)}`);
-  lineas.push(`Envío: ${formatearPrecio(costoEnvio)}`);
-  lineas.push(`*TOTAL: ${formatearPrecio(totalFinal)}*`);
-  lineas.push("");
-  lineas.push("Pendiente de confirmar disponibilidad y entrega.");
-
-  const mensajeTexto = lineas.join("\n");
-  const urlWA = `https://wa.me/573243744983?text=${encodeURIComponent(mensajeTexto)}`;
-
-  // El guardado de la dirección va con espera; si se pulsa "Finalizar" justo
-  // después de escribirla, esa espera aún no venció. Se fuerza aquí para que la
-  // dirección que se acaba de enviar sea la que quede recordada.
-  guardarDatosEnvio();
-
-  window.open(urlWA, "_blank");
 }
 
-export async function iniciarCheckout() {
-  const metodo = document.getElementById("payment-type-select")?.value;
-  if (metodo === "efectivo") {
-    enviarPedidoWhatsApp();
-    return;
+/** Abre el aviso del comprobante con la nota de envío solo cuando el destino
+ *  la necesita. */
+function abrirAvisoComprobante() {
+  const metodo =
+    document.getElementById("payment-type-select")?.value ?? "tarjeta";
+
+  // Sin pago en línea no hay "Continuar al pago": el pedido se coordina con el
+  // número del vendedor.
+  const botonPagar = document.getElementById("comprobante-pagar");
+  if (botonPagar) botonPagar.hidden = metodo === "efectivo";
+
+  const estado = document.getElementById("comprobante-estado");
+  if (estado) estado.textContent = "";
+
+  const copia = document.getElementById("comprobante-copia-estado");
+  if (copia) copia.textContent = "";
+
+  const nota = document.getElementById("comprobante-envio-nota");
+  if (nota) {
+    nota.hidden =
+      document.getElementById("shipping-city")?.value !== "nacional";
   }
+
+  abrirModal("modal-comprobante");
+}
+
+/** El pago no arranca solo: ePayco se abre cuando se pide desde el aviso, para
+ *  que dé tiempo a leerlo y a copiar el número del vendedor. */
+export function pagarDesdeAviso() {
+  const metodo =
+    document.getElementById("payment-type-select")?.value ?? "tarjeta";
+  if (metodo === "efectivo") return;
 
   const direccionInput = document.getElementById("user-address-input");
   const direccion = direccionInput?.value.trim() ?? "";
@@ -188,12 +157,18 @@ export async function iniciarCheckout() {
   }
 
   const selectorEnvio = document.getElementById("shipping-city");
-  const costoEnvio = selectorEnvio?.value === "nacional" ? ENVIO_NACIONAL : ENVIO_LOCAL;
-  const subtotal = getCarrito().reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-  guardarDatosEnvio();
+  const esNacional = selectorEnvio?.value === "nacional";
+  const costoEnvio = esNacional ? ENVIO_NACIONAL : ENVIO_LOCAL;
+  const subtotal = getCarrito().reduce(
+    (sum, item) => sum + item.precio * item.cantidad,
+    0,
+  );
+
+  const estado = document.getElementById("comprobante-estado");
+  if (estado) estado.textContent = "";
 
   try {
-    await pagarConEpayco({
+    pagarConEpayco({
       total: subtotal + costoEnvio,
       direccion,
       destino: selectorEnvio?.value ?? "bogota_soacha",
@@ -202,6 +177,46 @@ export async function iniciarCheckout() {
     });
   } catch (error) {
     console.error("[checkout] No se pudo iniciar ePayco", error);
-    alert(error instanceof Error ? error.message : "No se pudo iniciar el pago. Intenta de nuevo.");
+    const mensaje =
+      error instanceof Error
+        ? error.message
+        : "No se pudo iniciar el pago. Intenta de nuevo.";
+    if (estado) {
+      estado.textContent = mensaje;
+    } else {
+      alert(mensaje);
+    }
   }
+}
+
+export function iniciarCheckout() {
+  const carrito = getCarrito();
+  if (carrito.length === 0) {
+    alert("Tu carrito está vacío. Agrega algún producto antes de finalizar.");
+    return;
+  }
+
+  const direccionInput = document.getElementById("user-address-input");
+  const direccion = direccionInput ? direccionInput.value.trim() : "";
+
+  if (!direccion) {
+    alert("Por favor ingresa tu dirección exacta de entrega.");
+    direccionInput?.focus();
+    return;
+  }
+
+  if (direccion.length < 8) {
+    alert(
+      "Por favor ingresa una dirección de entrega válida y completa (ej. Calle 15 # 4-20 Apt 302).",
+    );
+    direccionInput?.focus();
+    return;
+  }
+
+  // El guardado de la dirección va con espera; si se pulsa "Finalizar" justo
+  // después de escribirla, esa espera aún no venció. Se fuerza aquí para que la
+  // dirección que se acaba de enviar sea la que quede recordada.
+  guardarDatosEnvio();
+
+  abrirAvisoComprobante();
 }

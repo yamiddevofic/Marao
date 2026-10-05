@@ -202,50 +202,11 @@
               >
                 AZUL
               </button>
-              <button
-                class="filter-btn"
-                data-action="filtrar-lentes"
-                aria-pressed="false"
-                data-group="color"
-                data-filter="cosplay"
-              >
-                COSPLAY
-              </button>
             </div>
           </div>
-          <div class="lentes-filter-wrapper">
-            <span class="filter-label">Pupila:</span>
-            <div class="pupil-filters" data-group="pupila">
-              <button
-                class="filter-btn active"
-                data-action="filtrar-lentes"
-                aria-pressed="true"
-                data-group="pupila"
-                data-filter="todos"
-              >
-                TODAS
-              </button>
-              <button
-                class="filter-btn"
-                data-action="filtrar-lentes"
-                aria-pressed="false"
-                data-group="pupila"
-                data-filter="reducida"
-              >
-                REDUCIDA
-              </button>
-              <button
-                class="filter-btn"
-                data-action="filtrar-lentes"
-                aria-pressed="false"
-                data-group="pupila"
-                data-filter="estandar"
-              >
-                ESTÁNDAR
-              </button>
-            </div>
-          </div>
-          <!-- Las subcategorías las crea la administradora; filtrarLentes las pinta desde los datos. -->
+          <!-- Pupila reducida, pupila estándar, cosplay Halloween... son categorías
+               que se gestionan en el panel; pintarFiltrosCategoriaLentes() las
+               pinta desde los datos. -->
           <div class="lentes-filter-wrapper" id="filtros-categoria-lentes" hidden>
             <span class="filter-label">Categoría:</span>
             <div class="pupil-filters" data-group="categoria"></div>
@@ -411,7 +372,9 @@
               <option value="bogota_soacha">
                 Bogotá / Soacha (Contraentrega - $10.000)
               </option>
-              <option value="nacional">A toda Colombia ($22.000)</option>
+              <option value="nacional">
+                A toda Colombia (Envío a acordar por WhatsApp)
+              </option>
             </select>
           </div>
 
@@ -427,29 +390,6 @@
 
           <hr class="dashed-divider" />
 
-          <div class="payment-methods-section">
-            <label class="payment-title" for="payment-type-select"
-              ><strong>Método de Pago:</strong></label
-            >
-
-            <select
-              id="payment-type-select"
-              class="payment-select"
-            >
-              <option value="tarjeta">Tarjeta de Crédito / Débito</option>
-              <option value="nequi">Nequi (Transferencia Directa)</option>
-              <option value="efectivo">
-                Pago Contraentrega (Solo Bogotá/Soacha)
-              </option>
-            </select>
-
-             <!-- Los datos sensibles se solicitan únicamente dentro del checkout
-                  hospedado de ePayco; nunca se piden en este formulario. -->
-             <p class="payment-note" id="payment-note">
-               El método seleccionado se abrirá directamente en el Web Checkout
-               seguro de ePayco. La contraentrega se coordina por WhatsApp.
-             </p>
-
           <div class="address-input-container">
             <label for="user-address-input"
               ><strong>Dirección exacta de entrega:</strong></label
@@ -461,7 +401,12 @@
             />
           </div>
 
-          <button class="btn-checkout-final" data-action="checkout">
+          <button
+            class="btn-checkout-final"
+            id="btn-finalizar"
+            data-action="checkout"
+            disabled
+          >
             FINALIZAR PEDIDO
           </button>
         </div>
@@ -683,6 +628,65 @@
               &minus;
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL AVISO DE COMPROBANTE -->
+    <div id="modal-comprobante" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="modal-detail-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-comprobante"
+        tabindex="-1"
+      >
+        <button
+          class="close-modal-x"
+          data-action="close-comprobante"
+          aria-label="Cerrar aviso de comprobante"
+        >
+          &times;
+        </button>
+        <h3 class="modal-header-title" id="titulo-comprobante">
+          ENVIAR COMPROBANTE DE PAGO POR WHATSAPP
+        </h3>
+
+        <p class="comprobante-aviso">
+          <strong>Importante:</strong> una vez realices el pago, toma una
+          captura de pantalla del comprobante y envíala al WhatsApp del
+          vendedor junto con tu pedido.
+        </p>
+
+        <p class="comprobante-aviso" id="comprobante-envio-nota" hidden>
+          El valor del envío fuera de Bogotá y Soacha se acuerda por WhatsApp de
+          acuerdo al destino.
+        </p>
+
+        <p class="comprobante-estado" id="comprobante-estado" role="status"></p>
+
+        <div class="comprobante-numero-bloque">
+          <p class="comprobante-numero-etiqueta">WhatsApp del vendedor</p>
+          <p class="comprobante-numero" id="comprobante-numero" data-numero="+573243744983">
+            +57 324 374 4983
+          </p>
+          <button class="btn-whatsapp" type="button" data-action="copiar-numero">
+            Copiar número
+          </button>
+          <p class="comprobante-copia-estado" id="comprobante-copia-estado" role="status"></p>
+        </div>
+
+        <div class="comprobante-acciones">
+          <button
+            class="btn-pagar-aviso"
+            id="comprobante-pagar"
+            data-action="comprobante-pagar"
+          >
+            Continuar al pago seguro
+          </button>
+          <button class="btn-modal-secundario" data-action="close-comprobante">
+            Cerrar
+          </button>
         </div>
       </div>
     </div>

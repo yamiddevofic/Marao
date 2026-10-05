@@ -11,7 +11,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **¿Por qué comprar en MARÃO?** (`#por-que-marao`): tres argumentos de venta estáticos (envíos, calidad, WhatsApp).
 - **Modal de detalle**: ficha del lente con imagen, precio, descripción, ficha técnica (tono, pupila, cobertura, borde, efecto, marcas y diámetros) y selector de cantidad.
 - **Carrito** (`#view-cart`): vista alterna (no es otra página) con cantidades, selector de envío y resumen de compra.
-- **Checkout**: destino de envío, intención de método de pago y envío del pedido por WhatsApp. No se piden datos de tarjeta: el cobro se coordina por ese mismo canal.
+- **Checkout**: destino de envío y envío del pedido por WhatsApp. No se piden datos de tarjeta: el cobro se coordina por ese mismo canal.
 - **Encabezado**: en móvil, menú hamburguesa con las secciones y el acceso al perfil; el carrito permanece visible en la barra. En escritorio el menú es una barra fija y el perfil vuelve al encabezado.
 - **Modal de perfil**: foto, nombre y correo de la cuenta, con el botón de cerrar sesión.
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
@@ -75,7 +75,7 @@ Pag_Marao/
 - **Delegación de eventos**: `main.js` escucha `click`, `change` e `input` a nivel de `document` y despacha según el atributo `data-action` del elemento (`add-to-cart`, `open-detail`, `checkout`, `filtrar-lentes`, etc.). No hay `onclick` en el markup.
 - **Comunicación del carrito**: `cart.js` emite el evento `cart:updated` en `window`; `main.js` lo escucha para refrescar el badge del header y recalcular los costos de envío.
 - **Categorías de producto**: cada producto lleva un `tipo` (`reducida` / `estandar` para lentes, `pestana`, `accesorio`). Los helpers `getLentes()`, `getAccesorios()` y `getPestanas()` de `productos.js` son la única fuente de esa partición — no filtres por precio ni por rango de `id`.
-- **Subcategorías**: tabla `categorias` de Supabase (`id`, `nombre`, `seccion`, `orden`) y columna `productos.categoria_id` (SQL en `supabase/categorias.sql`). No hay ninguna en el código: las crea la administradora en el panel. `establecerProductos(productos, categorias)` las resuelve a `categoriaId` y `subcategoria`, y `getCategoriasConProductos(seccion)` devuelve solo las que tienen productos. El campo `categoria` de los lentes cosplay locales es otra cosa (agrupación temática) y no se mezcla.
+- **Subcategorías**: tabla `categorias` de Supabase (`id`, `nombre`, `seccion`, `orden`) y columna `productos.categoria_id` (SQL en `supabase/categorias.sql`). No hay ninguna en el código: las crea la administradora en el panel. En Lentes son pupila reducida, pupila estándar y cosplay Halloween; la tienda ya no filtra lentes por `tipo` (los tres valores de lente se conservan por compatibilidad: al editar se mantiene el que tenía y un lente nuevo entra como `estandar`). `establecerProductos(productos, categorias)` las resuelve a `categoriaId` y `subcategoria`, y `getCategoriasConProductos(seccion)` devuelve solo las que tienen productos. El campo `categoria` de los lentes cosplay locales es otra cosa (agrupación temática) y no se mezcla.
 - **Productos sin precio**: hoy no hay ninguno, pero la salvaguarda sigue activa — un producto con `precio: null` se publica mostrando "Precio por confirmar", con el botón deshabilitado, y `agregarAlCarrito()` lo rechaza. Dejar entrar algo sin precio mandaría un pedido a $0 por WhatsApp.
 - **Datos de lentes**: `js/lentes.js` es un archivo generado a partir del documento del catálogo y del set de fotos; cada referencia añade `color`, `cobertura`, `borde`, `efecto`, `promocion`, `alias` y `presentaciones` (marca + diámetro + pupila). `constantes.js` existe para que `lentes.js` y `productos.js` compartan `IMG_PATH` y `PRECIO_LENTES` sin ciclo de imports.
 - **Persistencia**: `js/almacenamiento.js` envuelve `localStorage` con `try/catch` en cada acceso, porque en modo privado o con el almacenamiento bloqueado el solo hecho de tocarlo lanza; si falla, el sitio sigue funcionando sin memoria. Guarda tres cosas bajo el prefijo `marao:`:
@@ -162,7 +162,7 @@ Los precios de pestañas y accesorios vienen del documento "PRODUCTOS WORD3", do
 Envíos y pagos (`js/checkout.js`):
 
 - **Envío Bogotá / Soacha**: $10.000 (contraentrega disponible).
-- **Envío resto de Colombia**: $22.000.
+- **Envío resto de Colombia**: sin tarifa fija; se acuerda por WhatsApp según el destino y no se suma al total.
 - **Métodos de pago aceptados**: tarjeta crédito/débito mediante ePayco, Nequi y efectivo contraentrega por WhatsApp.
 
 ## Estado del proyecto y deuda técnica conocida

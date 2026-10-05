@@ -29,6 +29,8 @@
   --color-border: #ccc;
   --color-accent: #2f225b;
   --color-danger: #d9534f;
+  /* Verde de WhatsApp: solo para el botón que envía el pedido por ese canal. */
+  --color-whatsapp: #25d366;
   --shadow-card: 0 0.5rem 1.5rem rgb(0 0 0 / 20%);
 
   --radius-md: 6px;
@@ -537,7 +539,8 @@ picture {
   margin: 0 0 var(--spacing-md);
 }
 
-.carrusel-filtros[hidden] {
+.carrusel-filtros[hidden],
+.lentes-filter-wrapper[hidden] {
   display: none;
 }
 
@@ -911,15 +914,7 @@ picture {
   font-size: 0.8rem;
 }
 
-/* Era un <p> y ahora es <label for>, que es inline por defecto: sin esto el
-   selector se subiría a la misma línea que el texto. */
-.payment-title {
-  display: block;
-  margin-bottom: 0.4rem;
-}
-
-.shipping-selector-group select,
-.payment-select {
+.shipping-selector-group select {
   width: 100%;
   /* 0.75rem y no 0.5: con 0.5 el control quedaba en 23px de alto, por debajo
      de los 24x24 que pide WCAG 2.2 SC 2.5.8. */
@@ -942,12 +937,6 @@ picture {
   margin-top: var(--spacing-md);
 }
 
-.payment-note {
-  margin-top: 0.8rem;
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-}
-
 .btn-checkout-final {
   width: 100%;
   background: var(--color-black);
@@ -960,6 +949,11 @@ picture {
   letter-spacing: 1px;
   font-family: var(--font-body);
   border-radius: var(--radius-md);
+}
+
+.btn-checkout-final:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* MODALES */
@@ -1290,6 +1284,121 @@ body.scroll-bloqueado {
 .btn-modal-secundario:focus-visible {
   background: var(--color-text);
   color: var(--color-bg);
+}
+
+/* AVISO DE COMPROBANTE */
+#modal-comprobante .modal-detail-card {
+  max-width: 420px;
+}
+
+.comprobante-aviso {
+  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.comprobante-estado {
+  margin-top: var(--spacing-sm);
+  font-size: 0.85rem;
+  color: var(--color-danger);
+}
+
+.comprobante-estado:empty {
+  display: none;
+}
+
+.comprobante-numero-bloque {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.comprobante-numero-etiqueta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.comprobante-numero {
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+  font-family: var(--font-ui);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.comprobante-copia-estado {
+  margin-top: var(--spacing-sm);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.comprobante-copia-estado:empty {
+  display: none;
+}
+
+.comprobante-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.btn-whatsapp {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.8rem 1.5rem;
+  background: var(--color-whatsapp);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btn-whatsapp:hover,
+.btn-whatsapp:focus-visible {
+  filter: brightness(0.92);
+}
+
+/* Mismo peso que el botón negro del resumen: es la vía del pago en línea. */
+.btn-pagar-aviso {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.8rem 1.5rem;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  cursor: pointer;
+}
+
+.btn-pagar-aviso:hover,
+.btn-pagar-aviso:focus-visible {
+  background: var(--color-dark);
+}
+
+/* `display: block` de la clase pisa al atributo hidden del navegador. */
+.btn-pagar-aviso[hidden] {
+  display: none;
 }
 
 .google-btn-wrapper {

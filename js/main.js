@@ -19,11 +19,12 @@ import {
   getCarrito,
 } from "./cart.js";
 import { mostrarSeccion, vistaDesdeRuta } from "./ui.js";
-import { cerrarModalSuperior, hayModalAbierto } from "./modales.js";
+import { cerrarModalSuperior, cerrarModal, hayModalAbierto } from "./modales.js";
 import { desplazarCarrusel } from "./carrusel.js";
 import {
-  enviarPedidoWhatsApp,
   iniciarCheckout,
+  pagarDesdeAviso,
+  copiarNumeroVendedor,
   calcularCostosEnvio,
   guardarDatosEnvio,
   restaurarDatosEnvio,
@@ -232,6 +233,15 @@ document.addEventListener("click", (event) => {
       break;
     case "checkout":
       iniciarCheckout();
+      break;
+    case "close-comprobante":
+      cerrarModal("modal-comprobante");
+      break;
+    case "comprobante-pagar":
+      pagarDesdeAviso();
+      break;
+    case "copiar-numero":
+      copiarNumeroVendedor();
       break;
     default:
       console.warn(`[ui] Acción desconocida: ${el.dataset.action}`);
