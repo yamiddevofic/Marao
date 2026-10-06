@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - El footer muestra los iconos de redes sociales (Instagram y WhatsApp enlazados; TikTok y Facebook listos para activar cuando haya enlace) y el teléfono de contacto es un enlace que llama.
 - SEO: título y descripción pensados para búsquedas, URL canónica, datos estructurados de tienda en línea (schema.org), `robots.txt`, `sitemap.xml`, favicon con la «M» del logo y el panel marcado como `noindex`.
-- Al compartir el enlace (WhatsApp, Instagram, Facebook, X) aparece una vista previa con título, descripción y una imagen con el titular de la portada y la foto de la modelo completa (`assets/img/og-image.jpg`, 1200×630).
+- Al compartir el enlace (WhatsApp, Instagram, Facebook, X) aparece una vista previa con título, descripción y una captura de la página de inicio completa, con la modelo de la portada sin recortar (`assets/img/og-image.jpg`, 1200×630).
 - En el panel, los filtros se adaptan a la sección: el de categoría solo ofrece las de esa sección y se oculta si no tiene ninguna, y el de color solo aparece en Lentes.
 
 - En Lentes, pupila reducida, pupila estándar y cosplay Halloween pasaron a ser categorías: en la tienda reemplazan la fila fija «Pupila» y el botón de tono «COSPLAY», y en el panel se eligen en el selector de categoría. Los 121 lentes existentes quedaron asignados a la suya.
