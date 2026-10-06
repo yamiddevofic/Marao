@@ -17,7 +17,7 @@ const IMG_ACCESORIOS = IMG_PATH + "accesorios/";
 const otrosProductos = [
   {
     id: 105,
-    nombre: "PESTAÑAS CORTÓN",
+    nombre: "PESTAÑAS CARTÓN",
     desc: "Bandeja punto a punto con varias medidas en un solo estuche.",
     precio: 10000,
     tipo: "pestana",

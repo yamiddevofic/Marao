@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- El footer muestra los iconos de redes sociales (Instagram y WhatsApp enlazados; TikTok y Facebook listos para activar cuando haya enlace) y el teléfono de contacto es un enlace que llama.
+- SEO: título y descripción pensados para búsquedas, URL canónica, datos estructurados de tienda en línea (schema.org), `robots.txt`, `sitemap.xml`, favicon con la «M» del logo y el panel marcado como `noindex`.
+- Al compartir el enlace (WhatsApp, Instagram, Facebook, X) aparece una vista previa con título, descripción y una captura de la página de inicio (`assets/img/og-image.jpg`, 1200×630).
+- En el panel, los filtros se adaptan a la sección: el de categoría solo ofrece las de esa sección y se oculta si no tiene ninguna, y el de color solo aparece en Lentes.
+
 - En Lentes, pupila reducida, pupila estándar y cosplay Halloween pasaron a ser categorías: en la tienda reemplazan la fila fija «Pupila» y el botón de tono «COSPLAY», y en el panel se eligen en el selector de categoría. Los 121 lentes existentes quedaron asignados a la suya.
 - El panel de administración se rediseñó: encabezado con buscar, ver tienda y cerrar sesión; acciones «Categorías» y «Nuevo producto» siempre a la vista (desaparece el botón flotante); indicadores con color por estado; filtros en una sola barra; el inventario es una lista de filas con miniatura, sección y categoría, precio y estado; «Eliminar todos» se movió a una zona de peligro al final.
 
@@ -25,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cuatro lentes nuevos del documento del catálogo, con su foto y su ficha: Kitty Pink, Bluersht Pink, Taylor Violet y Gem Pink ($45.000 cada uno).
 - Trece referencias que tenían foto pero no ficha entraron por fin al catálogo con la versión nueva del documento: Aqua Blue, Melburth, 3 Con Hazel, Mel Beige, Queen Chocolate, Rio Ocre, Angeles Emarald, Awaken Green, Breeze Green, Cambusi Green, Rio Buzio, OMG Black y Pattaya Black. El catálogo pasó de 85 a 102 lentes.
 - Siri Brown ya no se vende a ciegas: llegó su foto y dejó de mostrarse con el placeholder.
-- Once productos nuevos de pestañas y accesorios, con foto y precio del documento del negocio: pestañas cortón ($10.000), pestañas libro ($30.000), removedor ($10.000), combo pegante + removedor ($20.000), combo pegante + removedor + pinzas ($23.000), pinzas para pestañas ($5.000), kit viajero completo ($12.000), lavadora ultrasónica ($30.000), pinzas abre ojos ($10.000), masajeador facial ($7.000) y jabón para manos ($10.000).
+- Once productos nuevos de pestañas y accesorios, con foto y precio del documento del negocio: pestañas cartón ($10.000), pestañas libro ($30.000), removedor ($10.000), combo pegante + removedor ($20.000), combo pegante + removedor + pinzas ($23.000), pinzas para pestañas ($5.000), kit viajero completo ($12.000), lavadora ultrasónica ($30.000), pinzas abre ojos ($10.000), masajeador facial ($7.000) y jabón para manos ($10.000).
 - Los accesorios que se vendían sin que nadie pudiera verlos ya tienen foto real: kit viajero con espejo y lavadora manual. Solo quedan dos con placeholder (solución de lentes y kit aplicador + pinza), que no vienen en el documento.
 - Los accesorios pasaron a carrusel, como las pestañas: se deslizan con el dedo, con el teclado o con las flechas.
 
@@ -52,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Salieron del catálogo "Tabla de pestañas punto a punto" ($30.000) y "Bandeja pestañas + Bond & Seal" ($35.000): el documento nuevo del negocio las reemplaza por pestañas cortón y pestañas libro. La segunda, además, nunca llegó a mostrarse en la tienda.
+- Salieron del catálogo "Tabla de pestañas punto a punto" ($30.000) y "Bandeja pestañas + Bond & Seal" ($35.000): el documento nuevo del negocio las reemplaza por pestañas cartón y pestañas libro. La segunda, además, nunca llegó a mostrarse en la tienda.
 - El checkout ya no pide número de tarjeta, vencimiento ni CVV. No había pasarela que procesara esos datos: el pedido siempre se coordinó por WhatsApp, así que pedirlos solo exponía a la clienta sin ninguna contrapartida. En su lugar, el resumen indica que el pago se acuerda por WhatsApp.
 - Elegir "Tarjeta" o "Nequi" ya no obliga a escribir un número para poder enviar el pedido.
 - El resumen de compras dejó de mostrar el selector de método de pago: la intención de pago ya no se pide antes de llegar al checkout, y con ella desaparecieron su etiqueta y su nota de ePayco.
@@ -90,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- El producto «Pestañas cortón» se llama en realidad «Pestañas cartón».
 - El detalle del lente ya no muestra la ficha técnica en productos que no son lentes: pestañas y accesorios no tienen tono, cobertura ni pupila, así que ese bloque (y el modal) quedan solo para lentes.
 
 - En una misma fila, el precio y el botón de todas las tarjetas caen ahora a la misma altura. Un nombre que ocupaba dos renglones corría hacia abajo el resto de su tarjeta y la fila quedaba despareja.

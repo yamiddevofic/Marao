@@ -450,9 +450,11 @@ img { max-width: 100%; }
 
 /* Filtros */
 
+/* Flex y no grid: los filtros que no aplican a la sección se ocultan, y en un
+   grid de columnas fijas dejaban huecos. */
 .admin-filtros {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.75rem;
@@ -469,7 +471,9 @@ img { max-width: 100%; }
   background-position: right 0.55rem center;
 }
 
-.admin-filtros-limpiar { grid-column: 1 / -1; }
+.admin-filtros .admin-campo { flex: 1 1 calc(50% - 0.25rem); min-width: 0; }
+
+.admin-filtros-limpiar { flex: 1 1 100%; }
 
 /* Lista de productos */
 
@@ -903,8 +907,9 @@ img { max-width: 100%; }
 
   .admin-resumen { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 
-  .admin-filtros { grid-template-columns: repeat(4, minmax(0, 1fr)) auto; }
-  .admin-filtros-limpiar { grid-column: auto; }
+  .admin-filtros { flex-wrap: nowrap; }
+  .admin-filtros .admin-campo { flex: 1 1 0; }
+  .admin-filtros-limpiar { flex: 0 0 auto; }
 
   .admin-fila {
     grid-template-areas: "foto info precio estado flecha";

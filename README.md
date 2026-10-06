@@ -140,7 +140,7 @@ Catálogo (`js/lentes.js` y `js/productos.js`):
 | ------------------------------------- | ------- | -------------------------- |
 | Lentes cosméticos (102 referencias en `js/lentes.js`) | $45.000 | Publicado (filtros por tono y pupila, paginado de 6) |
 | Lentes cosplay (19 referencias en `js/cosplay.js`) | $45.000 | Publicado (filtro "Cosplay"; sin clasificación por pupila) |
-| Pestañas cortón                       | $10.000 | Publicado                  |
+| Pestañas cartón                       | $10.000 | Publicado                  |
 | Pestañas libro                        | $30.000 | Publicado                  |
 | Pegante Bond & Seal                   | $10.000 | Publicado                  |
 | Removedor de pestañas                 | $10.000 | Publicado                  |

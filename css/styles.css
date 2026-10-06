@@ -1746,6 +1746,46 @@ body.scroll-bloqueado {
   filter: brightness(0) invert(1);
 }
 
+.footer-contact a {
+  color: inherit;
+}
+
+.footer-redes ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  list-style: none;
+}
+
+.footer-redes li[hidden] {
+  display: none;
+}
+
+/* 44px: área táctil cómoda en móvil aunque el icono sea más chico. */
+.footer-redes a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+  color: var(--color-white);
+  font-size: 1.15rem;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.footer-redes a:hover,
+.footer-redes a:focus-visible {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.footer-redes a:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
 /* ESCRITORIO: a partir de 769px se activa el layout de dos columnas */
 /* Texto que solo aparece en pantallas grandes. Se recorta la palabra en vez de
    duplicar el botón para que el lector de pantalla no anuncie dos veces la
@@ -2115,6 +2155,7 @@ body.scroll-bloqueado {
 
   .main-footer {
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
   }
 }

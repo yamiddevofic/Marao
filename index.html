@@ -3,8 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MARÃO - Tu mirada, tu estilo único</title>
-    
+    <title>MARÃO | Lentes de contacto cosméticos y pestañas en Colombia</title>
+    <meta
+      name="description"
+      content="Lentes de contacto cosméticos, lentes cosplay de Halloween, pestañas punto a punto y accesorios. Envíos a toda Colombia y pedidos por WhatsApp."
+    />
+    <link rel="canonical" href="https://marao.co/" />
+    <meta name="theme-color" content="#f8f7f5" />
+
+    <!-- ÍCONOS -->
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/img/icon-192.png" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+
+    <!-- OPEN GRAPH Y TARJETAS SOCIALES: lo que se ve al compartir el enlace por
+         WhatsApp, Instagram, Facebook o X. Las URL van absolutas porque las
+         plataformas no resuelven rutas relativas. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MARÃO" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:url" content="https://marao.co/" />
+    <meta property="og:title" content="MARÃO | Tu mirada, tu estilo único" />
+    <meta
+      property="og:description"
+      content="Lentes de contacto cosméticos, lentes cosplay de Halloween, pestañas punto a punto y accesorios. Envíos a toda Colombia."
+    />
+    <meta property="og:image" content="https://marao.co/assets/img/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Página de inicio de la tienda MARÃO" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MARÃO | Tu mirada, tu estilo único" />
+    <meta
+      name="twitter:description"
+      content="Lentes de contacto cosméticos, lentes cosplay de Halloween, pestañas punto a punto y accesorios. Envíos a toda Colombia."
+    />
+    <meta name="twitter:image" content="https://marao.co/assets/img/og-image.jpg" />
+
+    <!-- DATOS ESTRUCTURADOS: le dicen a Google qué es el sitio (una tienda en
+         línea), su logo, su contacto y sus redes. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "OnlineStore",
+            "@id": "https://marao.co/#tienda",
+            "name": "MARÃO",
+            "url": "https://marao.co/",
+            "logo": "https://marao.co/assets/img/logo.png",
+            "image": "https://marao.co/assets/img/og-image.jpg",
+            "description": "Tienda en línea de lentes de contacto cosméticos, pestañas punto a punto y accesorios, con envíos a toda Colombia.",
+            "telephone": "+57 324 374 4983",
+            "areaServed": { "@type": "Country", "name": "Colombia" },
+            "sameAs": ["https://www.instagram.com/maraoficiall/"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://marao.co/#sitio",
+            "name": "MARÃO",
+            "url": "https://marao.co/",
+            "inLanguage": "es-CO",
+            "publisher": { "@id": "https://marao.co/#tienda" }
+          }
+        ]
+      }
+    </script>
+
 
     <!-- FUENTES GOOGLE -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -141,7 +206,7 @@
             <source srcset="assets/img/hero-banner.webp" type="image/webp" />
             <img
               src="assets/img/hero-banner.jpg"
-              alt="Modelo Marao"
+              alt="Modelo luciendo lentes de contacto cosméticos y pestañas MARÃO"
               class="hero-img-element"
               width="1200"
               height="935"
@@ -697,9 +762,36 @@
         <p>Tu mirada, tu estilo único</p>
       </div>
       <div class="footer-contact">
-        <p><strong>CONTACTO:</strong> 3243744983</p>
+        <p><strong>CONTACTO:</strong> <a href="tel:+573243744983">324 374 4983</a></p>
         <p><strong>INSTA:</strong> @maraoficiall</p>
       </div>
+      <!-- Redes sociales. Para sumar una red, pon su URL en el href y quita el
+           atributo `hidden`; las que no tienen enlace todavía quedan ocultas
+           para no llevar a nadie a una página vacía. -->
+      <nav class="footer-redes" aria-label="Redes sociales">
+        <ul>
+          <li>
+            <a href="https://www.instagram.com/maraoficiall/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de MARÃO (se abre en otra pestaña)">
+              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://wa.me/573243744983" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de MARÃO (se abre en otra pestaña)">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li hidden>
+            <a href="" target="_blank" rel="noopener noreferrer" aria-label="TikTok de MARÃO (se abre en otra pestaña)">
+              <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li hidden>
+            <a href="" target="_blank" rel="noopener noreferrer" aria-label="Facebook de MARÃO (se abre en otra pestaña)">
+              <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </footer>
 
    <script src="https://checkout.epayco.co/checkout.js"></script>

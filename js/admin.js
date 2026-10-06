@@ -279,6 +279,7 @@ function limpiarFiltros() {
   if (color) color.value = "todos";
   const estado = document.getElementById("admin-filtro-estado");
   if (estado) estado.value = "todos";
+  ajustarFiltrosASeccion();
   aplicarFiltros();
 }
 
@@ -306,25 +307,55 @@ async function cargarCategoriasAdmin() {
     .order("nombre", { ascending: true });
   if (error) throw error;
   categorias = data ?? [];
-  pintarFiltroSubcategoria();
+  ajustarFiltrosASeccion();
 }
 
-/** El filtro agrupa por sección y conserva la elección si la categoría sigue existiendo. */
-function pintarFiltroSubcategoria() {
+/**
+ * Los filtros dependen de la sección elegida: el de categoría solo ofrece las
+ * de esa sección (y desaparece si no tiene ninguna) y el de color solo tiene
+ * sentido en Lentes, los únicos productos con tono. Un filtro oculto vuelve a
+ * "todos" para no seguir filtrando sin que se vea.
+ */
+function ajustarFiltrosASeccion() {
+  const seccion = filtros.seccion;
+
   const select = document.getElementById("admin-filtro-subcategoria");
-  if (!select) return;
-  const actual = select.value;
-  select.replaceChildren(new Option("Categoría", "todos"), new Option("Sin categoría", "sin"));
-  Object.entries(SECCIONES).forEach(([seccion, titulo]) => {
-    const lista = categoriasDe(seccion);
-    if (lista.length === 0) return;
-    const grupo = document.createElement("optgroup");
-    grupo.label = titulo;
-    lista.forEach((categoria) => grupo.append(new Option(categoria.nombre, String(categoria.id))));
-    select.append(grupo);
-  });
-  select.value = [...select.options].some((opcion) => opcion.value === actual) ? actual : "todos";
-  filtros.categoria = select.value;
+  if (select) {
+    const actual = select.value;
+    select.replaceChildren(new Option("Categoría", "todos"), new Option("Sin categoría", "sin"));
+    if (seccion === "todos") {
+      Object.entries(SECCIONES).forEach(([clave, titulo]) => {
+        const lista = categoriasDe(clave);
+        if (lista.length === 0) return;
+        const grupo = document.createElement("optgroup");
+        grupo.label = titulo;
+        lista.forEach((categoria) => grupo.append(new Option(categoria.nombre, String(categoria.id))));
+        select.append(grupo);
+      });
+    } else {
+      categoriasDe(seccion).forEach((categoria) =>
+        select.append(new Option(categoria.nombre, String(categoria.id))),
+      );
+    }
+    const hayCategorias =
+      seccion === "todos" ? categorias.length > 0 : categoriasDe(seccion).length > 0;
+    const campo = select.closest(".admin-campo");
+    if (campo) campo.hidden = !hayCategorias;
+    select.value =
+      hayCategorias && [...select.options].some((opcion) => opcion.value === actual)
+        ? actual
+        : "todos";
+    filtros.categoria = select.value;
+  }
+
+  const color = document.getElementById("admin-filtro-color");
+  if (color) {
+    const conColor = seccion === "todos" || seccion === "lente";
+    const campo = color.closest(".admin-campo");
+    if (campo) campo.hidden = !conColor;
+    if (!conColor) color.value = "todos";
+    filtros.color = color.value;
+  }
 }
 
 async function cargarProductosAdmin() {
@@ -1179,6 +1210,7 @@ function configurarDelegacion() {
       renombrarCategoria(Number(event.target.dataset.id), event.target);
     } else if (event.target.matches('[data-action="admin-filtro"]')) {
       leerFiltrosDeControles();
+      ajustarFiltrosASeccion();
       aplicarFiltros();
     }
   });
