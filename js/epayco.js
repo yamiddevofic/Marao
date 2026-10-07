@@ -72,6 +72,8 @@ export function pagarConEpayco({ total, direccion, destino, metodoPago, costoEnv
     // antiguo embebido sobre la tienda.
     external: "true",
     response: `${window.location.origin}/?pago=respuesta`,
-    confirmation: `${window.location.origin}/api/epayco/confirmation`,
+    // Sin `confirmation`: el sitio es estático y no hay servidor que reciba el
+    // aviso de ePayco (la ruta /api/epayco/confirmation daba 404). Hasta que
+    // exista, cada pago se verifica en el panel de ePayco antes de despachar.
   });
 }

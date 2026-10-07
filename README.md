@@ -169,7 +169,7 @@ Envíos y pagos (`js/checkout.js`):
 
 En desarrollo activo. Puntos pendientes identificados:
 
-- **Confirmación de pagos ePayco**: el Web Checkout ya está preparado; las URLs de respuesta y confirmación deben configurarse en el panel de ePayco antes de activar producción.
+- **ePayco en producción** (`data-epayco-test="false"`): los cobros son reales. No hay servidor que reciba la confirmación de ePayco (el sitio es estático), así que el checkout no envía URL de confirmación y cada pago se verifica en el panel de ePayco (estado y monto) antes de despachar el pedido.
 - **7 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
 
   | Referencia | Tono | Ficha |
