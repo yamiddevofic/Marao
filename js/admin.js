@@ -2,7 +2,7 @@ import { exigirSupabase } from "./supabase.js";
 import { formatearPrecio } from "./formato.js";
 import { abrirModal, cerrarModal, cerrarModalSuperior, hayModalAbierto } from "./modales.js";
 
-const CORREO_ADMIN = "admin@marao.com";
+const CORREO_ADMIN = "admin@marao.co";
 const ESTADOS = ["disponible", "agotado", "oculto"];
 const TIPOS_LENTE = ["reducida", "estandar", "cosplay"];
 const SECCIONES = { lente: "Lentes", pestana: "Pestañas", accesorio: "Accesorios" };
