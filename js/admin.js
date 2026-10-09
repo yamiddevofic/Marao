@@ -1104,20 +1104,8 @@ function mostrarMensajeEn(id, mensaje, error = false) {
 }
 
 const mostrarMensajeClave = (mensaje, error) => mostrarMensajeEn("admin-clave-mensaje", mensaje, error);
-const mostrarMensajeCorreo = (mensaje, error) => mostrarMensajeEn("admin-correo-mensaje", mensaje, error);
 
-/** Correo que espera confirmación: Supabase no lo aplica hasta que se confirme. */
-function pintarCorreoPendiente() {
-  const aviso = document.getElementById("admin-correo-pendiente");
-  if (!aviso) return;
-  const pendiente = usuarioActual?.new_email;
-  aviso.hidden = !pendiente;
-  aviso.textContent = pendiente
-    ? `Cambio pendiente a ${pendiente}: se aplica cuando se confirme el enlace que enviamos por correo.`
-    : "";
-}
-
-/* Se revalida la contraseña actual antes de cambiar correo o contraseña: un
+/* Se revalida la contraseña actual antes de cambiarla: un
    panel que quedó abierto en un equipo ajeno no debe bastar, y Supabase puede
    exigir un inicio de sesión reciente para aceptar el cambio. */
 async function revalidarClave(actual) {
@@ -1129,14 +1117,10 @@ async function revalidarClave(actual) {
 }
 
 function abrirPerfil() {
-  ["admin-clave-form", "admin-correo-form"].forEach((id) => {
-    const formulario = document.getElementById(id);
-    formulario?.reset();
-    ocultarClaves(formulario);
-  });
+  const formulario = document.getElementById("admin-clave-form");
+  formulario?.reset();
+  ocultarClaves(formulario);
   mostrarMensajeClave("");
-  mostrarMensajeCorreo("");
-  pintarCorreoPendiente();
   const correo = usuarioActual?.email ?? "";
   const etiqueta = document.getElementById("admin-perfil-correo");
   if (etiqueta) etiqueta.textContent = correo;
@@ -1178,57 +1162,6 @@ async function cambiarClave(evento) {
     mostrarToast("Contraseña actualizada.");
   } catch (error) {
     mostrarMensajeClave(mensajeErrorClave(error), true);
-  } finally {
-    restaurarBoton();
-  }
-}
-
-function mensajeErrorCorreo(error) {
-  if (error?.code === "email_exists") return "Ese correo ya lo usa otra cuenta.";
-  if (error?.code === "over_email_send_rate_limit") {
-    return "Se enviaron demasiados correos seguidos. Espera un rato y vuelve a intentarlo.";
-  }
-  /* El servidor de correo por defecto de Supabase solo envía a direcciones
-     del equipo del proyecto; para cualquier otra hace falta un SMTP propio. */
-  if (error?.code === "email_address_not_authorized") {
-    return "Supabase no puede enviar correos a esa dirección todavía: falta configurar un servidor de correo (SMTP) propio en Supabase.";
-  }
-  return error?.message ?? "No se pudo cambiar el correo.";
-}
-
-async function cambiarCorreo(evento) {
-  evento.preventDefault();
-  const formulario = evento.target;
-  const datos = new FormData(formulario);
-  const nuevo = String(datos.get("correo") ?? "").trim().toLowerCase();
-  const actual = String(datos.get("actual") ?? "");
-  const correoActual = usuarioActual?.email?.toLowerCase();
-
-  if (!correoActual) return mostrarMensajeCorreo("Vuelve a iniciar sesión e inténtalo de nuevo.", true);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevo)) return mostrarMensajeCorreo("Escribe un correo válido.", true);
-  if (nuevo === correoActual) return mostrarMensajeCorreo("Ese ya es el correo de la cuenta.", true);
-
-  const restaurarBoton = ocuparBoton(formulario.querySelector('button[type="submit"]'), "Enviando…");
-  mostrarMensajeCorreo("");
-  try {
-    await revalidarClave(actual);
-    const { data, error } = await obtenerSupabase().auth.updateUser(
-      { email: nuevo },
-      // El enlace de confirmación devuelve al panel, que retoma la sesión.
-      { emailRedirectTo: `${window.location.origin}/admin.html` },
-    );
-    if (error) throw error;
-    if (data?.user) usuarioActual = data.user;
-
-    formulario.reset();
-    ocultarClaves(formulario);
-    pintarCorreoPendiente();
-    mostrarMensajeCorreo(
-      `Enviamos un enlace de confirmación a ${nuevo} (y puede llegar otro a ${correoActual}). ` +
-        `El correo cambia cuando se confirme; mientras tanto sigues entrando con ${correoActual}.`,
-    );
-  } catch (error) {
-    mostrarMensajeCorreo(mensajeErrorCorreo(error), true);
   } finally {
     restaurarBoton();
   }
@@ -1379,8 +1312,6 @@ function configurarDelegacion() {
       guardarProducto(event);
     } else if (event.target.matches('[data-action="admin-clave-form"]')) {
       cambiarClave(event);
-    } else if (event.target.matches('[data-action="admin-correo-form"]')) {
-      cambiarCorreo(event);
     } else if (event.target.matches('[data-action="admin-categoria-form"]')) {
       crearCategoria(event);
     }

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- En «Mi cuenta» del panel la administradora puede cambiar su correo: pide la contraseña actual y el cambio se aplica al confirmar el enlace que Supabase envía. Los permisos de administración ya no dependen del correo sino del usuario (tabla `administradores`), así que cambiarlo no la deja fuera del panel.
+- Los permisos de administración ya no dependen del correo sino del usuario (tabla `administradores` en Supabase): si se cambia el correo de la cuenta, la administradora no pierde el acceso al panel. Cambiar el correo desde el propio panel queda para más adelante, cuando haya un servidor de correo (SMTP) propio.
 - El panel de administración permite ver la contraseña mientras se escribe (botón del ojo, en el acceso y al cambiarla) y, desde «Mi cuenta» en el encabezado, cambiar la contraseña: pide la actual, la nueva dos veces y exige al menos 8 caracteres.
 - ePayco pasó a producción: los pagos con tarjeta y Nequi son cobros reales. Se quitó la URL de confirmación, que apuntaba a una ruta inexistente; los pagos se verifican en el panel de ePayco.
 - El footer enlaza Instagram, TikTok y WhatsApp con las cuentas oficiales de la marca, y TikTok se sumó a los datos estructurados.
