@@ -29,18 +29,18 @@ using (true);
 create policy "Admin can insert categories"
 on public.categorias for insert
 to authenticated
-with check (auth.jwt() ->> 'email' = 'admin@marao.com');
+with check (public.es_admin());
 
 create policy "Admin can update categories"
 on public.categorias for update
 to authenticated
-using (auth.jwt() ->> 'email' = 'admin@marao.com')
-with check (auth.jwt() ->> 'email' = 'admin@marao.com');
+using (public.es_admin())
+with check (public.es_admin());
 
 create policy "Admin can delete categories"
 on public.categorias for delete
 to authenticated
-using (auth.jwt() ->> 'email' = 'admin@marao.com');
+using (public.es_admin());
 
 -- Al eliminar una subcategoría, sus productos se quedan sin ella.
 alter table public.productos
