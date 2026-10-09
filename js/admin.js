@@ -19,6 +19,8 @@ const EXTENSIONES_IMAGEN = ["jpg", "jpeg", "png", "webp"];
 /** Último catálogo cargado, para abrir el editor y leer sus fotos sin otra consulta. */
 let productos = [];
 let productoEditado = null;
+/** Usuario de la sesión, para mostrar su correo y revalidar su contraseña. */
+let usuarioActual = null;
 /** Subcategorías: `{ id, nombre, seccion, orden }`. */
 let categorias = [];
 let urlVistaPrevia = null;
@@ -1062,6 +1064,94 @@ const buscarAdminConEspera = conEspera(
 
 /* --- Sesión y delegación --- */
 
+/* --- Ver contraseña y cambiarla --- */
+
+function alternarVerClave(boton) {
+  const input = document.getElementById(boton.getAttribute("aria-controls"));
+  if (!input) return;
+  const mostrar = input.type === "password";
+  input.type = mostrar ? "text" : "password";
+  boton.setAttribute("aria-pressed", String(mostrar));
+  const texto = mostrar ? "Ocultar contraseña" : "Mostrar contraseña";
+  boton.setAttribute("aria-label", texto);
+  boton.title = texto;
+}
+
+/* Una contraseña no debe quedar a la vista al reabrir un formulario o después
+   de usarla. */
+function ocultarClaves(contenedor) {
+  contenedor
+    ?.querySelectorAll('[data-action="admin-ver-clave"][aria-pressed="true"]')
+    .forEach(alternarVerClave);
+}
+
+function mostrarMensajeClave(mensaje, error = false) {
+  const elemento = document.getElementById("admin-clave-mensaje");
+  if (!elemento) return;
+  elemento.textContent = mensaje;
+  elemento.classList.toggle("admin-mensaje--error", error);
+}
+
+function abrirPerfil() {
+  const formulario = document.getElementById("admin-clave-form");
+  formulario?.reset();
+  ocultarClaves(formulario);
+  mostrarMensajeClave("");
+  const correo = usuarioActual?.email ?? "";
+  const etiqueta = document.getElementById("admin-perfil-correo");
+  if (etiqueta) etiqueta.textContent = correo;
+  const usuario = document.getElementById("admin-perfil-usuario");
+  if (usuario) usuario.value = correo;
+  abrirModal("modal-admin-perfil");
+}
+
+function mensajeErrorClave(error) {
+  if (error?.code === "same_password") return "La contraseña nueva debe ser distinta de la actual.";
+  if (error?.code === "weak_password") return "Esa contraseña es muy débil. Usa una más larga o con más variedad.";
+  return error?.message ?? "No se pudo cambiar la contraseña.";
+}
+
+async function cambiarClave(evento) {
+  evento.preventDefault();
+  const formulario = evento.target;
+  const datos = new FormData(formulario);
+  const actual = String(datos.get("actual") ?? "");
+  const nueva = String(datos.get("nueva") ?? "");
+  const confirmar = String(datos.get("confirmar") ?? "");
+  const correo = usuarioActual?.email;
+
+  if (!correo) return mostrarMensajeClave("Vuelve a iniciar sesión e inténtalo de nuevo.", true);
+  if (nueva.length < 8) return mostrarMensajeClave("La contraseña nueva debe tener al menos 8 caracteres.", true);
+  if (nueva !== confirmar) return mostrarMensajeClave("Las contraseñas nuevas no coinciden.", true);
+  if (nueva === actual) return mostrarMensajeClave("La contraseña nueva debe ser distinta de la actual.", true);
+
+  const restaurarBoton = ocuparBoton(formulario.querySelector('button[type="submit"]'), "Cambiando…");
+  mostrarMensajeClave("");
+  try {
+    const supabase = obtenerSupabase();
+    /* Se revalida la contraseña actual: un panel que quedó abierto en un equipo
+       ajeno no debe bastar para cambiarla, y Supabase puede exigir un inicio de
+       sesión reciente para aceptar el cambio. */
+    const { error: errorActual } = await supabase.auth.signInWithPassword({
+      email: correo,
+      password: actual,
+    });
+    if (errorActual) throw new Error("La contraseña actual no es correcta.");
+
+    const { error } = await supabase.auth.updateUser({ password: nueva });
+    if (error) throw error;
+
+    formulario.reset();
+    ocultarClaves(formulario);
+    cerrarModal("modal-admin-perfil");
+    mostrarToast("Contraseña actualizada.");
+  } catch (error) {
+    mostrarMensajeClave(mensajeErrorClave(error), true);
+  } finally {
+    restaurarBoton();
+  }
+}
+
 export async function iniciarSesionAdmin(evento) {
   evento.preventDefault();
   const formulario = evento.target;
@@ -1076,6 +1166,7 @@ export async function iniciarSesionAdmin(evento) {
     mostrarToast(`No se pudo iniciar sesión: ${error.message}`, true);
     return;
   }
+  ocultarClaves(formulario);
   actualizarVistaAdmin(data.user);
 }
 
@@ -1089,12 +1180,15 @@ async function actualizarVistaAdmin(usuario) {
   const panel = document.getElementById("admin-panel-contenido");
   if (!acceso || !panel) return;
   const autorizado = esAdmin(usuario);
+  usuarioActual = autorizado ? usuario : null;
   acceso.hidden = autorizado;
   panel.hidden = !autorizado;
   const searchToggle = document.getElementById("admin-search-toggle");
   if (searchToggle) searchToggle.hidden = !autorizado;
   const logoutToggle = document.getElementById("admin-logout-toggle");
   if (logoutToggle) logoutToggle.hidden = !autorizado;
+  const perfilToggle = document.getElementById("admin-perfil-toggle");
+  if (perfilToggle) perfilToggle.hidden = !autorizado;
 
   if (!usuario) {
     mostrarMensaje("Inicia sesión con la cuenta administradora.");
@@ -1121,6 +1215,12 @@ function configurarDelegacion() {
            `closest` también devuelve el backdrop y cerraría al tocar el
            contenido. */
         if (event.target === el) cerrarModalSuperior();
+        break;
+      case "admin-ver-clave":
+        alternarVerClave(el);
+        break;
+      case "admin-perfil":
+        abrirPerfil();
         break;
       case "admin-logout":
         cerrarSesionAdmin();
@@ -1195,6 +1295,8 @@ function configurarDelegacion() {
       iniciarSesionAdmin(event);
     } else if (event.target.matches('[data-action="admin-product-form"]')) {
       guardarProducto(event);
+    } else if (event.target.matches('[data-action="admin-clave-form"]')) {
+      cambiarClave(event);
     } else if (event.target.matches('[data-action="admin-categoria-form"]')) {
       crearCategoria(event);
     }

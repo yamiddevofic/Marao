@@ -315,6 +315,38 @@ img { max-width: 100%; }
 .admin-icon-button:focus-visible { outline: none; box-shadow: var(--admin-focus); }
 .admin-icon-button:disabled { opacity: 0.35; cursor: not-allowed; background: transparent; }
 
+/* --- Campo de contraseña con botón para verla --- */
+
+.admin-clave { position: relative; }
+
+/* El campo deja sitio al botón para que el texto no quede debajo del ojo. */
+.admin-clave input { padding-right: 3.25rem; }
+
+.admin-ver-clave {
+  position: absolute;
+  top: 50%;
+  right: 0.15rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 8px;
+  color: var(--admin-muted);
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.admin-ver-clave:hover { color: var(--color-text); }
+.admin-ver-clave:focus-visible { outline: none; box-shadow: var(--admin-focus); }
+.admin-ver-clave .icono-ocultar,
+.admin-ver-clave[aria-pressed="true"] .icono-ver { display: none; }
+.admin-ver-clave[aria-pressed="true"] .icono-ocultar { display: block; }
+
+.admin-perfil-correo { margin: 0; color: var(--admin-muted); font-size: 0.9rem; }
+.admin-perfil-correo strong { color: var(--color-text); }
+
 /* --- Acceso --- */
 
 .admin-login-card {
