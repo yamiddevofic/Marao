@@ -344,7 +344,21 @@ img { max-width: 100%; }
 .admin-ver-clave[aria-pressed="true"] .icono-ver { display: none; }
 .admin-ver-clave[aria-pressed="true"] .icono-ocultar { display: block; }
 
-.admin-perfil-correo { margin: 0; color: var(--admin-muted); font-size: 0.9rem; }
+.admin-perfil-correo { margin: 0; color: var(--admin-muted); font-size: 0.9rem; overflow-wrap: anywhere; }
+
+/* Correo y contraseña son dos formularios independientes dentro del mismo
+   modal: cada uno con su botón y su mensaje. */
+.admin-perfil-bloque {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+}
+
+.admin-perfil-bloque h3 { margin: 0; font: 700 1rem var(--font-ui); }
+.admin-perfil-bloque .admin-button { justify-self: end; }
+.admin-perfil-bloque .admin-hint { margin: 0; }
 .admin-perfil-correo strong { color: var(--color-text); }
 
 /* --- Acceso --- */

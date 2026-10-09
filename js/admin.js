@@ -2,7 +2,6 @@ import { exigirSupabase } from "./supabase.js";
 import { formatearPrecio } from "./formato.js";
 import { abrirModal, cerrarModal, cerrarModalSuperior, hayModalAbierto } from "./modales.js";
 
-const CORREO_ADMIN = "admin@marao.co";
 const ESTADOS = ["disponible", "agotado", "oculto"];
 const TIPOS_LENTE = ["reducida", "estandar", "cosplay"];
 const SECCIONES = { lente: "Lentes", pestana: "Pestañas", accesorio: "Accesorios" };
@@ -29,8 +28,20 @@ function obtenerSupabase() {
   return exigirSupabase();
 }
 
-function esAdmin(usuario) {
-  return usuario?.email?.toLowerCase() === CORREO_ADMIN;
+/**
+ * Quién administra lo decide la base (tabla `administradores`, por id de
+ * usuario), no el correo: así la administradora puede cambiarlo sin quedarse
+ * fuera. Esto solo decide qué se muestra; la protección real son las
+ * políticas RLS, que usan la misma función `es_admin()`.
+ */
+async function esAdmin(usuario) {
+  if (!usuario) return false;
+  const { data, error } = await obtenerSupabase().rpc("es_admin");
+  if (error) {
+    console.warn("[admin] No se pudo comprobar el permiso:", error.message);
+    return false;
+  }
+  return data === true;
 }
 
 function esTipoLente(tipo) {
@@ -1085,18 +1096,47 @@ function ocultarClaves(contenedor) {
     .forEach(alternarVerClave);
 }
 
-function mostrarMensajeClave(mensaje, error = false) {
-  const elemento = document.getElementById("admin-clave-mensaje");
+function mostrarMensajeEn(id, mensaje, error = false) {
+  const elemento = document.getElementById(id);
   if (!elemento) return;
   elemento.textContent = mensaje;
   elemento.classList.toggle("admin-mensaje--error", error);
 }
 
+const mostrarMensajeClave = (mensaje, error) => mostrarMensajeEn("admin-clave-mensaje", mensaje, error);
+const mostrarMensajeCorreo = (mensaje, error) => mostrarMensajeEn("admin-correo-mensaje", mensaje, error);
+
+/** Correo que espera confirmación: Supabase no lo aplica hasta que se confirme. */
+function pintarCorreoPendiente() {
+  const aviso = document.getElementById("admin-correo-pendiente");
+  if (!aviso) return;
+  const pendiente = usuarioActual?.new_email;
+  aviso.hidden = !pendiente;
+  aviso.textContent = pendiente
+    ? `Cambio pendiente a ${pendiente}: se aplica cuando se confirme el enlace que enviamos por correo.`
+    : "";
+}
+
+/* Se revalida la contraseña actual antes de cambiar correo o contraseña: un
+   panel que quedó abierto en un equipo ajeno no debe bastar, y Supabase puede
+   exigir un inicio de sesión reciente para aceptar el cambio. */
+async function revalidarClave(actual) {
+  const { error } = await obtenerSupabase().auth.signInWithPassword({
+    email: usuarioActual?.email ?? "",
+    password: actual,
+  });
+  if (error) throw new Error("La contraseña actual no es correcta.");
+}
+
 function abrirPerfil() {
-  const formulario = document.getElementById("admin-clave-form");
-  formulario?.reset();
-  ocultarClaves(formulario);
+  ["admin-clave-form", "admin-correo-form"].forEach((id) => {
+    const formulario = document.getElementById(id);
+    formulario?.reset();
+    ocultarClaves(formulario);
+  });
   mostrarMensajeClave("");
+  mostrarMensajeCorreo("");
+  pintarCorreoPendiente();
   const correo = usuarioActual?.email ?? "";
   const etiqueta = document.getElementById("admin-perfil-correo");
   if (etiqueta) etiqueta.textContent = correo;
@@ -1128,17 +1168,8 @@ async function cambiarClave(evento) {
   const restaurarBoton = ocuparBoton(formulario.querySelector('button[type="submit"]'), "Cambiando…");
   mostrarMensajeClave("");
   try {
-    const supabase = obtenerSupabase();
-    /* Se revalida la contraseña actual: un panel que quedó abierto en un equipo
-       ajeno no debe bastar para cambiarla, y Supabase puede exigir un inicio de
-       sesión reciente para aceptar el cambio. */
-    const { error: errorActual } = await supabase.auth.signInWithPassword({
-      email: correo,
-      password: actual,
-    });
-    if (errorActual) throw new Error("La contraseña actual no es correcta.");
-
-    const { error } = await supabase.auth.updateUser({ password: nueva });
+    await revalidarClave(actual);
+    const { error } = await obtenerSupabase().auth.updateUser({ password: nueva });
     if (error) throw error;
 
     formulario.reset();
@@ -1147,6 +1178,57 @@ async function cambiarClave(evento) {
     mostrarToast("Contraseña actualizada.");
   } catch (error) {
     mostrarMensajeClave(mensajeErrorClave(error), true);
+  } finally {
+    restaurarBoton();
+  }
+}
+
+function mensajeErrorCorreo(error) {
+  if (error?.code === "email_exists") return "Ese correo ya lo usa otra cuenta.";
+  if (error?.code === "over_email_send_rate_limit") {
+    return "Se enviaron demasiados correos seguidos. Espera un rato y vuelve a intentarlo.";
+  }
+  /* El servidor de correo por defecto de Supabase solo envía a direcciones
+     del equipo del proyecto; para cualquier otra hace falta un SMTP propio. */
+  if (error?.code === "email_address_not_authorized") {
+    return "Supabase no puede enviar correos a esa dirección todavía: falta configurar un servidor de correo (SMTP) propio en Supabase.";
+  }
+  return error?.message ?? "No se pudo cambiar el correo.";
+}
+
+async function cambiarCorreo(evento) {
+  evento.preventDefault();
+  const formulario = evento.target;
+  const datos = new FormData(formulario);
+  const nuevo = String(datos.get("correo") ?? "").trim().toLowerCase();
+  const actual = String(datos.get("actual") ?? "");
+  const correoActual = usuarioActual?.email?.toLowerCase();
+
+  if (!correoActual) return mostrarMensajeCorreo("Vuelve a iniciar sesión e inténtalo de nuevo.", true);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevo)) return mostrarMensajeCorreo("Escribe un correo válido.", true);
+  if (nuevo === correoActual) return mostrarMensajeCorreo("Ese ya es el correo de la cuenta.", true);
+
+  const restaurarBoton = ocuparBoton(formulario.querySelector('button[type="submit"]'), "Enviando…");
+  mostrarMensajeCorreo("");
+  try {
+    await revalidarClave(actual);
+    const { data, error } = await obtenerSupabase().auth.updateUser(
+      { email: nuevo },
+      // El enlace de confirmación devuelve al panel, que retoma la sesión.
+      { emailRedirectTo: `${window.location.origin}/admin.html` },
+    );
+    if (error) throw error;
+    if (data?.user) usuarioActual = data.user;
+
+    formulario.reset();
+    ocultarClaves(formulario);
+    pintarCorreoPendiente();
+    mostrarMensajeCorreo(
+      `Enviamos un enlace de confirmación a ${nuevo} (y puede llegar otro a ${correoActual}). ` +
+        `El correo cambia cuando se confirme; mientras tanto sigues entrando con ${correoActual}.`,
+    );
+  } catch (error) {
+    mostrarMensajeCorreo(mensajeErrorCorreo(error), true);
   } finally {
     restaurarBoton();
   }
@@ -1179,7 +1261,7 @@ async function actualizarVistaAdmin(usuario) {
   const acceso = document.getElementById("admin-acceso");
   const panel = document.getElementById("admin-panel-contenido");
   if (!acceso || !panel) return;
-  const autorizado = esAdmin(usuario);
+  const autorizado = await esAdmin(usuario);
   usuarioActual = autorizado ? usuario : null;
   acceso.hidden = autorizado;
   panel.hidden = !autorizado;
@@ -1297,6 +1379,8 @@ function configurarDelegacion() {
       guardarProducto(event);
     } else if (event.target.matches('[data-action="admin-clave-form"]')) {
       cambiarClave(event);
+    } else if (event.target.matches('[data-action="admin-correo-form"]')) {
+      cambiarCorreo(event);
     } else if (event.target.matches('[data-action="admin-categoria-form"]')) {
       crearCategoria(event);
     }

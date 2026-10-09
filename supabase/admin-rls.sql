@@ -1,16 +1,37 @@
 -- Ejecutar en Supabase SQL Editor.
 -- La UI también comprueba el correo, pero RLS es la protección real.
 
--- La cuenta administradora es admin@marao.co. El correo vive en esta única
--- función: para cambiarlo basta con reescribirla, no cada política.
+-- Quién administra se guarda por id de usuario, no por correo: así la
+-- administradora puede cambiar su correo desde el panel sin perder el acceso.
+-- Para dar acceso a otra cuenta: insert into public.administradores (user_id)
+-- select id from auth.users where email = '<correo>';
+create table if not exists public.administradores (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  creado_en timestamptz not null default now()
+);
+
+-- Sin políticas: nadie la lee ni la escribe desde el navegador. Solo la
+-- consulta es_admin(), que corre con los permisos de su dueño.
+alter table public.administradores enable row level security;
+
+insert into public.administradores (user_id)
+select id from auth.users where email = 'admin@marao.co'
+on conflict do nothing;
+
 create or replace function public.es_admin()
 returns boolean
 language sql
 stable
+security definer
 set search_path = ''
 as $$
-  select coalesce(auth.jwt() ->> 'email', '') = 'admin@marao.co'
+  select exists (
+    select 1 from public.administradores where user_id = auth.uid()
+  )
 $$;
+
+revoke all on function public.es_admin() from public;
+grant execute on function public.es_admin() to anon, authenticated;
 
 alter table public.productos enable row level security;
 
