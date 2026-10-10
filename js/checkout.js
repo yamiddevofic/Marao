@@ -143,7 +143,7 @@ function abrirAvisoComprobante() {
 
 /** El pago no arranca solo: ePayco se abre cuando se pide desde el aviso, para
  *  que dé tiempo a leerlo y a copiar el número del vendedor. */
-export async function pagarDesdeAviso() {
+export function pagarDesdeAviso() {
   const metodo =
     document.getElementById("payment-type-select")?.value ?? "tarjeta";
   if (metodo === "efectivo") return;
@@ -157,14 +157,23 @@ export async function pagarDesdeAviso() {
   }
 
   const selectorEnvio = document.getElementById("shipping-city");
+  const esNacional = selectorEnvio?.value === "nacional";
+  const costoEnvio = esNacional ? ENVIO_NACIONAL : ENVIO_LOCAL;
+  const subtotal = getCarrito().reduce(
+    (sum, item) => sum + item.precio * item.cantidad,
+    0,
+  );
+
   const estado = document.getElementById("comprobante-estado");
   if (estado) estado.textContent = "";
 
   try {
-    await pagarConEpayco({
+    pagarConEpayco({
+      total: subtotal + costoEnvio,
       direccion,
       destino: selectorEnvio?.value ?? "bogota_soacha",
       metodoPago: metodo === "nequi" ? "NEQUI" : "CARD",
+      costoEnvio,
     });
   } catch (error) {
     console.error("[checkout] No se pudo iniciar ePayco", error);

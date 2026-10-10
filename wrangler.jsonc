@@ -1,14 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tienda-marao",
-  "main": "worker/index.js",
   "compatibility_date": "2026-10-01",
-  "vars": {
-    "EPAYCO_TEST_MODE": "false"
-  },
   "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "directory": "."
   }
 }
