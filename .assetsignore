@@ -6,6 +6,8 @@ node_modules
 .claude
 .opencode
 scripts
+tests
+worker
 supabase
 package.json
 package-lock.json

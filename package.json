@@ -1,8 +1,11 @@
 {
   "name": "pag-marao",
   "private": true,
-  "description": "Sitio estático de Marao. Sin build: este package.json solo existe para scripts de mantenimiento (migración y optimización de imágenes).",
+  "description": "Tienda estática de MARAO con Cloudflare Worker para crear sesiones seguras de ePayco.",
   "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
   "devDependencies": {
     "sharp": "^0.35.4"
   }

@@ -1,6 +1,7 @@
 .opencode/
 
 node_modules/
+.dev.vars
 
 .claude/*
 !.claude/skills/
