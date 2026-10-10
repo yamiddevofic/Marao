@@ -17,7 +17,7 @@ Tienda virtual de lentes de contacto cosméticos y pestañas pelo a pelo, desarr
 - **Login con Google**: acceso con cuenta de Google (SDK GSI). Prellena los datos del cliente en el pedido y separa los datos de envío guardados de cada cuenta en el mismo dispositivo.
 - **Contacto** (`#contacto`): datos de la marca en el footer.
 - **Panel de administración** (`admin.html`): acceso con la cuenta administradora, resumen del inventario, filtros por categoría/color/estado y CRUD completo (crear, editar ficha y foto, eliminar uno o vaciar el catálogo). La foto se sube a Supabase Storage. El catálogo del cliente carga desde Supabase (`js/catalogo-remoto.js`).
-- **Pago ePayco**: Web Checkout hospedado de ePayco para tarjeta y Nequi, con aviso del resultado al volver a la tienda.
+- **Pago ePayco**: Cloudflare Worker obtiene los precios vigentes desde Supabase y crea la sesión de Smart Checkout. El navegador solo recibe el `sessionId`; no envía ni decide el monto del cobro.
 
 La navegación entre tienda y carrito no recarga la página: `mostrarSeccion()` (`js/ui.js`) alterna la clase `hidden` entre `#view-store` y `#view-cart` y conserva la vista en la URL (`?vista=carrito`). Los filtros, la página y el detalle del lente también se pueden compartir mediante los parámetros `color`, `pupila`, `pagina` y `detalle`; Atrás y Adelante restauran ese estado.
 
@@ -54,7 +54,7 @@ Pag_Marao/
 │   ├── admin.js        # Panel: sesión, inventario, editor de fichas y CRUD
 │   ├── cart.js         # Estado y operaciones del carrito
 │   ├── checkout.js     # Costos de envío, medios de pago y checkout
-│   ├── epayco.js       # Web Checkout hospedado de ePayco
+│   ├── epayco.js       # Solicitud de sesión ePayco al Worker
 │   ├── pago-respuesta.js # Resultado del pago al volver de ePayco
 │   ├── auth.js         # Login con Google (inicializa GSI y decodifica el JWT)
 │   ├── carrusel.js     # Desplazamiento de los carruseles (pestañas y accesorios)
@@ -65,7 +65,7 @@ Pag_Marao/
 ├── supabase/
 │   └── admin-rls.sql   # Políticas RLS de productos y del Storage de fotos
 ├── worker/
-│   ├── index.js        # (Sin activar) Endpoint de creación de sesión de pago
+│   ├── index.js        # Endpoint de creación de sesión de pago
 │   └── payment.js      # Precio autoritativo y comunicación con ePayco
 ├── tests/
 │   └── payment.test.js # Pruebas del cálculo y creación de sesión
@@ -129,14 +129,16 @@ Luego visita <http://localhost:8080>.
 
 ### ePayco
 
-Las opciones **Tarjeta de Crédito / Débito** y **Nequi** abren el Web Checkout hospedado de ePayco (`checkout.js` clásico) con el método seleccionado. **Contraentrega** continúa por WhatsApp. MARAO no captura ni almacena números de tarjeta, vencimientos ni CVV. El frontend requiere estos atributos en el script de `js/main.js`:
+Las opciones **Tarjeta de Crédito / Débito** y **Nequi** usan ePayco Smart Checkout. El navegador envía al Worker únicamente IDs y cantidades; el Worker consulta en Supabase los precios vigentes, calcula el total y crea la sesión con la API de ePayco. El monto del navegador se ignora. **Contraentrega** continúa por WhatsApp. MARAO no captura ni almacena números de tarjeta, vencimientos ni CVV.
 
-- `data-epayco-public-key`: llave pública de producción.
-- `data-epayco-test`: `true` para sandbox y `false` para producción (hoy `false`: cobros reales).
+Antes de desplegar el Worker, configura sus secretos sin guardarlos en el repo:
 
-La llave pública es visible en el HTML por diseño; no pongas allí la llave privada.
+```sh
+npx wrangler secret put EPAYCO_PUBLIC_KEY
+npx wrangler secret put EPAYCO_PRIVATE_KEY
+```
 
-**Worker pendiente** (`worker/`, sin activar): crea sesiones de Smart Checkout con el monto calculado en el servidor desde los precios de Supabase. Se publicó el 2026-10-09 sin las llaves en Cloudflare y los pagos dejaron de abrir, así que se retiró. Para activarlo: cargar `EPAYCO_PUBLIC_KEY` y `EPAYCO_PRIVATE_KEY` con `npx wrangler secret put`, confirmar con `npx wrangler secret list`, y recién entonces volver a apuntar `wrangler.jsonc` (`main`, `binding`, `run_worker_first`), `js/epayco.js` y el script de `index.html` al flujo del Worker. Para desarrollo local, `.dev.vars` (ignorado por Git) con las mismas variables y `npx wrangler dev`.
+Para desarrollo local, crea `.dev.vars` (está ignorado por Git) con `EPAYCO_PUBLIC_KEY` y `EPAYCO_PRIVATE_KEY`, y ejecuta `npx wrangler dev`. `EPAYCO_TEST_MODE` está en `false` en `wrangler.jsonc`: los cobros son reales. Para probar en sandbox, cámbialo a `true` en `.dev.vars` o en una rama, nunca en el despliegue de producción.
 
 Al volver de ePayco (`/?pago=respuesta&ref_payco=…`), `js/pago-respuesta.js` consulta el estado de la transacción y le muestra a la clienta si el pago fue aprobado, quedó pendiente o no se completó (con el motivo, p. ej. «Saldo insuficiente»). Es solo informativo: el pedido se sigue verificando en el panel de ePayco antes de despachar.
 
@@ -183,7 +185,7 @@ Envíos y pagos (`js/checkout.js`):
 
 En desarrollo activo. Puntos pendientes identificados:
 
-- **Confirmación automática de pedidos**: todavía no hay persistencia de órdenes ni webhook de ePayco. Antes de automatizar el despacho se debe implementar y probar la confirmación server-to-server.
+- **Confirmación automática de pedidos**: todavía no hay persistencia de órdenes ni webhook de ePayco. El Worker crea sesiones con monto calculado desde Supabase, pero no registra ni cambia el estado de un pedido tras la transacción. Antes de automatizar el despacho se debe implementar y probar la confirmación server-to-server.
 - **7 referencias sin foto — pendiente del proveedor**: tienen ficha completa en el documento del catálogo (marca, diámetro, pupila, borde y, salvo dos, descripción) pero su foto no venía en el set. Se publican con `placeholder-producto.svg` hasta que lleguen las imágenes:
 
   | Referencia | Tono | Ficha |
