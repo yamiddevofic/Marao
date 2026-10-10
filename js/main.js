@@ -38,6 +38,7 @@ import {
   cerrarModalPerfil,
 } from "./auth.js";
 import { abrirBuscador, cerrarBuscador, buscar, abrirResultado } from "./buscador.js";
+import { mostrarResultadoPago } from "./pago-respuesta.js";
 
 /**
  * Menú de navegación en móvil.
@@ -243,6 +244,9 @@ document.addEventListener("click", (event) => {
     case "copiar-numero":
       copiarNumeroVendedor();
       break;
+    case "close-pago-resultado":
+      cerrarModal("modal-pago-resultado");
+      break;
     default:
       console.warn(`[ui] Acción desconocida: ${el.dataset.action}`);
   }
@@ -322,6 +326,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const detalle = Number(new URLSearchParams(window.location.search).get("detalle"));
   mostrarSeccion(vistaDesdeRuta(), { historial: false });
   if (Number.isInteger(detalle) && detalle > 0) abrirModalDetalle(detalle, { historial: false });
+  mostrarResultadoPago();
 });
 
 window.addEventListener("popstate", () => {

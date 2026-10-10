@@ -1286,6 +1286,32 @@ body.scroll-bloqueado {
   color: var(--color-bg);
 }
 
+/* RESULTADO DEL PAGO (al volver de ePayco) */
+#modal-pago-resultado .modal-detail-card {
+  max-width: 420px;
+}
+
+.pago-resultado[data-estado="rechazada"] .modal-header-title {
+  color: var(--color-danger);
+}
+
+.pago-resultado-motivo {
+  margin-top: var(--spacing-sm);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.pago-resultado-detalle {
+  margin-top: var(--spacing-sm);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.pago-resultado-motivo:empty,
+.pago-resultado-detalle:empty {
+  display: none;
+}
+
 /* AVISO DE COMPROBANTE */
 #modal-comprobante .modal-detail-card {
   max-width: 420px;

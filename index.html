@@ -759,6 +759,45 @@
       </div>
     </div>
 
+    <!-- MODAL RESULTADO DEL PAGO (al volver de ePayco) -->
+    <div id="modal-pago-resultado" class="modal-backdrop" data-action="close-modal">
+      <div
+        class="modal-detail-card pago-resultado"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pago-resultado-titulo"
+        aria-describedby="pago-resultado-mensaje"
+        tabindex="-1"
+      >
+        <button
+          class="close-modal-x"
+          data-action="close-pago-resultado"
+          aria-label="Cerrar resultado del pago"
+        >
+          &times;
+        </button>
+        <h3 class="modal-header-title" id="pago-resultado-titulo">Consultando tu pago…</h3>
+        <div role="status">
+          <p class="comprobante-aviso" id="pago-resultado-mensaje"></p>
+          <p class="pago-resultado-motivo" id="pago-resultado-motivo"></p>
+          <p class="pago-resultado-detalle" id="pago-resultado-detalle"></p>
+        </div>
+        <div class="comprobante-acciones">
+          <a
+            class="btn-whatsapp"
+            href="https://wa.me/573243744983"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Escribir por WhatsApp
+          </a>
+          <button class="btn-modal-secundario" data-action="close-pago-resultado">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <footer class="main-footer" id="contacto">
       <div class="footer-brand">
         <img src="assets/img/logoA.png" alt="MARÃO" class="footer-logo" loading="lazy" />
@@ -797,12 +836,10 @@
       </nav>
     </footer>
 
-   <script src="https://checkout.epayco.co/checkout.js"></script>
+   <script src="https://checkout.epayco.co/checkout-v2.js"></script>
    <script
      type="module"
      src="js/main.js"
-     data-epayco-public-key="4c789f4bb9331cd8bed2d9557ccaef4e"
-     data-epayco-test="false"
    ></script>
   </body>
 </html>
